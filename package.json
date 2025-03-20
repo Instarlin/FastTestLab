@@ -11,10 +11,24 @@
   "dependencies": {
     "@react-router/node": "^7.3.0",
     "@react-router/serve": "^7.3.0",
+    "@tiptap/extension-highlight": "^2.11.5",
+    "@tiptap/extension-placeholder": "^2.11.5",
+    "@tiptap/extension-typography": "^2.11.5",
+    "@tiptap/pm": "^2.11.5",
+    "@tiptap/react": "^2.11.5",
+    "@tiptap/starter-kit": "^2.11.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "isbot": "^5.1.17",
+    "lucide-react": "^0.482.0",
+    "motion": "^12.5.0",
+    "novel": "^1.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router": "^7.3.0"
+    "react-router": "^7.3.0",
+    "tailwind-merge": "^3.0.2",
+    "tailwindcss-animate": "^1.0.7",
+    "tiptap-extension-global-drag-handle": "^0.1.18"
   },
   "devDependencies": {
     "@react-router/dev": "^7.3.0",

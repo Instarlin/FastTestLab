@@ -1,5 +1,6 @@
+import { BreadcrumbLink } from "~/components/Breadcrumb";
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import { useNavigation } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +9,17 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
-  return <Welcome />;
+export const handle = {
+  breadcrumb: () => <BreadcrumbLink to='/home'>Home</BreadcrumbLink>
+}
+
+export default function Home({ matches }: Route.ComponentProps) {
+  const navigation = useNavigation();
+  const isNavigation = Boolean(navigation.location);
+
+  return (
+    <>
+    <div className="border-4 border-gray-200 border-t-blue-500 rounded-full w-5 h-5 animate-spin"></div>
+    </>
+  );
 }
