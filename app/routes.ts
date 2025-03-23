@@ -8,5 +8,6 @@ export default [
     route("/tests", "routes/tests.tsx", [
       route("extrachimin", "routes/chimin/extrachimin.tsx"),
     ]),
+    // route("/login", "routes/login.tsx"),
   ]),
 ] satisfies RouteConfig;

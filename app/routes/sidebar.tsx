@@ -44,12 +44,13 @@ export default function Home() {
     },
     {
       label: "Logout",
-      link: "#",
+      link: "/login",
       icon: (
         <LogOutIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
   ];
+  
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <motion.div 
@@ -93,8 +94,8 @@ export default function Home() {
           </SidebarBody>
         </Sidebar>
       </SidebarProvider>
-      <div className="flex flex-col shadow-[-4px_0px_6px_-1px_rgba(0,0,0,0.15)] rounded-tl-4xl pl-6 py-0 text-gray-950 bg-white w-full">
-        <AutonomousBreadcrumbs className="my-4" />
+      <div className="flex flex-col shadow-[-4px_0px_6px_-1px_rgba(0,0,0,0.15)] rounded-tl-4xl pl-0 py-0 text-gray-950 bg-white w-full">
+        <AutonomousBreadcrumbs className="mt-4 pl-6 pb-2 border-b-1 border-gray-200" />
         <Outlet />
       </div>
     </div>
