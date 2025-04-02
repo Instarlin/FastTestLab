@@ -7,7 +7,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "~/components/Breadcrumb";
+} from "./Breadcrumb";
 
 export function AutonomousBreadcrumbs({ className }: { className?: string }) {
   const matches = useMatches();

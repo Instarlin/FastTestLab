@@ -1,4 +1,5 @@
 import type { Route } from "./+types/home";
+import { WavyBackground } from "~/components/Hero/HeroBg";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -7,11 +8,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home({ matches }: Route.ComponentProps) {
+export default function Hero({ matches }: Route.ComponentProps) {
 
   return (
     <>
-      <div>Hero page</div>
+      <WavyBackground />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import type { Route } from "../+types/home";
-import { BreadcrumbLink } from "~/components/Breadcrumb";
+import { BreadcrumbLink } from "~/components/Sidebar";
 
 export function meta({}: Route.MetaArgs) {
   return [

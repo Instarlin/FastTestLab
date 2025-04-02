@@ -14,10 +14,12 @@ const content = `
 <img src="https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg"/>
 <h1>Here is your new awesome <mark>canvas</mark>!</h1>
 <h2>Here is your new awesome <mark>canvas</mark>!</h2>
+<h3>Here is your new awesome <mark>canvas</mark>!</h3>
 <p>Here is your new awesome <mark>canvas</mark>!</p>
-<p>Here is your new awesome <mark>canvas</mark>!</p>
-<p>Here is your new awesome <mark>canvas</mark>!</p>
-<p>Here is your new awesome <mark>canvas</mark>!</p>
+<ul>
+  <li>Here is your new awesome <mark>canvas</mark>!</li>
+  <li>Here is your new awesome <mark>canvas</mark>!</li>
+</ul>
 `
 
 export const useRichEditor = () => {

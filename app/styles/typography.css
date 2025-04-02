@@ -1,6 +1,6 @@
 .ProseMirror {
   p {
-    @apply leading-relaxed my-3 first:mt-0 last:mb-0;
+    @apply leading-relaxed py-3 first:pt-0 last:pb-0;
   }
 
   & > p {

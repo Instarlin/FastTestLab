@@ -1,9 +1,11 @@
 import type { Route } from "./+types/home"
-import { BreadcrumbLink } from "~/components/Breadcrumb"
+import { BreadcrumbLink } from "~/components/Sidebar";
 import { Link, Outlet } from "react-router"
 import { useEditorState } from "@tiptap/react"
 import RichEditor from "~/components/RichEditor"
 import useRichEditor from "~/components/editor/hooks/useRichEditor"
+import '~/styles/editor.css'
+import { useMessage } from "~/components/Message";
 
 
 export function meta({}: Route.MetaArgs) {
@@ -18,6 +20,7 @@ export const handle = {
 }
 
 export default function Tests() {
+  const { showMessage } = useMessage();
 
   const { editor } = useRichEditor();
 
@@ -31,14 +34,15 @@ export default function Tests() {
 
   return (
     <div 
-      className="flex relative flex-row justify-between items-start overflow-y-scroll overflow-x-hidden pl-6">
-      <div className="sticky top-5 text-sm w-28">
+      className="flex relative flex-row justify-around lg:justify-between items-start overflow-y-scroll overflow-x-hidden pl-6">
+      <div className="hidden lg:block sticky top-5 text-sm w-28">
         <p>{characters} characters</p>
         <p>{words} words</p>
       </div>
-      <RichEditor editor={editor!} />
-      <div className="sticky top-5 right-8 flex flex-col gap-1.5">
-        <Link to='./extrachimin' className="text-blue-300">Chimin Extra</Link>
+      <RichEditor editor={editor!} 
+      className="w-full px-4 sm:w-11/12 md:max-w-[640px] lg:max-w-[640px] xl:max-w-[960px] xxl:max-w-[1280px]"/>
+      <div className="hidden lg:flex flex-col gap-1.5 sticky top-5 right-8">
+        <Link onClick={() => showMessage('error', 'Chimin Extra')} to='./extrachimin' className="text-blue-300">Chimin Extra</Link>
         <Link to='./extrachimin' className="text-blue-300">Chimin Extra</Link>
         <Link to='./extrachimin' className="text-blue-300">Chimin Extra</Link>
       </div>

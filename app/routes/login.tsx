@@ -1,5 +1,11 @@
 import { useState } from "react";
 import type { Route } from "./+types/home";
+import { Link, useNavigate } from "react-router";
+import { Mail, User, Lock } from "lucide-react";
+import axios from "axios";
+import { useMessage } from "~/components/Message";
+import { motion, AnimatePresence } from "motion/react";
+import "~/styles/wave.css";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,181 +14,160 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Login() {
-  const [newState, setNewState] = useState(false);
-  const [login, setLogin] = useState('');
-  const [fisrtPass, setFisrtPass] = useState('');
-  const [secondPass, setSecondPass] = useState('');
-  const [showPassword_1, setShowPassword_1] = useState(false);
-  const [showPassword_2, setShowPassword_2] = useState(false);
-  const navigate = useNavigate();
+export default function AuthForm() {
+  const [isLogin, setIsLogin] = useState(true);
+  const [remember, setRemember] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
-  const handleClick = () => setNewState(!newState);
+  const formVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+  };
 
-  const handleUserCreation = async () => {
-    try {
-      if(fisrtPass === secondPass) {
-        const response = await axios.post(`${import.meta.env.VITE_PATH}/api/user`, {
-          "email": login,
-          "password": fisrtPass
-        });
-        message.success('Аккаунт создан');
-        if(response) handleLogin();
-      };
-    } catch (e) {
-      console.log(e);
-      if(e.code === "ERR_NETWORK") {
-        message.error('Нет соединения с сервером')
-      } else message.error(e?.response?.data?.detail);
-    }
-  }
-
-  const handleLogin = async () => {
-    let userInfo = new FormData();
-    userInfo.append("username", login);
-    userInfo.append("password", fisrtPass);
-    const res = await axios({
-      method: "post",
-      url: `${import.meta.env.VITE_PATH}/api/auth/token`,
-      data: userInfo,
-      headers: { "Content-Type": "multipart/form-data" },
-    }).then(response => {
-      navigate('/service', {state: {authToken: response.data.access_token}});
-      message.info('Вы вошли в аккаунт');
-    }).catch((e) => {
-      console.log(e);
-      if(e.code === "ERR_NETWORK") {
-        message.error('Нет соединения с сервером')
-      } else message.error(e?.response?.data?.detail);
-    });
-    console.log(res)
-  }
+  const backgroundColor = darkMode ? "bg-zinc-900" : "bg-zinc-100";
+  const textColor = darkMode ? "text-white" : "text-black";
+  const cardBg = darkMode ? "bg-zinc-800 border-zinc-600" : "bg-white border-zinc-200";
 
   return (
-    <>
-    <div className='content'>
-      {/* <div className='message'>
-        <h1>Добро пожаловать!</h1>
-        <h3>Создайте учетную запись, чтобы прорубить окно к знаниям с помощью нашего интеллектуального 
-          <span className='deco'> "Ассистента"</span> член гойда зв за наших ZZZ ZZZZZ ZZZZZ ZZZZ - это я сплю <span className='deco'> H U I</span></h3>
-      </div> */}
-      <div className="form">
-        {newState ? (
-          <>
-            <h2>Регистрация</h2>
-            <input
-              placeholder="e-mail..."
-              id="emailField"
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === "ArrowDown") {
-                  document.getElementById("firstRegPassForm").focus();
-                }
-              }}
-            />
-            <div style={{position: 'relative', display: 'inline-block'}}>
-              <input
-                id="firstRegPassForm"
-                placeholder="Пароль..."
-                type={showPassword_1 ? "text" : "password"}
-                value={fisrtPass}
-                onChange={(e) => setFisrtPass(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === "ArrowDown") {
-                    document.getElementById("secondRegPassForm").focus();
-                  } else if (e.key === "ArrowUp") {
-                    document.getElementById("emailField").focus();
-                  }
-                }}
-              />
-              <button className='inputBtn' type='button' onClick={() => setShowPassword_1(!showPassword_1)}>
-                {showPassword_1 ? <EyeOutlined style={{fontSize: '16px'}}/> : <EyeInvisibleOutlined style={{fontSize: '16px'}}/>}
-              </button>
-            </div>
-            <div style={{position: 'relative', display: 'inline-block'}}>
-              <input
-                id="secondRegPassForm"
-                placeholder="Подтвердите пароль..."
-                type={showPassword_2 ? "text" : "password"}
-                value={secondPass}
-                onChange={(e) => setSecondPass(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleUserCreation();
-                  } else if (e.key === "ArrowUp") {
-                    document.getElementById("firstRegPassForm").focus();
-                  }
-                }}
-              />
-              <button className='inputBtn' type='button' onClick={() => setShowPassword_2(!showPassword_2)}>
-                {showPassword_2 ? <EyeOutlined style={{fontSize: '16px'}}/> : <EyeInvisibleOutlined style={{fontSize: '16px'}}/>}
-              </button>
-            </div>
-            <div onClick={handleUserCreation} className='btnWrapper'>
-              <Link
-                style={{ textDecoration: "none" }}
-                to={"./"}
-                className='btn'
+    <div
+      className={`w-full min-h-screen flex items-center justify-center px-4 relative transition-colors duration-300 ${backgroundColor} ${textColor}`}
+    >
+      <button
+        className={`absolute z-10 bottom-4 right-4 text-sm px-3 py-1 rounded-md border border-gray-400 hover:cursor-pointer transition-colors duration-200 ${
+          darkMode ? "hover:bg-zinc-700" : "hover:bg-gray-200"
+        }`}
+        onClick={() => setDarkMode(!darkMode)}
+      >
+        Switch to {darkMode ? "Light" : "Dark"}
+      </button>
+
+      <motion.div
+        layout
+        animate={{ height: "auto" }}
+        transition={{ type: "spring", duration: 0.5 }}
+        className={`w-full max-w-md rounded-xl p-6 shadow-2xl border transition-colors duration-200 ${cardBg}`}
+      >
+        <h2 className="text-2xl text-center font-semibold mb-6 transition-all duration-300">
+          {isLogin ? "Login" : "Register"}
+        </h2>
+
+        <AnimatePresence mode="wait">
+          <motion.div layout="position">
+            {isLogin ? (
+              <motion.form
+                key="login"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={formVariants}
+                transition={{ duration: 0.3 }}
+                className="flex flex-col gap-4"
               >
-                Зарегистрироваться
-              </Link>
-            </div>
-            <p>
-              Есть аккаунт?{"  "}
-              <Link onClick={handleClick}>Войти</Link>
-            </p>
-          </>
-        ) : (
-          <>
-            <h2>Вход</h2>
-            <input
-              placeholder="e-mail..."
-              id="emailForm"
-              type='text'
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === "ArrowDown")
-                  document.getElementById("passForm").focus();
-              }}
-            />
-            <div style={{position: 'relative', display: 'inline-block'}}>
-              <input
-                placeholder="Пароль..."
-                id="passForm"
-                type={showPassword_1 ? "text" : "password"}
-                value={fisrtPass}
-                onChange={(e) => setFisrtPass(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleLogin();
-                  } else if (e.key === "ArrowUp") {
-                    document.getElementById("emailForm").focus();
-                  }
-                }}
-              />
-              <button className='inputBtn' type='button' onClick={() => setShowPassword_1(!showPassword_1)}>
-                {showPassword_1 ? <EyeOutlined style={{fontSize: '16px'}}/> : <EyeInvisibleOutlined style={{fontSize: '16px'}}/>}
-              </button>
-            </div>
-            <div onClick={handleLogin} className='btnWrapper'>
-              <Link
-                style={{ textDecoration: "none" }}
-                to={"./"}
-                className='btn'
+                <div className="relative">
+                  <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                  />
+                </div>
+                <div className="relative">
+                  <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                  />
+                </div>
+
+                <div className={`flex justify-between items-center text-sm ${darkMode ? "text-zinc-400" : "text-gray-600"}`}>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="accent-pink-500"
+                      checked={remember}
+                      onChange={() => setRemember(!remember)}
+                    />
+                    Remember me
+                  </label>
+                  <a href="#" className="hover:underline transition cursor-pointer">
+                    Forgot password?
+                  </a>
+                </div>
+
+                <Link
+                  to={'/home'}
+                  className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white bg-pink-600 ${
+                    darkMode
+                      ? "hover:bg-pink-500"
+                      : "hover:bg-pink-700"
+                  }`}
+                >
+                  Log In
+                </Link>
+              </motion.form>
+            ) : (
+              <motion.form
+                key="register"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={formVariants}
+                transition={{ duration: 0.3 }}
+                className="flex flex-col gap-4"
               >
-                Войти
-              </Link>
-            </div>
-            <p>
-              Нет аккаута?{"  "}
-              <Link onClick={handleClick}>Зарегистрируйтесь</Link>
-            </p>
-          </>
-        )}
-      </div>
-    </div>
+                <div className="relative">
+                  <User className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                  />
+                </div>
+                <div className="relative">
+                  <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                  />
+                </div>
+                <div className="relative">
+                  <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                  />
+                </div>
+                <Link
+                  to={'/home'}
+                  className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white bg-blue-600 ${
+                    darkMode
+                      ? "hover:bg-blue-500"
+                      : "hover:bg-blue-700"
+                  }`}
+                >
+                  Sign Up
+                </Link>
+              </motion.form>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className={`text-center mt-6 text-sm ${darkMode ? "text-zinc-400" : "text-gray-600"}`}>
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          <button
+            className={`underline transition cursor-pointer ${darkMode ? "hover:text-pink-300" : "hover:text-pink-600"}`}
+            onClick={() => setIsLogin(!isLogin)}
+          >
+            {isLogin ? "Register" : "Login"}
+          </button>
+        </div>
+
+      </motion.div>
+
       <svg
         width="100%"
         height="100%"
@@ -248,27 +233,6 @@ export default function Login() {
           className="transition-all duration-300 ease-in-out delay-150 path-3"
         ></path>
       </svg>
-      {/* <svg
-        className="blob"
-        viewBox="0 0 200 200"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M40,60 C70,10 140,10 160,60 C180,110 100,180 60,140 C20,100 20,110 40,60"
-          fill="#9900ef"
-        >
-          <animate
-            attributeName="d"
-            dur="3s"
-            repeatCount="indefinite"
-            values="
-              M40,60 C70,10 140,10 160,60 C180,110 100,180 60,140 C20,100 20,110 40,60;
-              M50,50 C90,0 150,10 160,50 C170,100 110,190 50,150 C10,100 10,100 50,50;
-              M40,60 C70,10 140,10 160,60 C180,110 100,180 60,140 C20,100 20,110 40,60;
-            "
-          />
-        </path>
-      </svg> */}
       <svg
         width="100%"
         height="100%"
@@ -338,6 +302,6 @@ export default function Login() {
           transform="rotate(-180 720 200)"
         ></path>
       </svg>
-    </>
+    </div>
   );
 }
