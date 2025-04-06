@@ -1,7 +1,7 @@
-import { cn } from "~/lib/utils";
-import { Link } from "react-router";
-import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import React, { createContext, useContext, useState } from "react";
+import { Link } from "react-router";
+import { cn } from "~/lib/utils";
 // import { IconMenu2, IconX } from "@tabler/icons-react";
 
 interface Links {
@@ -189,13 +189,13 @@ export const Logo = () => {
   const { open, animate } = useSidebar();
   return (
     <Link
-      to='/home'
+      to="/home"
       className="relative z-20 flex items-center space-x-3 py-1 text-sm font-normal text-black pl-2"
     >
       <div className="h-6 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
       {/* <svg href="../../public/assets/logo-electron.svg" className="fill-amber-500" color="red"/> */}
       <motion.span
-        animate={{ opacity: animate ? (open ? 1 : 0) : 1, }}
+        animate={{ opacity: animate ? (open ? 1 : 0) : 1 }}
         className="font-medium whitespace-pre text-black dark:text-white"
       >
         Fast Test Lab

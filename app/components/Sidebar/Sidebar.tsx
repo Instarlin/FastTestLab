@@ -1,44 +1,56 @@
-import { Logo, Sidebar, SidebarBody, SidebarLink, SidebarProvider } from "./SidebarComponents";
-import { LogOutIcon, LucideBolt, UserSearchIcon, AtomIcon, BotIcon, DatabaseIcon } from "lucide-react";
+import {
+  AtomIcon,
+  BotIcon,
+  DatabaseIcon,
+  LogOutIcon,
+  LucideBolt,
+} from "lucide-react";
+import {
+  Logo,
+  Sidebar,
+  SidebarBody,
+  SidebarLink,
+  SidebarProvider,
+} from "./SidebarComponents";
 
 export function SidebarNav() {
-    const links = [
-      {
-        label: "Tests",
-        link: "/tests",
-        icon: (
-          <AtomIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-        ),
-      },
-      {
-        label: "Database",
-        link: "#",
-        icon: (
-          <DatabaseIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-        ),
-      },
-      {
-        label: "Chat Bot",
-        link: "#",
-        icon: (
-          <BotIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-        ),
-      },
-      {
-        label: "Settings",
-        link: "#",
-        icon: (
-          <LucideBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-        ),
-      },
-      {
-        label: "Logout",
-        link: "/login",
-        icon: (
-          <LogOutIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-        ),
-      },
-    ];
+  const links = [
+    {
+      label: "Tests",
+      link: "/tests",
+      icon: (
+        <AtomIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Database",
+      link: "#",
+      icon: (
+        <DatabaseIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Chat Bot",
+      link: "#",
+      icon: (
+        <BotIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Settings",
+      link: "#",
+      icon: (
+        <LucideBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Logout",
+      link: "/login",
+      icon: (
+        <LogOutIcon className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+  ];
   return (
     <SidebarProvider open={false}>
       <Sidebar>
@@ -47,7 +59,11 @@ export function SidebarNav() {
             <Logo />
             <div className="mt-12 flex flex-col gap-2">
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} className="hover:bg-gray-200 duration-150 rounded-lg pl-2 py-2 mr-3"/>
+                <SidebarLink
+                  key={idx}
+                  link={link}
+                  className="hover:bg-gray-200 duration-150 rounded-lg pl-2 py-2 mr-3"
+                />
               ))}
             </div>
           </div>

@@ -16,7 +16,6 @@ export function AutonomousBreadcrumbs({ className }: { className?: string }) {
     (match) => match.handle && (match.handle as any).breadcrumb
   );
 
-
   return (
     <Breadcrumb className={className}>
       <BreadcrumbList>

@@ -5,7 +5,7 @@ import { cn } from "~/lib/utils";
 
 export const CardSpotlight = ({
   children,
-  radius = 350,
+  radius = 450,
   color = "#262626",
   className,
   ...props
@@ -49,7 +49,7 @@ export const CardSpotlight = ({
             radial-gradient(
               ${radius}px circle at ${mouseX}px ${mouseY}px,
               white,
-              transparent 80%
+              transparent 50%
             )
           `,
         }}

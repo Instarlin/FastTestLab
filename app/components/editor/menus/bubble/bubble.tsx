@@ -1,14 +1,10 @@
-import { Editor, isTextSelection } from "@tiptap/core"
-import { BubbleMenu } from "@tiptap/react"
-import { TextButtons } from "./text-buttons"
-import { AlignButtons } from "./align-buttons"
-import Split from '~/components/editor/ui/bubble-split' 
+import { Editor, isTextSelection } from "@tiptap/core";
+import { BubbleMenu } from "@tiptap/react";
+import Split from "~/components/editor/ui/bubble-split";
+import { AlignButtons } from "./align-buttons";
+import { TextButtons } from "./text-buttons";
 
-export const CustomBubbleMenu = ({
-  editor,
-}: {
-  editor: Editor | null;
-}) => {
+export const CustomBubbleMenu = ({ editor }: { editor: Editor | null }) => {
   if (!editor) {
     return null;
   }
@@ -43,11 +39,11 @@ export const CustomBubbleMenu = ({
 
         return true;
       }}
-      className="flex flex-row justify-center items-center gap-0.5 py-0.5 px-1 
+      className="flex flex-row justify-center items-center gap-0.5 py-0.5 px-1
     rounded-md overflow-clip bg-white border-1 border-gray-300"
     >
       <TextButtons editor={editor} />
-      <Split/>
+      <Split />
       <AlignButtons editor={editor} />
     </BubbleMenu>
   );

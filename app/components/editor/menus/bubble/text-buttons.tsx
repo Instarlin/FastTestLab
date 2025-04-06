@@ -1,7 +1,13 @@
-import { Editor } from "@tiptap/core"
-import { useEditorState } from "@tiptap/react"
-import { BoldIcon, CodeIcon, ItalicIcon, StrikethroughIcon, UnderlineIcon, } from "lucide-react"
-import { BubbleMenuBtn } from "~/components/editor/ui/bubble-menu-btn"
+import { Editor } from "@tiptap/core";
+import { useEditorState } from "@tiptap/react";
+import {
+  BoldIcon,
+  CodeIcon,
+  ItalicIcon,
+  StrikethroughIcon,
+  UnderlineIcon,
+} from "lucide-react";
+import { BubbleMenuBtn } from "~/components/editor/ui/bubble-menu-btn";
 
 interface SelectorResult {
   isBold: boolean;
@@ -63,5 +69,7 @@ export const TextButtons = ({ editor }: { editor: Editor }) => {
     }),
   });
 
-  return <BubbleMenuBtn items={items} editor={editor} editorState={editorState} />
+  return (
+    <BubbleMenuBtn items={items} editor={editor} editorState={editorState} />
+  );
 };

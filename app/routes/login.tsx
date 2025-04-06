@@ -65,10 +65,10 @@ export default function AuthForm() {
                 <div className="relative">
                   <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400 pointer-events-none" />
                   <Input
-                    color="#f6339a"
+                    // color="#f6339a"
                     type="email"
                     placeholder="Email"
-                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 ${
                       darkMode
                         ? "bg-zinc-700 text-white placeholder-zinc-400"
                         : "bg-zinc-100 text-black placeholder-gray-500"
@@ -80,7 +80,7 @@ export default function AuthForm() {
                   <Input
                     type="password"
                     placeholder="Password"
-                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none ${
                       darkMode
                         ? "bg-zinc-700 text-white placeholder-zinc-400"
                         : "bg-zinc-100 text-black placeholder-gray-500"
@@ -96,7 +96,7 @@ export default function AuthForm() {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      className="accent-pink-500"
+                      className="accent-zinc-800"
                       checked={remember}
                       onChange={() => setRemember(!remember)}
                     />
@@ -104,7 +104,7 @@ export default function AuthForm() {
                   </label>
                   <a
                     href="#"
-                    className="hover:underline transition cursor-pointer"
+                    className="hover:text-blue-400 transition-all duration-300 cursor-pointer underline"
                   >
                     Forgot password?
                   </a>
@@ -112,8 +112,8 @@ export default function AuthForm() {
 
                 <Link
                   to={"/home"}
-                  className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white bg-pink-600 ${
-                    darkMode ? "hover:bg-pink-500" : "hover:bg-pink-700"
+                  className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white ${
+                    darkMode ? "hover:bg-zinc-700 bg-zinc-600" : "hover:bg-zinc-700 bg-zinc-800"
                   }`}
                 >
                   Log In
@@ -131,7 +131,7 @@ export default function AuthForm() {
               >
                 <div className="relative">
                   <User className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Full Name"
                     className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
@@ -143,7 +143,7 @@ export default function AuthForm() {
                 </div>
                 <div className="relative">
                   <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-                  <input
+                  <Input
                     type="email"
                     placeholder="Email"
                     className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
@@ -155,7 +155,7 @@ export default function AuthForm() {
                 </div>
                 <div className="relative">
                   <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-                  <input
+                  <Input
                     type="password"
                     placeholder="Password"
                     className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
@@ -167,8 +167,8 @@ export default function AuthForm() {
                 </div>
                 <Link
                   to={"/home"}
-                  className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white bg-blue-600 ${
-                    darkMode ? "hover:bg-blue-500" : "hover:bg-blue-700"
+                  className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white bg-zinc-800 ${
+                    darkMode ? "hover:bg-zinc-700" : "hover:bg-zinc-700"
                   }`}
                 >
                   Sign Up
@@ -185,9 +185,7 @@ export default function AuthForm() {
         >
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
-            className={`underline transition cursor-pointer ${
-              darkMode ? "hover:text-pink-300" : "hover:text-pink-600"
-            }`}
+            className={`underline transition duration-200 cursor-pointer hover:text-blue-400`}
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin ? "Register" : "Login"}

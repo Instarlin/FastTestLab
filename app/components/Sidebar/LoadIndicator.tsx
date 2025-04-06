@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useDelayedLoader } from "~/lib/utils/useDelayedLoader";
 
 export function LoadIndicator() {
@@ -7,7 +7,7 @@ export function LoadIndicator() {
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div 
+        <motion.div
           initial={{ scaleX: 0, originX: 0, opacity: 1 }}
           exit={{ opacity: 0 }}
           animate={{ scaleX: progress / 100 }}

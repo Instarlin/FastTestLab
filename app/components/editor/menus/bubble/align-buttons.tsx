@@ -1,7 +1,7 @@
-import { Editor } from "@tiptap/core"
-import { useEditorState } from "@tiptap/react"
-import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, CheckIcon, ChevronDownIcon } from "lucide-react"
-import { BubbleMenuBtn } from "~/components/editor/ui/bubble-menu-btn"
+import { Editor } from "@tiptap/core";
+import { useEditorState } from "@tiptap/react";
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon } from "lucide-react";
+import { BubbleMenuBtn } from "~/components/editor/ui/bubble-menu-btn";
 
 interface SelectorResult {
   isLeft: boolean;
@@ -43,5 +43,7 @@ export const AlignButtons = ({ editor }: { editor: Editor }) => {
     }),
   });
 
-  return <BubbleMenuBtn items={items} editor={editor} editorState={editorState} />
+  return (
+    <BubbleMenuBtn items={items} editor={editor} editorState={editorState} />
+  );
 };

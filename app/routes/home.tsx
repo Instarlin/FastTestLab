@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CardSpotlight } from "~/components/CardSpotLight";
-import type { Route } from "./+types/home";
 import { BreadcrumbLink } from "~/components/Sidebar";
+import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,18 +11,19 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export const handle = {
-  breadcrumb: () => <BreadcrumbLink to='/home'>Home</BreadcrumbLink>
+  breadcrumb: () => <BreadcrumbLink to="/home">Home</BreadcrumbLink>,
 };
 
 const Card = () => {
   return (
     <CardSpotlight className="flex-1 basis-[calc(33%-0.5rem)] min-w-[200px] max-w-[calc(33%-0.5rem)] border-gray-300 overflow-hidden p-0 min-h-[200px] flex flex-col items-center justify-center cursor-pointer">
-      <div 
+      <div
         className="w-full flex-3 bg-cover bg-center bg-"
         style={{
-          backgroundImage: "url('https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg')",
-        }}>
-      </div>
+          backgroundImage:
+            "url('https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg')",
+        }}
+      ></div>
       <div className="w-full flex-1 bg-white z-20 flex justify-start items-center px-4 transition-all duration-300">
         Course Title goes here
       </div>
@@ -32,7 +33,7 @@ const Card = () => {
 
 const cardLayouts = [
   { label: "6 x 2", columns: 6, rows: 2 },
-  { label: "10 x 2", columns: 10, rows: 2 }
+  { label: "10 x 2", columns: 10, rows: 2 },
 ];
 
 export default function Home() {

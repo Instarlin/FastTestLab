@@ -1,4 +1,3 @@
-import { cn } from "~/lib/utils";
 import { Extension, mergeAttributes, textInputRule } from "@tiptap/core";
 import CharacterCount from "@tiptap/extension-character-count";
 import Heading from "@tiptap/extension-heading";
@@ -9,14 +8,15 @@ import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import TextAlign from "@tiptap/extension-text-align";
+import TextStyle from "@tiptap/extension-text-style";
 import Underline from "@tiptap/extension-underline";
 import Youtube from "@tiptap/extension-youtube";
 import { type DOMOutputSpec } from "@tiptap/pm/model";
 import StarterKit from "@tiptap/starter-kit";
 import GlobalDragHandle from "tiptap-extension-global-drag-handle";
 import { Markdown } from "tiptap-markdown";
+import { cn } from "~/lib/utils";
 import { TrailingNode } from "./extensions/trailing-node";
-import TextStyle from "@tiptap/extension-text-style";
 import SlashCommand from "./menus/commands/commands";
 
 const TiptapStarterKit = StarterKit.configure({
@@ -154,12 +154,8 @@ const TiptapImage = Image.configure({
 const DragHandle = GlobalDragHandle.configure({
   dragHandleWidth: 25,
   scrollTreshold: 100,
-  excludedTags: [
-    "li"
-  ],
-  customNodes: [
-    "table",
-  ],
+  excludedTags: ["li"],
+  customNodes: ["table"],
 });
 
 const markdown = Markdown.configure({
@@ -179,22 +175,20 @@ const TiptapCharacterCount = CharacterCount;
 const Smiles = Extension.create({
   name: "smiles",
   addInputRules() {
-    return [
-      textInputRule({ find: /O;-\) $/, replace: '😇 ' }),
-    ]
-  }
+    return [textInputRule({ find: /O;-\) $/, replace: "😇 " })];
+  },
 });
 
 const Keymap = Extension.create({
   name: "keymap",
   addKeyboardShortcuts() {
     return {
-      "Ctrl-1": () => this.editor.commands.toggleHeading({ level: 1}),
-      "Ctrl-2": () => this.editor.commands.toggleHeading({ level: 2}),
-      "Ctrl-3": () => this.editor.commands.toggleHeading({ level: 3}),
-    }
-  }
-})
+      "Ctrl-1": () => this.editor.commands.toggleHeading({ level: 1 }),
+      "Ctrl-2": () => this.editor.commands.toggleHeading({ level: 2 }),
+      "Ctrl-3": () => this.editor.commands.toggleHeading({ level: 3 }),
+    };
+  },
+});
 
 export const defaultExtensions = [
   TiptapStarterKit,

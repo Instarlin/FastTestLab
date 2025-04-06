@@ -1,6 +1,10 @@
 import { Outlet } from "react-router";
+import {
+  AutonomousBreadcrumbs,
+  LoadIndicator,
+  SidebarNav,
+} from "~/components/Sidebar";
 import type { Route } from "./+types/home";
-import { SidebarNav, AutonomousBreadcrumbs, LoadIndicator } from "~/components/Sidebar";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,7 +14,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <LoadIndicator />

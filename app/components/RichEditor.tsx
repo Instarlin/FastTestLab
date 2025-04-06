@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
-import { Editor, EditorContent } from '@tiptap/react'
-import { CustomBubbleMenu } from './editor/menus/bubble/bubble'
+import { Editor, EditorContent } from "@tiptap/react";
+import { useRef } from "react";
+import { CustomBubbleMenu } from "./editor/menus/bubble/bubble";
 
 const RichEditor = ({
   editor,
-  className
-} : {
-  editor: Editor,
-  className?: string
+  className,
+}: {
+  editor: Editor;
+  className?: string;
 }) => {
-  if (!editor) return null
+  if (!editor) return null;
 
   const editorBoundsRef = useRef(null);
   // const [dimensions, setDimensions] = useState("calc(7/12 * 100%)");
@@ -22,15 +22,12 @@ const RichEditor = ({
   // }, []);
 
   return (
-    <div style={{  }} className={className} ref={editorBoundsRef}>
-      <EditorContent
-        editor={editor}
-        className="flex flex-col h-full w-full"
-      />
+    <div style={{}} className={className} ref={editorBoundsRef}>
+      <EditorContent editor={editor} className="flex flex-col h-full w-full" />
       {/* <TableOptionsMenu editor={editor} /> */}
       <CustomBubbleMenu editor={editor} />
     </div>
-  )
-}
+  );
+};
 
-export default RichEditor
+export default RichEditor;
