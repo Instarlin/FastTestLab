@@ -1,14 +1,6 @@
-import { useEditor } from '@tiptap/react'
-// import type { Editor } from '@tiptap/core'
-import { defaultExtensions } from '../extensions'
-import Placeholder from '@tiptap/extension-placeholder'
-
-
-// declare global {
-//   interface Window {
-//     editor: Editor | null
-//   }
-// }
+import { useEditor } from "@tiptap/react";
+import { defaultExtensions } from "../extensions";
+import Placeholder from "@tiptap/extension-placeholder";
 
 const content = `
 <img src="https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg"/>
@@ -32,12 +24,12 @@ export const useRichEditor = () => {
       extensions: [
         ...defaultExtensions,
         Placeholder.configure({
-          placeholder: 'Type / for commands...',
+          placeholder: "Type / for commands...",
         })
       ],
       editorProps: {
         attributes: {
-          spellcheck: 'false',
+          spellcheck: "false",
         },
         handleDrop(view, event, slice, moved) {
           if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
@@ -83,6 +75,10 @@ export const useRichEditor = () => {
       onContentError: ({ error }) => {
         console.error(error);
       },
+
+      onTransaction: ({ editor, transaction }) => {
+        console.log(transaction);
+      }
     },
   )
 

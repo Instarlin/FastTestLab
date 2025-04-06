@@ -1,17 +1,13 @@
+import { Lock, Mail, User } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import type { Route } from "./+types/home";
-import { Link, useNavigate } from "react-router";
-import { Mail, User, Lock } from "lucide-react";
-import axios from "axios";
-import { useMessage } from "~/components/Message";
-import { motion, AnimatePresence } from "motion/react";
+import { Link } from "react-router";
+import { Input } from "~/components/Input";
 import "~/styles/wave.css";
+import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Login" },
-    { name: "description", content: "Login page" },
-  ];
+  return [{ title: "Login" }, { name: "description", content: "Login page" }];
 }
 
 export default function AuthForm() {
@@ -27,7 +23,9 @@ export default function AuthForm() {
 
   const backgroundColor = darkMode ? "bg-zinc-900" : "bg-zinc-100";
   const textColor = darkMode ? "text-white" : "text-black";
-  const cardBg = darkMode ? "bg-zinc-800 border-zinc-600" : "bg-white border-zinc-200";
+  const cardBg = darkMode
+    ? "bg-zinc-800 border-zinc-600"
+    : "bg-white border-zinc-200";
 
   return (
     <div
@@ -65,23 +63,36 @@ export default function AuthForm() {
                 className="flex flex-col gap-4"
               >
                 <div className="relative">
-                  <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-                  <input
+                  <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <Input
+                    color="#f6339a"
                     type="email"
                     placeholder="Email"
-                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${
+                      darkMode
+                        ? "bg-zinc-700 text-white placeholder-zinc-400"
+                        : "bg-zinc-100 text-black placeholder-gray-500"
+                    }`}
                   />
                 </div>
                 <div className="relative">
-                  <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-                  <input
+                  <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <Input
                     type="password"
                     placeholder="Password"
-                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${
+                      darkMode
+                        ? "bg-zinc-700 text-white placeholder-zinc-400"
+                        : "bg-zinc-100 text-black placeholder-gray-500"
+                    }`}
                   />
                 </div>
 
-                <div className={`flex justify-between items-center text-sm ${darkMode ? "text-zinc-400" : "text-gray-600"}`}>
+                <div
+                  className={`flex justify-between items-center text-sm ${
+                    darkMode ? "text-zinc-400" : "text-gray-600"
+                  }`}
+                >
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -91,17 +102,18 @@ export default function AuthForm() {
                     />
                     Remember me
                   </label>
-                  <a href="#" className="hover:underline transition cursor-pointer">
+                  <a
+                    href="#"
+                    className="hover:underline transition cursor-pointer"
+                  >
                     Forgot password?
                   </a>
                 </div>
 
                 <Link
-                  to={'/home'}
+                  to={"/home"}
                   className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white bg-pink-600 ${
-                    darkMode
-                      ? "hover:bg-pink-500"
-                      : "hover:bg-pink-700"
+                    darkMode ? "hover:bg-pink-500" : "hover:bg-pink-700"
                   }`}
                 >
                   Log In
@@ -122,7 +134,11 @@ export default function AuthForm() {
                   <input
                     type="text"
                     placeholder="Full Name"
-                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                      darkMode
+                        ? "bg-zinc-700 text-white placeholder-zinc-400"
+                        : "bg-zinc-100 text-black placeholder-gray-500"
+                    }`}
                   />
                 </div>
                 <div className="relative">
@@ -130,7 +146,11 @@ export default function AuthForm() {
                   <input
                     type="email"
                     placeholder="Email"
-                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                      darkMode
+                        ? "bg-zinc-700 text-white placeholder-zinc-400"
+                        : "bg-zinc-100 text-black placeholder-gray-500"
+                    }`}
                   />
                 </div>
                 <div className="relative">
@@ -138,15 +158,17 @@ export default function AuthForm() {
                   <input
                     type="password"
                     placeholder="Password"
-                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${darkMode ? "bg-zinc-700 text-white placeholder-zinc-400" : "bg-zinc-100 text-black placeholder-gray-500"}`}
+                    className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                      darkMode
+                        ? "bg-zinc-700 text-white placeholder-zinc-400"
+                        : "bg-zinc-100 text-black placeholder-gray-500"
+                    }`}
                   />
                 </div>
                 <Link
-                  to={'/home'}
+                  to={"/home"}
                   className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white bg-blue-600 ${
-                    darkMode
-                      ? "hover:bg-blue-500"
-                      : "hover:bg-blue-700"
+                    darkMode ? "hover:bg-blue-500" : "hover:bg-blue-700"
                   }`}
                 >
                   Sign Up
@@ -156,16 +178,21 @@ export default function AuthForm() {
           </motion.div>
         </AnimatePresence>
 
-        <div className={`text-center mt-6 text-sm ${darkMode ? "text-zinc-400" : "text-gray-600"}`}>
+        <div
+          className={`text-center mt-6 text-sm ${
+            darkMode ? "text-zinc-400" : "text-gray-600"
+          }`}
+        >
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
-            className={`underline transition cursor-pointer ${darkMode ? "hover:text-pink-300" : "hover:text-pink-600"}`}
+            className={`underline transition cursor-pointer ${
+              darkMode ? "hover:text-pink-300" : "hover:text-pink-600"
+            }`}
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin ? "Register" : "Login"}
           </button>
         </div>
-
       </motion.div>
 
       <svg
