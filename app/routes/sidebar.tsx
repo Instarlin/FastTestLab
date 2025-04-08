@@ -17,11 +17,12 @@ export default function Home() {
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <LoadIndicator />
-      <SidebarNav />
-      <div className="flex flex-col shadow-[-4px_0px_6px_-1px_rgba(0,0,0,0.15)] rounded-tl-4xl pl-0 py-0 text-gray-950 bg-white w-full">
-        <AutonomousBreadcrumbs className="mt-4 pl-6 pb-2 border-b-1 border-gray-200" />
+      <SidebarNav className="group peer"/>
+      <div className="relative flex flex-col flex-shrink-0 min-w-0 w-[calc(100%-52px)] border border-red-500 shadow-[-4px_0px_6px_-1px_rgba(0,0,0,0.15)] rounded-tl-4xl px-0 py-0 text-gray-950 bg-white">
+        <AutonomousBreadcrumbs className="mt-4 px-6 pb-2 border-b-1 border-gray-200" />
         <Outlet />
       </div>
+      <div className="opacity-0 peer-hover:opacity-30 transition-opacity duration-600 absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
     </div>
   );
 }
