@@ -1,11 +1,13 @@
-import { useEditorState } from "@tiptap/react";
+import type { Route } from "./+types/home";
 import { Link, Outlet } from "react-router";
 import { useMessage } from "~/components/Message";
-import RichEditor from "~/components/RichEditor";
+import { RichEditor } from "~/components/RichEditor";
 import { BreadcrumbLink } from "~/components/Sidebar";
+import { WordCount } from "~/components/editor/ui/word-count";
 import useRichEditor from "~/components/editor/hooks/useRichEditor";
 import "~/styles/editor.css";
-import type { Route } from "./+types/home";
+import { useRef } from "react";
+import { TracingBeam } from "~/components/editor/ui/trace-scroller";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -20,26 +22,11 @@ export const handle = {
 
 export default function Tests() {
   const { showMessage } = useMessage();
-
   const { editor } = useRichEditor();
-
-  const { characters, words } = useEditorState({
-    editor,
-    selector(ctx): { characters: number; words: number } {
-      const { characters, words } = ctx.editor?.storage.characterCount || {
-        characters: () => 0,
-        words: () => 0,
-      };
-      return { characters: characters(), words: words() };
-    },
-  }) ?? { characters: 0, words: 0 };
 
   return (
     <div className="flex relative flex-row justify-around lg:justify-between items-start overflow-y-scroll overflow-x-hidden pl-6">
-      <div className="hidden lg:block sticky top-5 text-sm w-28">
-        <p>{characters} characters</p>
-        <p>{words} words</p>
-      </div>
+      <WordCount editor={editor!} />
       <RichEditor
         editor={editor!}
         className="w-full px-4 sm:w-11/12 md:max-w-[640px] lg:max-w-[640px] xl:max-w-[960px] xxl:max-w-[1280px]"

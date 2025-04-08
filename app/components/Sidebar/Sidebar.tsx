@@ -12,8 +12,9 @@ import {
   SidebarLink,
   SidebarProvider,
 } from "./SidebarComponents";
+import { cn } from "~/lib/utils";
 
-export function SidebarNav() {
+export function SidebarNav({ className }: { className?: string }) {
   const links = [
     {
       label: "Tests",
@@ -54,7 +55,7 @@ export function SidebarNav() {
   return (
     <SidebarProvider open={false}>
       <Sidebar>
-        <SidebarBody className="justify-between gap-10">
+        <SidebarBody className={cn("justify-between gap-10", className)}>
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             <Logo />
             <div className="mt-12 flex flex-col gap-2">
