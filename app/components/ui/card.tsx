@@ -169,7 +169,7 @@ function Card({
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-[800px] max-h-[600px] overflow-y-auto overflow-x-clip">
+      <DialogContent className="md:max-w-[800px] md:max-h-[600px] overflow-y-auto overflow-x-clip">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

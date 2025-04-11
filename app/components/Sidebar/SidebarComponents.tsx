@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 import React, { createContext, useContext, useState } from "react";
 import { Link } from "react-router";
 import { cn } from "~/lib/utils";
-// import { IconMenu2, IconX } from "@tabler/icons-react";
+import { MenuIcon, XIcon } from "lucide-react";
 
 interface Links {
   label: string;
@@ -122,15 +122,15 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
+          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-white dark:bg-neutral-800"
         )}
         {...props}
       >
         <div className="flex justify-end z-20 w-full hover:cursor-pointer">
-          {/* <IconMenu2
+          <MenuIcon
             className="text-neutral-800 dark:text-neutral-200"
             onClick={() => setOpen(!open)}
-          /> */}
+          />
         </div>
         <AnimatePresence>
           {open && (
@@ -151,7 +151,7 @@ export const MobileSidebar = ({
                 className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200 hover:cursor-pointer"
                 onClick={() => setOpen(!open)}
               >
-                {/* <IconX /> */}
+                <XIcon />
               </div>
               {children}
             </motion.div>
@@ -169,7 +169,7 @@ export const SidebarLink = ({
   link: Links;
   className?: string;
 }) => {
-  const { open, animate } = useSidebar();
+  const { open, animate, setOpen } = useSidebar();
   return (
     <Link
       to={link.link}
@@ -177,6 +177,7 @@ export const SidebarLink = ({
         "flex items-center justify-start gap-2 group/sidebar",
         className
       )}
+      onClick={() => setOpen(!open)}
     >
       {link.icon}
 
@@ -215,14 +216,14 @@ export const SidebarPopoverLink = ({ link, className }: SidebarPopoverLinkProps)
 };
 
 export const Logo = () => {
-  const { open, animate } = useSidebar();
+  const { open, animate, setOpen } = useSidebar();
   return (
     <Link
       to="/home"
       className="relative z-20 flex items-center space-x-3 py-1 text-sm font-normal text-black pl-2"
+      onClick={() => setOpen(!open)}
     >
       <div className="h-6 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
-      {/* <svg href="../../public/assets/logo-electron.svg" className="fill-amber-500" color="red"/> */}
       <motion.span
         animate={{ opacity: animate ? (open ? 1 : 0) : 1 }}
         className="font-medium whitespace-pre text-black dark:text-white"

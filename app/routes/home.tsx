@@ -93,7 +93,7 @@ export default function Home() {
           <DialogTrigger asChild>
             <Button variant="outline">Create New Card</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] md:max-w-[600px]">
+          <DialogContent className="sm:max-w-full sm:h-full md:max-w-[600px] md:h-fit">
             <DialogHeader>
               <DialogTitle>Card Details</DialogTitle>
               <DialogDescription>
