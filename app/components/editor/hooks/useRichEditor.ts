@@ -4,14 +4,31 @@ import { defaultExtensions } from "../extensions";
 
 const content = `
 <img src="https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg"/>
-<h1>Here is your new awesome <mark>canvas</mark>!</h1>
-<h2>Here is your new awesome <mark>canvas</mark>!</h2>
-<h3>Here is your new awesome <mark>canvas</mark>!</h3>
-<p>Here is your new awesome <mark>canvas</mark>!</p>
+<h1>Использование текстового редактора</h1>
+<h2>Взаимодействие с текстом</h2>
+<p>Чтобы изменить внешний вид текста или поменять раположение нужно выделить участок текста. После этого появится меню взаимодействия. Стили можно смешивать.</p>
+<p>Так же для более удобного пользования редактором есть команды</p>
 <ul>
-  <li>Here is your new awesome <mark>canvas</mark>!</li>
-  <li>Here is your new awesome <mark>canvas</mark>!</li>
+  <li>Жирный текст <code>Ctrl + B</code></li>
+  <li>Курсив <code>Ctrl + I</code></li>
+  <li>Подчеркнутый текст <code>Ctrl + U</code></li>
+  <li>Зачеркнутый текст <code>Ctrl + Shift + S</code></li>
 </ul>
+<h2>Создание новых блоков</h2>
+<p>Новый блок можно создать используя команду написав <i>/</i> с новой строчки.</p>
+<p>Список всех возможных команд:</p>
+<ul>
+  <li>Заголовки 3-х уровней</li>
+  <li>Нумерованный список</li>
+  <li>Ненумерованный список</li>
+  <li>Цитата</li>
+  <li>Таблица</li>
+  <li>Горизонтальный разделитель</li>
+</ul>
+<h2>Добавление изображений</h2>
+<p>Для добавления изображений его можно просто перетащить в сам редактор или же сделать это с помощью команды</p>
+<h2>Интерфейс программы</h2>
+<p>Слева находится счетчик слов и символов, справа же навигация по документу. Она выстраивается из заголовков. Заголовки более низкого уровня вкладываются в более высокие.</p>
 `;
 
 export const useRichEditor = () => {
@@ -88,11 +105,9 @@ export const useRichEditor = () => {
     },
 
     onTransaction: ({ editor, transaction }) => {
-      console.log(transaction);
+      console.log(transaction.docChanged);
     },
   });
-
-  // window.editor = editor
 
   return { editor };
 };

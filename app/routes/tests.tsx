@@ -6,8 +6,6 @@ import { BreadcrumbLink } from "~/components/Sidebar";
 import { WordCount } from "~/components/editor/ui/word-count";
 import useRichEditor from "~/components/editor/hooks/useRichEditor";
 import "~/styles/editor.css";
-import { useRef } from "react";
-import { TracingBeam } from "~/components/editor/ui/trace-scroller";
 
 export function meta({}: Route.MetaArgs) {
   return [

@@ -10,6 +10,14 @@ interface Links {
   icon: React.JSX.Element | React.ReactNode;
 }
 
+interface SidebarPopoverLinkProps {
+  link: {
+    label: string;
+    icon: React.ReactNode;
+  };
+  className?: string;
+};
+
 interface SidebarContextProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -182,6 +190,27 @@ export const SidebarLink = ({
         {link.label}
       </motion.span>
     </Link>
+  );
+};
+
+export const SidebarPopoverLink = ({ link, className }: SidebarPopoverLinkProps) => {
+  const { open, animate } = useSidebar();
+
+  return (
+    <div
+      className={cn("flex items-center gap-2 cursor-pointer", className)}
+    >
+      {link.icon}
+      <motion.span
+        animate={{
+          display: animate ? (open ? "inline-block" : "none") : "inline-block",
+          opacity: animate ? (open ? 1 : 0) : 1,
+        }}
+        className="text-neutral-700 dark:text-neutral-200 text-sm transition duration-150 whitespace-pre inline-block"
+      >
+        {link.label}
+      </motion.span>
+    </div>
   );
 };
 

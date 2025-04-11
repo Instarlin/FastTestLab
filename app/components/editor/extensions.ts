@@ -37,14 +37,14 @@ const TiptapStarterKit = StarterKit.configure({
   },
   blockquote: {
     HTMLAttributes: {
-      class: cn("border-l-4 border-gray-600"),
+      class: cn(""),
     },
   },
   codeBlock: false,
   code: {
     HTMLAttributes: {
       class: cn(
-        "rounded-lg bg-muted text-green-400 dark:bg-muted/90 dark:text-red-400 px-1.5 py-1 font-mono font-medium before:content-none after:content-none"
+        "rounded-lg bg-muted dark:bg-muted/90 dark:text-red-400 px-1.5 py-1 font-mono font-medium before:content-none after:content-none"
       ),
       spellcheck: "false",
     },
@@ -154,8 +154,8 @@ const TiptapImage = Image.configure({
 const DragHandle = GlobalDragHandle.configure({
   dragHandleWidth: 25,
   scrollTreshold: 100,
-  excludedTags: ["li"],
-  customNodes: ["table"],
+  excludedTags: [],
+  customNodes: ["li"],
 });
 
 const markdown = Markdown.configure({

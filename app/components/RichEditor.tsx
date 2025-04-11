@@ -1,7 +1,6 @@
 import { Editor, EditorContent } from "@tiptap/react";
 import { useRef } from "react";
 import { CustomBubbleMenu } from "./editor/menus/bubble/bubble";
-import { TracingBeam } from "./editor/ui/trace-scroller";
 
 export const RichEditor = ({
   editor,

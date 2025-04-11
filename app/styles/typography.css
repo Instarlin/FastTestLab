@@ -60,6 +60,10 @@
     @apply bg-red-500 rounded-sm decoration-clone text-inherit py-1 px-0 dark:bg-red-400;
   }
 
+  blockquote {
+    @apply bg-accent py-1 px-2 rounded-2xl
+  }
+
   & img {
     @apply h-auto w-full max-w-full;
   }

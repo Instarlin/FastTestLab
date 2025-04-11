@@ -39,8 +39,7 @@ export const CustomBubbleMenu = ({ editor }: { editor: Editor | null }) => {
 
         return true;
       }}
-      className="flex flex-row justify-center items-center gap-0.5 py-0.5 px-1
-    rounded-md overflow-clip bg-white border-1 border-gray-300"
+      className="flex flex-row justify-center items-center gap-0.5 py-0.5 px-1 rounded-md overflow-clip bg-white border-1 border-gray-300"
     >
       <TextButtons editor={editor} />
       <Split />

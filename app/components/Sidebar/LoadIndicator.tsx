@@ -15,7 +15,7 @@ export function LoadIndicator() {
             duration: 0.3,
             ease: "easeOut",
           }}
-          className="absolute top-0 left-0 !m-0 p-0 w-full h-1 bg-blue-500 rounded-3xl my-4"
+          className="absolute z-50 top-0 left-0 !m-0 p-0 w-full h-1 bg-blue-500 rounded-3xl my-4"
         />
       )}
     </AnimatePresence>
