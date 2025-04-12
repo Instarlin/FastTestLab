@@ -65,7 +65,6 @@ export default function AuthForm() {
                 <div className="relative">
                   <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400 pointer-events-none" />
                   <Input
-                    // color="#f6339a"
                     type="email"
                     placeholder="Email"
                     className={`w-full p-3 pl-10 rounded-md focus:outline-none focus:ring-2 ${

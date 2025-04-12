@@ -3,6 +3,12 @@ import React, { createContext, useContext, useState } from "react";
 import { Link } from "react-router";
 import { cn } from "~/lib/utils";
 import { MenuIcon, XIcon } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Label } from "../ui/label";
+import { Input } from "../Input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import type { Button } from "../Button";
+import type { Card } from "../ui/card";
 
 interface Links {
   label: string;
@@ -198,20 +204,78 @@ export const SidebarPopoverLink = ({ link, className }: SidebarPopoverLinkProps)
   const { open, animate } = useSidebar();
 
   return (
-    <div
-      className={cn("flex items-center gap-2 cursor-pointer", className)}
-    >
-      {link.icon}
-      <motion.span
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm transition duration-150 whitespace-pre inline-block"
-      >
-        {link.label}
-      </motion.span>
-    </div>
+    <Popover>
+      <PopoverTrigger asChild>
+        <div
+          className={cn("flex items-center gap-2 cursor-pointer", className)}
+        >
+          {link.icon}
+          <motion.span
+            animate={{
+              display: animate ? (open ? "inline-block" : "none") : "inline-block",
+              opacity: animate ? (open ? 1 : 0) : 1,
+            }}
+            className="text-neutral-700 dark:text-neutral-200 text-sm transition duration-150 whitespace-pre inline-block"
+          >
+            {link.label}
+          </motion.span>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 ml-8">
+        <Tabs defaultValue="account" className="w-[400px]">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="account">Account</TabsTrigger>
+            <TabsTrigger value="password">Password</TabsTrigger>
+          </TabsList>
+          <TabsContent value="account">
+            {/* <Card>
+              <CardHeader>
+                <CardTitle>Account</CardTitle>
+                <CardDescription>
+                  Make changes to your account here. Click save when you're done.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="space-y-1">
+                  <Label htmlFor="name">Name</Label>
+                  <Input id="name" defaultValue="Pedro Duarte" />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="username">Username</Label>
+                  <Input id="username" defaultValue="@peduarte" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button>Save changes</Button>
+              </CardFooter>
+            </Card> */}
+          </TabsContent>
+          <TabsContent value="password">
+            {/* <Card>
+              <CardHeader>
+                <CardTitle>Password</CardTitle>
+                <CardDescription>
+                  Change your password here. After saving, you'll be logged out.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="space-y-1">
+                  <Label htmlFor="current">Current password</Label>
+                  <Input id="current" type="password" />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="new">New password</Label>
+                  <Input id="new" type="password" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button>Save password</Button>
+              </CardFooter>
+            </Card> */}
+          </TabsContent>
+        </Tabs>
+      </PopoverContent>
+    </Popover >
   );
 };
 

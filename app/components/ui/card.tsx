@@ -1,150 +1,30 @@
-import { MoveRightIcon, BookOpenCheckIcon, NotebookPenIcon, PencilLineIcon, BookIcon, LibraryBigIcon, CheckIcon } from "lucide-react";
-import { CardSpotlight } from "../CardSpotLight";
-import { DialogTitle, DialogHeader, DialogContent, DialogTrigger, DialogDescription } from "../Dialog";
-import { Dialog } from "../Dialog";
+import { MoveRightIcon, PencilLineIcon, LibraryBigIcon, CheckIcon } from "lucide-react";
+import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogTrigger, DialogDescription } from "./dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
 import { Link } from "react-router";
 
-const lessons = [
-  {
-    title: "Lesson 1",
-    description: "Lesson 1 Description",
-    subLessons: [
-      {
-        title: "Sub Lesson 1",
-        description: "Sub Lesson 1 Description",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson 2",
-        description: "Sub Lesson 2 Description",
-        icon: "theory",
-      },
-    ],
-  },
-  {
-    title: "Lesson 2",
-    description: "Lesson 2 Description",
-    subLessons: [
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-    ],
-  },
-  {
-    title: "Lesson 3",
-    description: "Lesson 3 Description",
-    subLessons: [
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-      },
-    ],
-  },
-];
+interface Lesson {
+  title: string;
+  description: string;
+  subLessons: {
+    title: string;
+    icon: string;
+    succsess: boolean;
+  }[];
+}
+
 function Card({ 
   size,
   title,
   picture,
   description,
+  lessons,
 }: {
   size: string
   title: string,
   picture: string,
   description: string,
+  lessons: Lesson[]
 }) {
   return (
     <Dialog>
@@ -169,13 +49,21 @@ function Card({
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[800px] md:max-h-[600px] overflow-y-auto overflow-x-clip">
+      <DialogContent className="md:max-w-[800px] md:max-h-[800px] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <Accordion type="multiple" className="w-full max-h-[400px] overflow-y-auto overflow-x-clip">
+        <div 
+          className="w-full h-[200px] bg-background bg-cover bg-center rounded-md relative overflow-hidden"
+          style={{
+            backgroundImage: `url(${picture})`,
+          }}
+        >
+          <div className="absolute inset-0 -bottom-2 bg-gradient-to-t from-white/100 to-transparent pointer-events-none" />
+        </div>
+        <Accordion type="multiple" className="w-full max-h-[400px] overflow-y-auto overflow-x-none">
           {lessons.map((lesson) => (
-            <AccordionItem value={lesson.title} className="">
+            <AccordionItem value={lesson.title}>
               <AccordionTrigger>
                 <DialogHeader>
                   <DialogTitle>{lesson.title}</DialogTitle>
@@ -193,7 +81,7 @@ function Card({
                         : <LibraryBigIcon className="size-4 text-zinc-600" />
                       }
                       <p>{subLesson.title}</p>
-                      <CheckIcon className="size-4 text-zinc-600 ml-auto" />
+                      {subLesson.succsess ? <CheckIcon className="size-4 text-zinc-600 ml-auto" /> : null}
                     </div>
                   </Link>
                 ))}

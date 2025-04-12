@@ -43,11 +43,232 @@ const cardLayouts = [
   { label: "10 x 2", columns: 10, rows: 2 },
 ];
 
+const lessons = [
+  {
+    title: "Lesson 1",
+    description: "Lesson 1 Description",
+    subLessons: [
+      {
+        title: "Sub Lesson 1",
+        description: "Sub Lesson 1 Description",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson 2",
+        description: "Sub Lesson 2 Description",
+        icon: "theory",
+        succsess: false,
+      },
+    ],
+  },
+  {
+    title: "Lesson 2",
+    description: "Lesson 2 Description",
+    subLessons: [
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: true,
+      },
+    ],
+  },
+  {
+    title: "Lesson 3",
+    description: "Lesson 3 Description",
+    subLessons: [
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+    ],
+  },
+  {
+    title: "Lesson 4",
+    description: "Lesson 2 Description",
+    subLessons: [
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        succsess: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        succsess: true,
+      },
+    ],
+  },
+];
+
 export default function Home() {
   const [cardSize, setCardSize] = useState<string>();
   const [layout, setLayout] = useState(cardLayouts[0]);
   const totalCards = layout.columns * layout.rows;
   const cardsArray = Array.from({ length: totalCards });
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     setCardSize(localStorage.getItem("cardSize") ?? "25%");
@@ -70,7 +291,7 @@ export default function Home() {
         "image/*": [".png", ".jpg", ".jpeg"],
       },
       maxSize: 10 * 1024 * 1024,
-      maxFiles: 10,
+      maxFiles: 1,
     },
   });
 
@@ -102,18 +323,18 @@ export default function Home() {
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">Title</Label>
-                <Input id="name" value="" placeholder="Card Title" className="col-span-3 w-[200px]" />
+                <Label htmlFor="title" className="text-right">Title</Label>
+                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Card Title" className="col-span-3 w-[200px]" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="username" className="text-right">Description</Label>
-                <Input id="username" value="" placeholder="Card Description" className="col-span-3 w-[200px]" />
+                <Label htmlFor="description" className="text-right">Description</Label>
+                <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Card Description" className="col-span-3 w-[200px]" />
               </div>
               <Dropzone {...dropzone}>
                 <div>
                   <div className="flex justify-between">
                     <DropzoneDescription>
-                      Please select up to 10 images
+                      Please add background image for your card
                     </DropzoneDescription>
                     <DropzoneMessage />
                   </div>
@@ -202,6 +423,7 @@ export default function Home() {
             description="Card Description"
             size={cardSize!}
             key={index}
+            lessons={lessons}
           />
         ))}
       </div>
