@@ -21,6 +21,7 @@ export const handle = {
 export default function Tests() {
   const { showMessage } = useMessage();
   const { editor } = useRichEditor();
+  console.log(editor?.state.doc)
 
   return (
     <div className="flex relative flex-row justify-around lg:justify-between items-start overflow-y-scroll overflow-x-hidden pl-6">
@@ -35,12 +36,6 @@ export default function Tests() {
           to="./extrachimin"
           className="text-blue-300"
         >
-          Chimin Extra
-        </Link>
-        <Link to="./extrachimin" className="text-blue-300">
-          Chimin Extra
-        </Link>
-        <Link to="./extrachimin" className="text-blue-300">
           Chimin Extra
         </Link>
       </div>

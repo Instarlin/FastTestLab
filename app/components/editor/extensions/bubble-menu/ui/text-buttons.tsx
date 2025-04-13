@@ -7,7 +7,7 @@ import {
   StrikethroughIcon,
   UnderlineIcon,
 } from "lucide-react";
-import { BubbleMenuBtn } from "~/components/editor/ui/bubble-menu-btn";
+import { BubbleMenuBtn } from "./bubble-menu-btn";
 
 interface SelectorResult {
   isBold: boolean;

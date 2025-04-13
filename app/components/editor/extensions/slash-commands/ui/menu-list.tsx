@@ -1,8 +1,11 @@
 import { type Editor } from "@tiptap/core";
-import { icons } from "lucide-react";
+import { icons, TestTubeIcon } from "lucide-react";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 import { type Command, type Group } from "./groups";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogHeader, DialogTrigger, DialogFooter } from "~/components/ui/dialog";
+import { Button } from "~/components/ui/button";
+import { SingleOptionForm } from "../../tests-extension/single-option-form";
 
 export type IconProps = {
   name: keyof typeof icons;
@@ -59,18 +62,21 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
           return false;
         }
 
-        const commands = props.items[selectedGroupIndex].commands;
+        const commands = props.items[selectedGroupIndex]?.commands || [];
 
         let newCommandIndex = selectedCommandIndex + 1;
         let newGroupIndex = selectedGroupIndex;
 
-        if (commands.length - 1 < newCommandIndex) {
+        if (selectedCommandIndex > commands.length - 2) {
           newCommandIndex = 0;
-          newGroupIndex = selectedGroupIndex + 1;
+          if (newGroupIndex > props.items.length) {
+            newGroupIndex = 0;
+          } else newGroupIndex = selectedGroupIndex + 1;
         }
 
-        if (props.items.length - 1 < newGroupIndex) {
+        if (newGroupIndex > props.items.length) {
           newGroupIndex = 0;
+          newCommandIndex = 0;
         }
 
         setSelectedCommandIndex(newCommandIndex);
@@ -89,13 +95,12 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
 
         if (newCommandIndex < 0) {
           newGroupIndex = selectedGroupIndex - 1;
-          newCommandIndex =
-            props.items[newGroupIndex]?.commands.length - 1 || 0;
-        }
-
-        if (newGroupIndex < 0) {
-          newGroupIndex = props.items.length - 1;
-          newCommandIndex = props.items[newGroupIndex].commands.length - 1;
+          if (newGroupIndex < 0) {
+            newGroupIndex = props.items.length;
+            newCommandIndex = 0;
+          } else {
+            newCommandIndex = props.items[newGroupIndex]?.commands.length - 1 || 0;
+          }
         }
 
         setSelectedCommandIndex(newCommandIndex);
@@ -111,6 +116,15 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
           selectedCommandIndex === -1
         ) {
           return false;
+        }
+
+        if (selectedGroupIndex === props.items.length) {
+          // Handle test section click
+          const button = activeItem.current;
+          if (button) {
+            button.click();
+          }
+          return true;
         }
 
         selectItem(selectedGroupIndex, selectedCommandIndex);
@@ -178,6 +192,65 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
           ))}
         </div>
       ))}
+      <div>
+        <div className="text-xs font-medium text-gray-500 w-full">
+          Test
+        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              ref={
+                selectedGroupIndex === props.items.length &&
+                selectedCommandIndex === 0
+                  ? activeItem
+                  : null
+              }
+              onClick={() => {
+                
+                const event = new MouseEvent('mousedown', {
+                  view: window,
+                  bubbles: true,
+                  cancelable: true
+                });
+                document.dispatchEvent(event);
+              }}
+              className={cn(
+                "flex cursor-pointer items-center rounded-sm my-1 px-2 py-1 text-sm transition-colors w-full",
+                selectedGroupIndex === props.items.length &&
+                selectedCommandIndex === 0
+                  ? "bg-gray-200"
+                  : "hover:bg-gray-200"
+              )}
+            >
+              <TestTubeIcon className="h-4 w-4" />
+              <span className="ml-2">Run Test</span>
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Single Option</DialogTitle>
+              <DialogDescription>
+                Add options for your single choice question.
+              </DialogDescription>
+            </DialogHeader>
+            <SingleOptionForm
+              onSubmit={(options) => {
+                props.editor.chain().focus().undo().toggleSigleOption({
+                  options,
+                  defaultValue: options[0]?.value
+                }).run();
+              }}
+              onCancel={() => {
+                // Close dialog
+                const dialog = document.querySelector('[role="dialog"]');
+                if (dialog) {
+                  (dialog as HTMLElement).click();
+                }
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 });

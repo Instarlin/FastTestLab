@@ -15,9 +15,10 @@ import { type DOMOutputSpec } from "@tiptap/pm/model";
 import StarterKit from "@tiptap/starter-kit";
 import GlobalDragHandle from "tiptap-extension-global-drag-handle";
 import { Markdown } from "tiptap-markdown";
-import { cn } from "~/lib/utils";
 import { TrailingNode } from "./extensions/trailing-node";
-import SlashCommand from "./menus/commands/commands";
+import { SlashCommand } from "./extensions/slash-commands/commands";
+import SingleOptionNode from "./extensions/tests-extension/single-option-node";
+import { cn } from "~/lib/utils";
 
 const TiptapStarterKit = StarterKit.configure({
   bulletList: {
@@ -44,7 +45,7 @@ const TiptapStarterKit = StarterKit.configure({
   code: {
     HTMLAttributes: {
       class: cn(
-        "rounded-lg bg-muted dark:bg-muted/90 dark:text-red-400 px-1.5 py-1 font-mono font-medium before:content-none after:content-none"
+        "hover:cursor-pointer hover:bg-zinc-200 transtions-colors duration-300 rounded-lg bg-muted dark:bg-muted/90 dark:text-red-400 px-1.5 py-1 font-mono font-medium before:content-none after:content-none"
       ),
       spellcheck: "false",
     },
@@ -71,6 +72,7 @@ const TiptapHeading = Heading.extend({
         `h${level}`,
         mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
           id: node.textContent.replaceAll(/\s+/g, "-").toLowerCase(),
+          data: 'jump-point'
         }),
         0,
       ];
@@ -183,9 +185,14 @@ const Keymap = Extension.create({
   name: "keymap",
   addKeyboardShortcuts() {
     return {
+      "Tab": () => this.editor.chain().command(({ tr }) => {tr.insertText("    "); return true}).run(),
       "Ctrl-1": () => this.editor.commands.toggleHeading({ level: 1 }),
       "Ctrl-2": () => this.editor.commands.toggleHeading({ level: 2 }),
       "Ctrl-3": () => this.editor.commands.toggleHeading({ level: 3 }),
+      "Ctrl-4": () => this.editor.commands.toggleCode(),
+      "Ctrl-5": () => this.editor.commands.toggleBulletList(),
+      "Ctrl-6": () => this.editor.commands.toggleOrderedList(),
+      "Ctrl-7": () => this.editor.commands.toggleBlockquote(),
     };
   },
 });
@@ -210,4 +217,5 @@ export const defaultExtensions = [
   SlashCommand,
   DragHandle,
   markdown,
+  SingleOptionNode,
 ];

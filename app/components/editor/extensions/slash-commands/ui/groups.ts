@@ -72,26 +72,6 @@ export const GROUPS: Group[] = [
           editor.chain().focus().toggleOrderedList().run()
         },
       },
-      // {
-      //   name: 'taskList',
-      //   label: 'Task List',
-      //   iconName: 'ListTodo',
-      //   description: 'Task list with todo items',
-      //   aliases: ['todo'],
-      //   action: editor => {
-      //     editor.chain().focus().toggleTaskList().run()
-      //   },
-      // },
-      // {
-      //   name: 'toggleList',
-      //   label: 'Toggle List',
-      //   iconName: 'ListCollapse',
-      //   description: 'Toggles can show and hide content',
-      //   aliases: ['toggle'],
-      //   action: editor => {
-      //     editor.chain().focus().setDetails().run()
-      //   },
-      // },
       {
         name: 'blockquote',
         label: 'Blockquote',
@@ -127,32 +107,6 @@ export const GROUPS: Group[] = [
           editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run()
         },
       },
-      // {
-      //   name: 'image',
-      //   label: 'Image',
-      //   iconName: 'Image',
-      //   description: 'Insert an image',
-      //   aliases: ['img'],
-      //   action: editor => {
-      //     editor.chain().focus().setImageUpload().run()
-      //   },
-      // },
-      // {
-      //   name: 'columns',
-      //   label: 'Columns',
-      //   iconName: 'Columns2',
-      //   description: 'Add two column content',
-      //   aliases: ['cols'],
-      //   shouldBeHidden: editor => editor.isActive('columns'),
-      //   action: editor => {
-      //     editor
-      //       .chain()
-      //       .focus()
-      //       .setColumns()
-      //       .focus(editor.state.selection.head - 1)
-      //       .run()
-      //   },
-      // },
       {
         name: 'horizontalRule',
         label: 'Horizontal Rule',
@@ -163,19 +117,36 @@ export const GROUPS: Group[] = [
           editor.chain().focus().setHorizontalRule().run()
         },
       },
-      // {
-      //   name: 'toc',
-      //   label: 'Table of Contents',
-      //   iconName: 'Book',
-      //   aliases: ['outline'],
-      //   description: 'Insert a table of contents',
-      //   shouldBeHidden: editor => editor.isActive('columns'),
-      //   action: editor => {
-      //     editor.chain().focus().insertTableOfContents().run()
-      //   },
-      // },
     ],
   },
+  {
+    name: 'test',
+    title: 'Tests',
+    commands: [
+      {
+        name: 'multyoptiontest',
+        label: 'MultyOptionTest',
+        iconName: 'ZoomOut',
+        description: 'Insert a sigle option test',
+        action: editor => {
+          editor.chain().focus().toggleSigleOption().run()
+        },
+      },
+    ],
+  },
+  // {
+  //   name: 'test',
+  //   title: 'Tests',
+  //   commands: [
+  //     {
+  //       name: 'multyoptiontest',
+  //       label: 'MultyOptionTest',
+  //       iconName: 'ZoomOut',
+  //       description: 'Insert a sigle option test',
+  //       action: ,
+  //     },
+  //   ],
+  // },
 ]
 
 export default GROUPS

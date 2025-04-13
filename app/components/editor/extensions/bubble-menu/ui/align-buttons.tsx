@@ -1,7 +1,7 @@
 import { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon } from "lucide-react";
-import { BubbleMenuBtn } from "~/components/editor/ui/bubble-menu-btn";
+import { BubbleMenuBtn } from "./bubble-menu-btn";
 
 interface SelectorResult {
   isLeft: boolean;

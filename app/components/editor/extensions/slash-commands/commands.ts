@@ -7,8 +7,8 @@ import Suggestion, {
 } from "@tiptap/suggestion";
 import tippy from "tippy.js";
 
-import { GROUPS } from "./groups";
-import { MenuList } from "./MenuList";
+import { GROUPS } from "./ui/groups";
+import { MenuList } from "./ui/menu-list";
 
 const extensionName = "slashCommand";
 
@@ -294,5 +294,3 @@ export const SlashCommand = Extension.create({
     };
   },
 });
-
-export default SlashCommand;

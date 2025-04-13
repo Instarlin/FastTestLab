@@ -68,7 +68,7 @@ body {
   @apply bg-white dark:bg-gray-950;
 
   background: #f3f4f6;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {
