@@ -18,6 +18,7 @@ import { Markdown } from "tiptap-markdown";
 import { TrailingNode } from "./extensions/trailing-node";
 import { SlashCommand } from "./extensions/slash-commands/commands";
 import SingleOptionNode from "./extensions/tests-extension/single-option-node";
+import MultipleOptionNode from "./extensions/tests-extension/multiple-option-node";
 import { cn } from "~/lib/utils";
 
 const TiptapStarterKit = StarterKit.configure({
@@ -218,4 +219,5 @@ export const defaultExtensions = [
   DragHandle,
   markdown,
   SingleOptionNode,
+  MultipleOptionNode,
 ];

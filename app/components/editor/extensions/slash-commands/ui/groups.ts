@@ -119,21 +119,6 @@ export const GROUPS: Group[] = [
       },
     ],
   },
-  {
-    name: 'test',
-    title: 'Tests',
-    commands: [
-      {
-        name: 'multyoptiontest',
-        label: 'MultyOptionTest',
-        iconName: 'ZoomOut',
-        description: 'Insert a sigle option test',
-        action: editor => {
-          editor.chain().focus().toggleSigleOption().run()
-        },
-      },
-    ],
-  },
   // {
   //   name: 'test',
   //   title: 'Tests',
@@ -143,7 +128,9 @@ export const GROUPS: Group[] = [
   //       label: 'MultyOptionTest',
   //       iconName: 'ZoomOut',
   //       description: 'Insert a sigle option test',
-  //       action: ,
+  //       action: editor => {
+  //         editor.chain().focus().toggleSigleOption().run()
+  //       },
   //     },
   //   ],
   // },

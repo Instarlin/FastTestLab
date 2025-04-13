@@ -3,9 +3,10 @@ import { icons, TestTubeIcon } from "lucide-react";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 import { type Command, type Group } from "./groups";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogHeader, DialogTrigger, DialogFooter } from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogHeader, DialogTrigger, DialogFooter, DialogClose } from "~/components/ui/dialog";
 import { SingleOptionForm } from "../../tests-extension/single-option-form";
+import { MultipleOptionForm } from "../../tests-extension/multiple-option-form";
+import { Button } from "~/components/ui/button";
 
 export type IconProps = {
   name: keyof typeof icons;
@@ -235,17 +236,62 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
             </DialogHeader>
             <SingleOptionForm
               onSubmit={(options) => {
-                props.editor.chain().focus().undo().toggleSigleOption({
+                props.editor.chain().focus()
+                .undo()
+                .toggleSigleOption({
                   options,
                   defaultValue: options[0]?.value
                 }).run();
               }}
-              onCancel={() => {
-                // Close dialog
-                const dialog = document.querySelector('[role="dialog"]');
-                if (dialog) {
-                  (dialog as HTMLElement).click();
-                }
+            />
+          </DialogContent>
+        </Dialog>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              ref={
+                selectedGroupIndex === props.items.length &&
+                  selectedCommandIndex === 0
+                  ? activeItem
+                  : null
+              }
+              onClick={() => {
+                const event = new MouseEvent('mousedown', {
+                  view: window,
+                  bubbles: true,
+                  cancelable: true
+                });
+                document.dispatchEvent(event);
+              }}
+              className={cn(
+                "flex cursor-pointer items-center rounded-sm my-1 px-2 py-1 text-sm transition-colors w-full",
+                selectedGroupIndex === props.items.length &&
+                  selectedCommandIndex === 0
+                  ? "bg-gray-200"
+                  : "hover:bg-gray-200"
+              )}
+            >
+              <TestTubeIcon className="h-4 w-4" />
+              <span className="ml-2">Run Test</span>
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Multiple Choice</DialogTitle>
+              <DialogDescription>
+                Add options for your multiple choice question.
+              </DialogDescription>
+            </DialogHeader>
+            <MultipleOptionForm
+              onSubmit={(options) => {
+                props.editor.chain()
+                  .focus()
+                  .undo()
+                  .toggleMultipleOption({
+                    options,
+                    defaultValues: []
+                  })
+                  .run();
               }}
             />
           </DialogContent>

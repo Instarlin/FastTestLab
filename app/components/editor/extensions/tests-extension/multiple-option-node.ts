@@ -1,25 +1,25 @@
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
-import { SingleOption } from './single-option'
+import { MultipleOption } from './multiple-option'
 
-interface SingleOptionAttributes {
+interface MultipleOptionAttributes {
   options: Array<{
     value: string
     label: string
   }>
-  defaultValue?: string
+  defaultValues?: string[]
 }
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
-    sigleoption: {
-      toggleSigleOption: (attributes?: SingleOptionAttributes) => ReturnType,
+    multipleoption: {
+      toggleMultipleOption: (attributes?: MultipleOptionAttributes) => ReturnType,
     }
   }
 }
 
 export default Node.create({
-  name: 'singleOptionNode',
+  name: 'multipleOptionNode',
 
   group: 'block list',
 
@@ -29,13 +29,13 @@ export default Node.create({
     return {
       options: {
         default: [
-          { value: 'default', label: 'Default' },
-          { value: 'comfortable', label: 'Comfortable' },
-          { value: 'compact', label: 'Compact' }
+          { value: 'option1', label: 'Option 1' },
+          { value: 'option2', label: 'Option 2' },
+          { value: 'option3', label: 'Option 3' }
         ],
       },
-      defaultValue: {
-        default: 'comfortable',
+      defaultValues: {
+        default: [],
       },
     }
   },
@@ -43,18 +43,18 @@ export default Node.create({
   parseHTML() {
     return [
       {
-        tag: 'single-option',
+        tag: 'multiple-option',
       },
     ]
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['single-option', mergeAttributes(HTMLAttributes)]
+    return ['multiple-option', mergeAttributes(HTMLAttributes)]
   },
 
   addCommands() {
     return {
-      toggleSigleOption: (attributes?: SingleOptionAttributes) => ({ commands }) => {
+      toggleMultipleOption: (attributes?: MultipleOptionAttributes) => ({ commands }) => {
         return commands.insertContent({
           type: this.name,
           attrs: attributes,
@@ -64,6 +64,6 @@ export default Node.create({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(SingleOption)
+    return ReactNodeViewRenderer(MultipleOption)
   },
-})
+}) 

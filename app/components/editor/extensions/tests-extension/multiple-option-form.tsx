@@ -10,11 +10,11 @@ interface Option {
   label: string;
 }
 
-interface SingleOptionFormProps {
+interface MultipleOptionFormProps {
   onSubmit: (options: Option[]) => void;
 }
 
-export function SingleOptionForm({ onSubmit }: SingleOptionFormProps) {
+export function MultipleOptionForm({ onSubmit }: MultipleOptionFormProps) {
   const [options, setOptions] = useState<Option[]>([
     { value: uuidv4(), label: "" }
   ]);
@@ -35,6 +35,7 @@ export function SingleOptionForm({ onSubmit }: SingleOptionFormProps) {
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    console.log(e)
     e.preventDefault();
     const validOptions = options.filter(opt => opt.label.trim());
     onSubmit(validOptions);
@@ -85,4 +86,4 @@ export function SingleOptionForm({ onSubmit }: SingleOptionFormProps) {
       </div>
     </form>
   );
-} 
+}
