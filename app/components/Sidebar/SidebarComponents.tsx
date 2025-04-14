@@ -3,12 +3,13 @@ import React, { createContext, useContext, useState } from "react";
 import { Link } from "react-router";
 import { cn } from "~/lib/utils";
 import { MenuIcon, XIcon } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Label } from "../ui/label";
 import { Input } from "../Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import type { Button } from "../Button";
-import type { Card } from "../ui/card";
+import { Button } from "../Button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../ui/select";
+import { Switch } from "../ui/switch";
 
 interface Links {
   label: string;
@@ -202,6 +203,7 @@ export const SidebarLink = ({
 
 export const SidebarPopoverLink = ({ link, className }: SidebarPopoverLinkProps) => {
   const { open, animate } = useSidebar();
+  const [activeTab, setActiveTab] = useState("profile");
 
   return (
     <Popover>
@@ -213,7 +215,6 @@ export const SidebarPopoverLink = ({ link, className }: SidebarPopoverLinkProps)
           <motion.span
             animate={{
               display: animate ? (open ? "inline-block" : "none") : "inline-block",
-              opacity: animate ? (open ? 1 : 0) : 1,
             }}
             className="text-neutral-700 dark:text-neutral-200 text-sm transition duration-150 whitespace-pre inline-block"
           >
@@ -221,61 +222,83 @@ export const SidebarPopoverLink = ({ link, className }: SidebarPopoverLinkProps)
           </motion.span>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-80 ml-8">
-        <Tabs defaultValue="account" className="w-[400px]">
+      <PopoverContent className="w-80">
+        <Tabs defaultValue="profile" className="w-full" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="account">Account</TabsTrigger>
-            <TabsTrigger value="password">Password</TabsTrigger>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
-          <TabsContent value="account">
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Account</CardTitle>
-                <CardDescription>
-                  Make changes to your account here. Click save when you're done.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" defaultValue="Pedro Duarte" />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              layout
+              animate={{ height: "auto" }}
+              transition={{ duration: 0.1 }}
+            >
+              <TabsContent value="profile" className="mt-4">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input id="name" placeholder="Enter your name" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="Enter your email" />
+                  </div>
+                  <Button className="w-full">Save Changes</Button>
                 </div>
-                <div className="space-y-1">
-                  <Label htmlFor="username">Username</Label>
-                  <Input id="username" defaultValue="@peduarte" />
+              </TabsContent>
+              <TabsContent value="settings" className="mt-4">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Theme</Label>
+                    <Select defaultValue="system">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select theme" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="light">Light</SelectItem>
+                        <SelectItem value="dark">Dark</SelectItem>
+                        <SelectItem value="system">System</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Notifications</Label>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="email-notifications" className="text-sm">Email</Label>
+                        <Switch id="email-notifications" />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="push-notifications" className="text-sm">Push</Label>
+                        <Switch id="push-notifications" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Language</Label>
+                    <Select defaultValue="en">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="es">Spanish</SelectItem>
+                        <SelectItem value="fr">French</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link to="/settings">View Full Settings</Link>
+                  </Button>
                 </div>
-              </CardContent>
-              <CardFooter>
-                <Button>Save changes</Button>
-              </CardFooter>
-            </Card> */}
-          </TabsContent>
-          <TabsContent value="password">
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Password</CardTitle>
-                <CardDescription>
-                  Change your password here. After saving, you'll be logged out.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="current">Current password</Label>
-                  <Input id="current" type="password" />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="new">New password</Label>
-                  <Input id="new" type="password" />
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button>Save password</Button>
-              </CardFooter>
-            </Card> */}
-          </TabsContent>
+              </TabsContent>
+            </motion.div>
+          </AnimatePresence>
         </Tabs>
       </PopoverContent>
-    </Popover >
+    </Popover>
   );
 };
 
