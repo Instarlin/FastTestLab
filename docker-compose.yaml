@@ -6,4 +6,4 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5173:5173"
-    image: instarlin/frontend_fta:latest
+    image: registry.ilcloud.tech/mds_7_case_digital_brief_platform-frontend:latest
