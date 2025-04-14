@@ -1,5 +1,5 @@
 import { type Editor } from "@tiptap/core";
-import { icons, TestTubeIcon } from "lucide-react";
+import { icons, CopyCheckIcon, SquareCheckIcon } from "lucide-react";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 import { type Command, type Group } from "./groups";
@@ -62,6 +62,7 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
         if (!props.items.length) {
           return false;
         }
+        console.log(selectedCommandIndex)
 
         const commands = props.items[selectedGroupIndex]?.commands || [];
 
@@ -70,12 +71,10 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
 
         if (selectedCommandIndex > commands.length - 2) {
           newCommandIndex = 0;
-          if (newGroupIndex > props.items.length) {
-            newGroupIndex = 0;
-          } else newGroupIndex = selectedGroupIndex + 1;
+          newGroupIndex = selectedGroupIndex + 1;
         }
 
-        if (newGroupIndex > props.items.length) {
+        if (newGroupIndex > props.items.length + 1) {
           newGroupIndex = 0;
           newCommandIndex = 0;
         }
@@ -87,6 +86,7 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
       }
 
       if (event.key === "ArrowUp") {
+        console.log(selectedCommandIndex)
         if (!props.items.length) {
           return false;
         }
@@ -97,7 +97,7 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
         if (newCommandIndex < 0) {
           newGroupIndex = selectedGroupIndex - 1;
           if (newGroupIndex < 0) {
-            newGroupIndex = props.items.length;
+            newGroupIndex = props.items.length + 1;
             newCommandIndex = 0;
           } else {
             newCommandIndex = props.items[newGroupIndex]?.commands.length - 1 || 0;
@@ -207,7 +207,6 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
                   : null
               }
               onClick={() => {
-                
                 const event = new MouseEvent('mousedown', {
                   view: window,
                   bubbles: true,
@@ -223,25 +222,37 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
                   : "hover:bg-gray-200"
               )}
             >
-              <TestTubeIcon className="h-4 w-4" />
-              <span className="ml-2">Run Test</span>
+              <SquareCheckIcon className="h-4 w-4" />
+              <span className="ml-2">Single Choice</span>
             </button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create Single Option</DialogTitle>
+              <DialogTitle>Create Single Choice Question</DialogTitle>
               <DialogDescription>
-                Add options for your single choice question.
+                Add options for your single choice question and select the correct answer.
               </DialogDescription>
             </DialogHeader>
             <SingleOptionForm
-              onSubmit={(options) => {
+              onSubmit={({ options, correctAnswer }) => {
                 props.editor.chain().focus()
                 .undo()
                 .toggleSigleOption({
                   options,
                   defaultValue: options[0]?.value
                 }).run();
+
+                // Here you would send the data to your Python backend
+                // Example:
+                // fetch('/api/tests/questions', {
+                //   method: 'POST',
+                //   headers: { 'Content-Type': 'application/json' },
+                //   body: JSON.stringify({
+                //     type: 'single',
+                //     options,
+                //     correctAnswer
+                //   })
+                // });
               }}
             />
           </DialogContent>
@@ -251,7 +262,7 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
             <button
               ref={
                 selectedGroupIndex === props.items.length &&
-                  selectedCommandIndex === 0
+                  selectedCommandIndex === 1
                   ? activeItem
                   : null
               }
@@ -266,24 +277,24 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
               className={cn(
                 "flex cursor-pointer items-center rounded-sm my-1 px-2 py-1 text-sm transition-colors w-full",
                 selectedGroupIndex === props.items.length &&
-                  selectedCommandIndex === 0
+                  selectedCommandIndex === 1
                   ? "bg-gray-200"
                   : "hover:bg-gray-200"
               )}
             >
-              <TestTubeIcon className="h-4 w-4" />
-              <span className="ml-2">Run Test</span>
+              <CopyCheckIcon className="h-4 w-4" />
+              <span className="ml-2">Multiple Choice</span>
             </button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create Multiple Choice</DialogTitle>
+              <DialogTitle>Create Multiple Choice Question</DialogTitle>
               <DialogDescription>
-                Add options for your multiple choice question.
+                Add options for your multiple choice question and select all correct answers.
               </DialogDescription>
             </DialogHeader>
             <MultipleOptionForm
-              onSubmit={(options) => {
+              onSubmit={({ options, correctAnswers }) => {
                 props.editor.chain()
                   .focus()
                   .undo()
@@ -292,6 +303,18 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
                     defaultValues: []
                   })
                   .run();
+
+                // Here you would send the data to your Python backend
+                // Example:
+                // fetch('/api/tests/questions', {
+                //   method: 'POST',
+                //   headers: { 'Content-Type': 'application/json' },
+                //   body: JSON.stringify({
+                //     type: 'multiple',
+                //     options,
+                //     correctAnswers
+                //   })
+                // });
               }}
             />
           </DialogContent>

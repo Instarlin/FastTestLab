@@ -2,6 +2,7 @@ import { MoveRightIcon, PencilLineIcon, LibraryBigIcon, CheckIcon } from "lucide
 import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogTrigger, DialogDescription } from "./dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
 import { Link } from "react-router";
+import type React from "react";
 
 interface Lesson {
   title: string;
@@ -19,37 +20,40 @@ function Card({
   picture,
   description,
   lessons,
+  settingsButton
 }: {
-  size: string
-  title: string,
-  picture: string,
-  description: string,
-  lessons: Lesson[]
+  size: string;
+  title: string;
+  picture: string;
+  description: string;
+  lessons: Lesson[];
+  settingsButton?: React.ReactNode;
 }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div
-          style={{
-            flexBasis: `calc(${size} - 0.5rem)`,
-            maxWidth: `calc(${size} - 0.5rem)`,
-          }}
-          className="group rounded-md border border-gray-300 overflow-hidden p-0 min-h-[200px] flex flex-col items-center justify-center cursor-pointer transition-all duration-300"
-        >
           <div
-            className="w-full flex-3 bg-cover bg-center"
             style={{
-              backgroundImage:
-                `url(${picture})`,
+              flexBasis: `calc(${size} - 0.5rem)`,
+              maxWidth: `calc(${size} - 0.5rem)`,
             }}
-          ></div>
-          <div className="w-full flex-1 bg-background group-hover:bg-accent z-20 flex flex-row justify-start items-center px-4 transition-colors duration-500">
-            <p>{title}</p>
-            <MoveRightIcon className="ml-auto mr-2 opacity-55 size-7 group-hover:translate-x-1 transition-transform duration-500" />
+            className="relative group rounded-md border border-gray-300 overflow-hidden p-0 max-h-1/4 min-h-[200px] flex flex-col items-center justify-center cursor-pointer transition-all duration-300"
+          >
+            <div
+              className="w-full flex-3 bg-cover bg-center"
+              style={{
+                backgroundImage:
+                  `url(${picture})`,
+              }}
+            ></div>
+            <div className="w-full flex-1 bg-background group-hover:bg-accent z-20 flex flex-row justify-start items-center px-4 transition-colors duration-500">
+              <p>{title}</p>
+              <MoveRightIcon className="size-4 ml-auto" />
+            </div>
           </div>
-        </div>
       </DialogTrigger>
       <DialogContent className="md:max-w-[800px] md:max-h-[800px] overflow-hidden">
+        {settingsButton}
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

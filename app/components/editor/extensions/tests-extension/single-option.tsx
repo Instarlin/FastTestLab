@@ -4,6 +4,7 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Label } from "~/components/ui/label";
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
+import { CheckCircle2 } from "lucide-react";
 
 interface Option {
   value: string;
@@ -13,15 +14,15 @@ interface Option {
 export function SingleOption(props: NodeViewProps) {
   const options = props.node.attrs.options || [];
   const defaultValue = props.node.attrs.defaultValue;
+  const correctAnswer = props.node.attrs.correctAnswer;
   const nodeId = props.node.attrs.id || props.node.attrs._id || uuidv4();
   const [isEditable, setIsEditable] = useState(props.editor.isEditable);
+  const [selectedValue, setSelectedValue] = useState(defaultValue);
 
   useEffect(() => {
     const updateEditable = () => {
       setIsEditable(props.editor.isEditable);
     };
-
-    console.log(isEditable)
 
     props.editor.on('update', updateEditable);
     return () => {
@@ -29,12 +30,17 @@ export function SingleOption(props: NodeViewProps) {
     };
   }, [props.editor.isEditable]);
 
+  const handleValueChange = (value: string) => {
+    setSelectedValue(value);
+  };
+
   return (
     <NodeViewWrapper>
       <div className="relative group">
         <RadioGroup 
           className="mt-8" 
-          defaultValue={defaultValue} 
+          value={selectedValue}
+          onValueChange={handleValueChange}
           contentEditable={isEditable}
           disabled={isEditable}
         >
@@ -51,6 +57,9 @@ export function SingleOption(props: NodeViewProps) {
               >
                 {option.label}
               </Label>
+              {!isEditable && correctAnswer === option.value && (
+                <CheckCircle2 className="h-5 w-5 text-green-500 ml-2" />
+              )}
             </div>
           ))}
         </RadioGroup>

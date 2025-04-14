@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/Input";
+import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Plus, X } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
@@ -11,7 +11,10 @@ interface Option {
 }
 
 interface SingleOptionFormProps {
-  onSubmit: (options: Option[]) => void;
+  onSubmit: (data: {
+    options: Option[];
+    correctAnswer: string;
+  }) => void;
 }
 
 export function SingleOptionForm({ onSubmit }: SingleOptionFormProps) {
@@ -37,7 +40,7 @@ export function SingleOptionForm({ onSubmit }: SingleOptionFormProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validOptions = options.filter(opt => opt.label.trim());
-    onSubmit(validOptions);
+    onSubmit({ options: validOptions, correctAnswer: "" });
   };
 
   return (

@@ -12,7 +12,6 @@ interface Option {
 
 export function MultipleOption(props: NodeViewProps) {
   const options = props.node.attrs.options || [];
-  const defaultValues = props.node.attrs.defaultValues || [];
   const nodeId = props.node.attrs.id || props.node.attrs._id || uuidv4();
   const [isEditable, setIsEditable] = useState(props.editor.isEditable);
 
@@ -26,19 +25,6 @@ export function MultipleOption(props: NodeViewProps) {
       props.editor.off('update', updateEditable);
     };
   }, [props.editor.isEditable]);
-
-  const handleCheckboxChange = (value: string, checked: boolean) => {
-    if (isEditable) {
-      const newValues = checked
-        ? [...defaultValues, value]
-        : defaultValues.filter((v: string) => v !== value);
-
-      props.updateAttributes({
-        ...props.node.attrs,
-        defaultValues: newValues
-      });
-    }
-  };
 
   return (
     <NodeViewWrapper>
