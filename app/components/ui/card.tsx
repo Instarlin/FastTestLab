@@ -52,7 +52,7 @@ function Card({
             </div>
           </div>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[800px] md:max-h-[800px] overflow-hidden">
+      <DialogContent hideClose={true} className="md:max-w-[800px] md:max-h-[800px] overflow-hidden">
         {settingsButton}
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

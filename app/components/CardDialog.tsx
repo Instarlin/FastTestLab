@@ -23,7 +23,7 @@ import {
   useDropzone,
 } from "~/components/ui/dropzone";
 
-interface Card {
+export interface CardI {
   title: string;
   description: string;
   color: string;
@@ -32,19 +32,19 @@ interface Card {
   images: string[];
 }
 
-interface CardCreationDialogProps {
+interface CardDialogProps {
   trigger?: React.ReactNode;
-  initialData?: Partial<Card>;
-  onSave: (card: Card) => void;
+  initialData?: Partial<CardI>;
+  onSave: (card: CardI) => void;
   onOpenChange?: (open: boolean) => void;
 }
 
-export function CardCreationDialog({ 
+export function CardDialog({ 
   trigger, 
   initialData, 
   onSave,
   onOpenChange 
-}: CardCreationDialogProps) {
+}: CardDialogProps) {
   const [title, setTitle] = useState(initialData?.title || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [color, setColor] = useState(initialData?.color || "#ffffff");
@@ -87,9 +87,11 @@ export function CardCreationDialog({
       color,
       progress,
       tags,
-      images: dropzone.fileStatuses
-        .map((file) => file.result)
-        .filter((result): result is string => result !== undefined),
+      images: dropzone.fileStatuses.length > 0
+        ? dropzone.fileStatuses
+            .map((file) => file.result)
+            .filter((result): result is string => result !== undefined)
+        : initialData?.images || [],
     });
   };
 
@@ -191,8 +193,8 @@ export function CardCreationDialog({
                 </DropzoneDescription>
                 <DropzoneMessage />
               </div>
-              <DropZoneArea>
-                <DropzoneTrigger className="flex flex-col items-center gap-4 bg-transparent p-10 text-center text-sm">
+              <DropZoneArea className="p-0">
+                <DropzoneTrigger className="flex flex-col items-center gap-4 bg-transparent py-8 m-0 text-center text-sm w-full">
                   <CloudUploadIcon className="size-8" />
                   <div>
                     <p className="font-semibold">Upload listing images</p>

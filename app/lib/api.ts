@@ -8,10 +8,9 @@ export const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: true, // Enable cookies
+  withCredentials: true,
 });
 
-// Auth types
 export interface RegisterRequest {
   email: string;
   username: string;
@@ -31,7 +30,6 @@ export interface AuthResponse {
   token: string;
 }
 
-// Auth API functions
 export const authApi = {
   register: async (data: RegisterRequest): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('/crud/register', data);
@@ -40,7 +38,6 @@ export const authApi = {
   
   login: async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('/auth/login', data);
-    console.log("LOGIN RESPONSE:", response);
     return response.data;
   },
 };

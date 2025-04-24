@@ -10,9 +10,11 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Card } from "~/components/ui/card";
-import { Button } from "~/components/Button";
+import { Button } from "~/components/ui/button";
 import { Settings2Icon } from "lucide-react";
-import { CardCreationDialog } from "~/components/CardCreationDialog";
+import { CardDialog, type CardI } from "~/components/CardDialog";
+// import { requireUser } from "~/lib/auth.server";
+// import type { LoaderFunction } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -25,10 +27,10 @@ export const handle = {
   breadcrumb: () => <BreadcrumbLink to="/home">Home</BreadcrumbLink>,
 };
 
-const cardLayouts = [
-  { label: "6 x 2", columns: 6, rows: 2 },
-  { label: "10 x 2", columns: 10, rows: 2 },
-];
+// export const loader: LoaderFunction = async ({ request }: Route.LoaderArgs) => {
+  // const user = await requireUser(request);
+  // return { user };
+// };
 
 const lessons = [
   {
@@ -249,44 +251,34 @@ const lessons = [
   },
 ];
 
-interface Card {
-  title: string;
-  description: string;
-  color: string;
-  progress: string;
-  tags: string[];
-  images: string[];
-}
-
 export default function Home() {
   const [cardSize, setCardSize] = useState<string>();
-  const [layout, setLayout] = useState(cardLayouts[0]);
-  const [cardsArray, setCardsArray] = useState<Card[]>([]);
+  const [cardsArray, setCardsArray] = useState<CardI[]>([]);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
+  const allowedSizes = ["20%", "25%", "33%"];
 
   useEffect(() => {
-    setCardSize(localStorage.getItem("cardSize") ?? "25%");
+    const savedSize = localStorage.getItem("cardSize");
+    setCardSize(allowedSizes.includes(savedSize || "") && savedSize ? savedSize : "25%");
   }, []);
 
   useEffect(() => {
     if (cardSize !== undefined) localStorage.setItem("cardSize", cardSize);
   }, [cardSize]);
 
-  const handleSaveCard = (card: Card) => {
+  const handleSaveCard = (card: CardI) => {
     if (editingCardIndex !== null) {
-      // Update existing card
       const updatedCards = [...cardsArray];
       updatedCards[editingCardIndex] = card;
       setCardsArray(updatedCards);
     } else {
-      // Create new card
       setCardsArray([...cardsArray, card]);
     }
     setEditingCardIndex(null);
   };
 
   return (
-    <div className="flex flex-1 flex-col pl-6 overflow-y-scroll group-hover:pointer-events-none">
+    <div className="flex flex-1 flex-col pl-6 overflow-y-scroll">
       <div className="sticky top-0 flex align-middle gap-4 z-30 py-3">
         <Select value={cardSize} onValueChange={setCardSize}>
           <SelectTrigger className="w-[150px]">
@@ -300,19 +292,7 @@ export default function Home() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <CardCreationDialog onSave={handleSaveCard} />
-        {cardLayouts.map((option) => (
-          <button
-            key={option.label}
-            className={`px-4 py-2 rounded border ${layout.label === option.label
-                ? "bg-blue-600 text-white"
-                : "bg-white text-black border-gray-400"
-              }`}
-            onClick={() => setLayout(option)}
-          >
-            {option.label}
-          </button>
-        ))}
+        <CardDialog onSave={handleSaveCard} />
       </div>
       <div className="flex flex-1 flex-wrap justify-start gap-2 transition-all duration-300">
         {cardsArray.map((card, index) => (
@@ -320,15 +300,15 @@ export default function Home() {
             title={card.title}
             picture={card.images[0] || "https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg"}
             description={card.description}
-            size={cardSize!}
+            size={cardSize || "25%"}
             lessons={lessons}
             settingsButton={
-              <CardCreationDialog
+              <CardDialog
                 trigger={
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+                    className="absolute top-2 right-2 bg-white hover:bg-accent"
                   >
                     <Settings2Icon className="size-4" />
                   </Button>

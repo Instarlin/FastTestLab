@@ -11,7 +11,6 @@ import { authApi } from "~/lib/api";
 import type { RegisterRequest, LoginRequest } from "~/lib/api";
 import { Waves } from "~/components/Waves";
 
-
 const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
   username: z.string().min(3, "Username must be at least 3 characters"),
