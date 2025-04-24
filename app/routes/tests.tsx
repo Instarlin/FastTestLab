@@ -47,10 +47,20 @@ export default function Tests() {
         </Button>
         <WordCount editor={editor!} />
       </div>
-      <RichEditor
-        editor={editor!}
-        className="w-full px-4 sm:w-11/12 md:max-w-[640px] lg:max-w-[640px] xl:max-w-[960px] xxl:max-w-[1280px]"
-      />
+      <div>
+        <RichEditor
+          editor={editor!}
+          className="w-full px-4 sm:w-11/12 md:max-w-[640px] lg:max-w-[640px] xl:max-w-[960px] xxl:max-w-[1280px]"
+        />
+        <div className="flex flex-row gap-8">
+          <Button>
+            Previous
+          </Button>
+          <Button>
+            Next
+          </Button>
+        </div>
+      </div>
       <div className="hidden lg:flex flex-col gap-1.5 sticky top-4 right-8">
         <Link
           onClick={() => {
