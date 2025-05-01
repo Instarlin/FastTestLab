@@ -3,7 +3,7 @@ import { icons, CopyCheckIcon, SquareCheckIcon } from "lucide-react";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 import { type Command, type Group } from "./groups";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogHeader, DialogTrigger, DialogFooter, DialogClose } from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogHeader, DialogTrigger } from "~/components/ui/dialog";
 import { SingleOptionForm } from "../../tests-extension/single-option-form";
 import { MultipleOptionForm } from "../../tests-extension/multiple-option-form";
 import { Button } from "~/components/ui/button";
@@ -226,7 +226,7 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
               <span className="ml-2">Single Choice</span>
             </button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="">
             <DialogHeader>
               <DialogTitle>Create Single Choice Question</DialogTitle>
               <DialogDescription>
@@ -242,8 +242,7 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
                   defaultValue: options[0]?.value
                 }).run();
 
-                // Here you would send the data to your Python backend
-                // Example:
+
                 // fetch('/api/tests/questions', {
                 //   method: 'POST',
                 //   headers: { 'Content-Type': 'application/json' },

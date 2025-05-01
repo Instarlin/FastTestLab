@@ -5,14 +5,6 @@ import { Input } from "~/components/Input";
 import { Label } from "~/components/ui/label";
 import { CloudUploadIcon, Trash2Icon } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import {
   Dropzone,
   DropZoneArea,
   DropzoneDescription,
@@ -27,9 +19,8 @@ export interface CardI {
   title: string;
   description: string;
   color: string;
-  progress: string;
   tags: string[];
-  images: string[];
+  picture: string;
 }
 
 interface CardDialogProps {
@@ -48,7 +39,6 @@ export function CardDialog({
   const [title, setTitle] = useState(initialData?.title || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [color, setColor] = useState(initialData?.color || "#ffffff");
-  const [progress, setProgress] = useState(initialData?.progress || "not_started");
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [newTag, setNewTag] = useState("");
 
@@ -85,13 +75,12 @@ export function CardDialog({
       title,
       description,
       color,
-      progress,
       tags,
-      images: dropzone.fileStatuses.length > 0
+      picture: dropzone.fileStatuses.length > 0
         ? dropzone.fileStatuses
             .map((file) => file.result)
-            .filter((result): result is string => result !== undefined)
-        : initialData?.images || [],
+            .filter((result): result is string => result !== undefined)[0]
+        : initialData?.picture || '',
     });
   };
 
@@ -99,9 +88,10 @@ export function CardDialog({
     setTitle(initialData?.title || "");
     setDescription(initialData?.description || "");
     setColor(initialData?.color || "#ffffff");
-    setProgress(initialData?.progress || "not_started");
     setTags(initialData?.tags || []);
     setNewTag("");
+    console.log(dropzone.fileStatuses);
+    dropzone.fileStatuses = [];
   };
 
   return (
@@ -141,21 +131,6 @@ export function CardDialog({
               />
               <span className="text-sm text-muted-foreground">Choose card color</span>
             </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="progress" className="text-right">Progress</Label>
-            <Select value={progress} onValueChange={setProgress}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select progress" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="not_started">Not Started</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="tags" className="text-right">Tags</Label>

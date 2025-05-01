@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { BreadcrumbLink } from "~/components/Sidebar";
 import type { Route } from "./+types/home";
 import {
   Select,
@@ -13,6 +12,7 @@ import { Card } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Settings2Icon } from "lucide-react";
 import { CardDialog, type CardI } from "~/components/CardDialog";
+import { homeApi } from "~/lib/homeApi";
 // import { requireUser } from "~/lib/auth.server";
 // import type { LoaderFunction } from "react-router";
 
@@ -23,10 +23,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export const handle = {
-  breadcrumb: () => <BreadcrumbLink to="/home">Home</BreadcrumbLink>,
-};
-
+//! Needs to be done on server, kubernetes required
 // export const loader: LoaderFunction = async ({ request }: Route.LoaderArgs) => {
   // const user = await requireUser(request);
   // return { user };
@@ -258,6 +255,11 @@ export default function Home() {
   const allowedSizes = ["20%", "25%", "33%"];
 
   useEffect(() => {
+    homeApi.getCards().then((cards) => {
+      // TODO: make card's fields fron response being aligned with CardI type
+      // setCardsArray(cards);
+      console.log("cards", cards);
+    });
     const savedSize = localStorage.getItem("cardSize");
     setCardSize(allowedSizes.includes(savedSize || "") && savedSize ? savedSize : "25%");
   }, []);
@@ -266,7 +268,8 @@ export default function Home() {
     if (cardSize !== undefined) localStorage.setItem("cardSize", cardSize);
   }, [cardSize]);
 
-  const handleSaveCard = (card: CardI) => {
+  const handleSaveCard = async (card: CardI) => {
+    const res = await homeApi.createCard(card);
     if (editingCardIndex !== null) {
       const updatedCards = [...cardsArray];
       updatedCards[editingCardIndex] = card;
@@ -298,7 +301,7 @@ export default function Home() {
         {cardsArray.map((card, index) => (
           <Card
             title={card.title}
-            picture={card.images[0] || "https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg"}
+            picture={card.picture || "https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg"}
             description={card.description}
             size={cardSize || "25%"}
             lessons={lessons}

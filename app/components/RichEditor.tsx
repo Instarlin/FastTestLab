@@ -16,7 +16,6 @@ export const RichEditor = ({
   return (
     <div className={className} ref={editorBoundsRef}>
       <EditorContent editor={editor} className="flex flex-col h-full w-full" />
-      {/* <TableOptionsMenu editor={editor} /> */}
       <CustomBubbleMenu editor={editor} />
     </div>
   );

@@ -1,4 +1,3 @@
-import { BreadcrumbLink } from "~/components/Sidebar";
 import type { Route } from "./+types/home";
 import {
   Dropzone,
@@ -31,10 +30,6 @@ export function meta({ }: Route.MetaArgs) {
     { name: "description", content: "Chat interface with file uploads" },
   ];
 }
-
-export const handle = {
-  breadcrumb: () => <BreadcrumbLink to="/chat">Chat</BreadcrumbLink>,
-};
 
 export default function Chat() {
   const [message, setMessage] = useState("");

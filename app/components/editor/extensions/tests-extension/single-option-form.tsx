@@ -42,16 +42,16 @@ export function SingleOptionForm({ onSubmit }: SingleOptionFormProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validOptions = options.filter(opt => opt.label.trim());
-    onSubmit({ options: validOptions, correctAnswer: "" });
+    onSubmit({ options: validOptions, correctAnswer: correctAnswer });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className=" space-y-4 max-h-[500px]">
       <div className="space-y-2">
         {options.map((option, index) => (
           <div key={option.value} className="flex items-center gap-2">
             <div className="relative flex-1 space-y-1">
-              <Label className="my-4" htmlFor={`label-${option.value}`}>Option {index + 1}</Label>
+              <Label className="mb-2 mt-4" htmlFor={`label-${option.value}`}>Option {index + 1}</Label>
               <Input
                 id={`label-${option.value}`}
                 value={option.label}
@@ -64,44 +64,46 @@ export function SingleOptionForm({ onSubmit }: SingleOptionFormProps) {
                   variant="ghost"
                   size="icon"
                   onClick={() => handleRemoveOption(index)}
-                  className="absolute top-[50px] right-1 size-7 opacity-50 hover:opacity-100 transition-opacity duration-300"
+                  className="absolute top-[42px] right-1 size-7 opacity-50 hover:opacity-100 transition-opacity duration-300"
                 >
-                  <X className="size-4 p-0" />
+                  <X className="size-4" />
                 </Button>
               )}
             </div>
-
           </div>
         ))}
       </div>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-8">
         <div className="flex gap-2">
           <Button
             type="button"
             variant="outline"
+            disabled={options.length > 10}
             onClick={handleAddOption}
             className="flex items-center gap-1"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="size-4" />
             Add Option
           </Button>
           <Select disabled={options.length === 1} defaultValue={correctAnswer} onValueChange={setCorrectAnswer}>
-            <SelectTrigger className="max-w-[240px]">
+            <SelectTrigger className="min-w-[200px] max-w-[240px]">
               <SelectValue placeholder="Select correct answer" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {options.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                {options.map((option, index) => (
+                  <SelectItem key={option.value} value={option.value} className="hover:bg-gray-100">
+                    {option.label || "Option " + (index + 1)}
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit">
+        <Button type="submit" disabled={
+          options.length === 1 || correctAnswer === "" || options.some(opt => opt.label.trim() === "")
+        }>
           Create
         </Button>
       </div>

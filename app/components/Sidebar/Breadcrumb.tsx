@@ -45,11 +45,12 @@ const BreadcrumbLink = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof Link> & {
     asChild?: boolean;
   }
->(({ asChild, className, ...props }) => {
+>(({ asChild, className, ...props }, ref) => {
   const Comp = asChild ? Slot : Link;
 
   return (
     <Comp
+      ref={ref}
       className={cn("transition-colors hover:text-foreground", className)}
       {...props}
     />
