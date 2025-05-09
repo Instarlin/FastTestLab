@@ -20,9 +20,7 @@ declare module '@tiptap/core' {
 
 export default Node.create({
   name: 'multipleOptionNode',
-
   group: 'block list',
-
   atom: true,
 
   addAttributes() {

@@ -12,7 +12,7 @@ export const WordCount = ({ editor }: { editor: Editor }) => {
     },
   }) ?? { characters: 0, words: 0 };
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-32">
       <p>{characters} characters</p>
       <p>{words} words</p>
     </div>

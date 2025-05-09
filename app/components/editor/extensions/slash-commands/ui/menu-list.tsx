@@ -66,21 +66,17 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
         if (!props.items.length) {
           return false;
         }
-        console.log(selectedCommandIndex)
-
-        const commands = props.items[selectedGroupIndex]?.commands || [];
 
         let newCommandIndex = selectedCommandIndex + 1;
         let newGroupIndex = selectedGroupIndex;
 
-        if (selectedCommandIndex > commands.length - 2) {
+        if (selectedCommandIndex > props.items[selectedGroupIndex]?.commands.length - 2 || 0) {
           newCommandIndex = 0;
           newGroupIndex = selectedGroupIndex + 1;
         }
 
-        if (newGroupIndex > props.items.length + 1) {
+        if (newGroupIndex === props.items.length) {
           newGroupIndex = 0;
-          newCommandIndex = 0;
         }
 
         setSelectedCommandIndex(newCommandIndex);
@@ -90,7 +86,6 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
       }
 
       if (event.key === "ArrowUp") {
-        console.log(selectedCommandIndex)
         if (!props.items.length) {
           return false;
         }
@@ -98,15 +93,17 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
         let newCommandIndex = selectedCommandIndex - 1;
         let newGroupIndex = selectedGroupIndex;
 
-        if (newCommandIndex < 0) {
+        if (selectedCommandIndex === 0) {
           newGroupIndex = selectedGroupIndex - 1;
-          if (newGroupIndex < 0) {
-            newGroupIndex = props.items.length + 1;
-            newCommandIndex = 0;
-          } else {
-            newCommandIndex = props.items[newGroupIndex]?.commands.length - 1 || 0;
-          }
+          newCommandIndex = props.items[newGroupIndex]?.commands.length - 1 || 0;
         }
+
+        if (newGroupIndex < 0) {
+          newGroupIndex = props.items.length - 1;
+          newCommandIndex = props.items[newGroupIndex]?.commands.length - 1 || 0;
+        }
+
+        console.log(newCommandIndex, newGroupIndex)
 
         setSelectedCommandIndex(newCommandIndex);
         setSelectedGroupIndex(newGroupIndex);
