@@ -1,12 +1,9 @@
 import { type Editor } from "@tiptap/core";
-import { icons, CopyCheckIcon, SquareCheckIcon } from "lucide-react";
+import { icons } from "lucide-react";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 import { type Command, type Group } from "./groups";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogHeader, DialogTrigger } from "~/components/ui/dialog";
-import { SingleOptionForm } from "../../tests-extension/single-option-form";
-import { MultipleOptionForm } from "../../tests-extension/multiple-option-form";
-import { Button } from "~/components/ui/button";
 
 export type IconProps = {
   name: keyof typeof icons;
@@ -51,7 +48,14 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
   const selectItem = useCallback(
     (groupIndex: number, commandIndex: number) => {
       const command = props.items[groupIndex].commands[commandIndex];
-      props.command(command);
+      if (command.dialog) {
+        const button = activeItem.current;
+        if (button) {
+          button.click();
+        }
+      } else {
+        props.command(command);
+      }
     },
     [props]
   );
@@ -120,7 +124,6 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
         }
 
         if (selectedGroupIndex === props.items.length) {
-          // Handle test section click
           const button = activeItem.current;
           if (button) {
             button.click();
@@ -170,155 +173,78 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
             {group.title}
           </div>
           {group.commands.map((command, commandIndex) => (
-            <button
-              key={`${command.label}`}
-              ref={
-                selectedGroupIndex === groupIndex &&
-                selectedCommandIndex === commandIndex
-                  ? activeItem
-                  : null
-              }
-              onClick={createCommandClickHandler(groupIndex, commandIndex)}
-              className={cn(
-                "flex cursor-pointer items-center rounded-sm my-1 px-2 py-1 text-sm transition-colors w-full",
-                selectedGroupIndex === groupIndex &&
+            command.dialog ? (
+              <Dialog key={`${command.label}`}>
+                <DialogTrigger asChild>
+                  <button
+                    ref={
+                      selectedGroupIndex === groupIndex &&
+                      selectedCommandIndex === commandIndex
+                        ? activeItem
+                        : null
+                    }
+                    onClick={() => {
+                      const event = new MouseEvent('mousedown', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                      });
+                      document.dispatchEvent(event);
+                    }}
+                    className={cn(
+                      "flex cursor-pointer items-center rounded-sm my-1 px-2 py-1 text-sm transition-colors w-full",
+                      selectedGroupIndex === groupIndex &&
+                        selectedCommandIndex === commandIndex
+                        ? "bg-gray-200"
+                        : "hover:bg-gray-200"
+                    )}
+                  >
+                    <Icon name={command.iconName} className="h-4 w-4" />
+                    <span className="ml-2">{command.label}</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{command.dialog.title}</DialogTitle>
+                    <DialogDescription>
+                      {command.dialog.description}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <command.dialog.component
+                    onSubmit={(data) => {
+                      if (command.action) {
+                        command.action(props.editor, data);
+                      }
+                    }}
+                    editor={props.editor}
+                  />
+                </DialogContent>
+              </Dialog>
+            ) : (
+              <button
+                key={`${command.label}`}
+                ref={
+                  selectedGroupIndex === groupIndex &&
                   selectedCommandIndex === commandIndex
-                  ? "bg-gray-200"
-                  : "hover:bg-gray-200"
-              )}
-            >
-              <Icon name={command.iconName} className="h-4 w-4" />
-              <span className="ml-2">{command.label}</span>
-            </button>
+                    ? activeItem
+                    : null
+                }
+                onClick={createCommandClickHandler(groupIndex, commandIndex)}
+                className={cn(
+                  "flex cursor-pointer items-center rounded-sm my-1 px-2 py-1 text-sm transition-colors w-full",
+                  selectedGroupIndex === groupIndex &&
+                    selectedCommandIndex === commandIndex
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-200"
+                )}
+              >
+                <Icon name={command.iconName} className="h-4 w-4" />
+                <span className="ml-2">{command.label}</span>
+              </button>
+            )
           ))}
         </div>
       ))}
-      <div>
-        <div className="text-xs font-medium text-gray-500 w-full">
-          Test
-        </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button
-              ref={
-                selectedGroupIndex === props.items.length &&
-                selectedCommandIndex === 0
-                  ? activeItem
-                  : null
-              }
-              onClick={() => {
-                const event = new MouseEvent('mousedown', {
-                  view: window,
-                  bubbles: true,
-                  cancelable: true
-                });
-                document.dispatchEvent(event);
-              }}
-              className={cn(
-                "flex cursor-pointer items-center rounded-sm my-1 px-2 py-1 text-sm transition-colors w-full",
-                selectedGroupIndex === props.items.length &&
-                selectedCommandIndex === 0
-                  ? "bg-gray-200"
-                  : "hover:bg-gray-200"
-              )}
-            >
-              <SquareCheckIcon className="h-4 w-4" />
-              <span className="ml-2">Single Choice</span>
-            </button>
-          </DialogTrigger>
-          <DialogContent className="">
-            <DialogHeader>
-              <DialogTitle>Create Single Choice Question</DialogTitle>
-              <DialogDescription>
-                Add options for your single choice question and select the correct answer.
-              </DialogDescription>
-            </DialogHeader>
-            <SingleOptionForm
-              onSubmit={({ options, correctAnswer }) => {
-                props.editor.chain().focus()
-                .undo()
-                .toggleSigleOption({
-                  options,
-                  defaultValue: options[0]?.value
-                }).run();
-
-
-                // fetch('/api/tests/questions', {
-                //   method: 'POST',
-                //   headers: { 'Content-Type': 'application/json' },
-                //   body: JSON.stringify({
-                //     type: 'single',
-                //     options,
-                //     correctAnswer
-                //   })
-                // });
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button
-              ref={
-                selectedGroupIndex === props.items.length &&
-                  selectedCommandIndex === 1
-                  ? activeItem
-                  : null
-              }
-              onClick={() => {
-                const event = new MouseEvent('mousedown', {
-                  view: window,
-                  bubbles: true,
-                  cancelable: true
-                });
-                document.dispatchEvent(event);
-              }}
-              className={cn(
-                "flex cursor-pointer items-center rounded-sm my-1 px-2 py-1 text-sm transition-colors w-full",
-                selectedGroupIndex === props.items.length &&
-                  selectedCommandIndex === 1
-                  ? "bg-gray-200"
-                  : "hover:bg-gray-200"
-              )}
-            >
-              <CopyCheckIcon className="h-4 w-4" />
-              <span className="ml-2">Multiple Choice</span>
-            </button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Multiple Choice Question</DialogTitle>
-              <DialogDescription>
-                Add options for your multiple choice question and select all correct answers.
-              </DialogDescription>
-            </DialogHeader>
-            <MultipleOptionForm
-              onSubmit={({ options, correctAnswers }) => {
-                props.editor.chain()
-                  .focus()
-                  .undo()
-                  .toggleMultipleOption({
-                    options,
-                    defaultValues: []
-                  })
-                  .run();
-
-                // Here you would send the data to your Python backend
-                // Example:
-                // fetch('/api/tests/questions', {
-                //   method: 'POST',
-                //   headers: { 'Content-Type': 'application/json' },
-                //   body: JSON.stringify({
-                //     type: 'multiple',
-                //     options,
-                //     correctAnswers
-                //   })
-                // });
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
     </div>
   );
 });
@@ -326,3 +252,13 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
 MenuList.displayName = "MenuList";
 
 export default MenuList;
+
+// fetch('/api/tests/questions', {
+//   method: 'POST',
+//   headers: { 'Content-Type': 'application/json' },
+//   body: JSON.stringify({
+//     type: 'multiple',
+//     options,
+//     correctAnswers
+//   })
+// });

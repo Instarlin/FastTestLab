@@ -1,14 +1,23 @@
 import { Editor } from '@tiptap/core'
 import { icons } from 'lucide-react'
-
+import { SingleOptionForm } from '../../tests-extension/single-option-form'
+import { MultipleOptionForm } from '../../tests-extension/multiple-option-form'
 export interface Command {
   name: string
   label: string
   description: string
   aliases?: string[]
   iconName: keyof typeof icons
-  action: (editor: Editor) => void
+  action?: (editor: Editor, data?: any) => void
   shouldBeHidden?: (editor: Editor) => boolean
+  dialog?: {
+    title: string
+    description: string
+    component: React.ComponentType<{
+      onSubmit: (data: any) => void
+      editor: Editor
+    }>
+  }
 }
 
 export interface Group {
@@ -119,21 +128,49 @@ export const GROUPS: Group[] = [
       },
     ],
   },
-  // {
-  //   name: 'test',
-  //   title: 'Tests',
-  //   commands: [
-  //     {
-  //       name: 'multyoptiontest',
-  //       label: 'MultyOptionTest',
-  //       iconName: 'ZoomOut',
-  //       description: 'Insert a sigle option test',
-  //       action: editor => {
-  //         editor.chain().focus().toggleSigleOption().run()
-  //       },
-  //     },
-  //   ],
-  // },
+  {
+    name: 'test',
+    title: 'Test',
+    commands: [
+      {
+        name: 'singleOption',
+        label: 'Single Option Test',
+        iconName: 'SquareCheck',
+        description: 'Creates test with single option',
+        action: (editor, data) => {
+          editor.chain().focus()
+          .undo()
+          .toggleSigleOption({
+            options: data.options,
+            defaultValue: data.options[0]?.value
+          }).run();
+        },
+        dialog: {
+          title: 'Create Single Choice Question',
+          description: 'Add options for your single choice question and select the correct answer.',
+          component: SingleOptionForm
+        }
+      },
+      {
+        name: 'multyOption',
+        label: 'Multy Option Test',
+        iconName: 'CopyCheck',
+        description: 'Creates test with multy options',
+        action: (editor, data) => {
+          editor.chain().focus()
+          .undo()
+          .toggleMultipleOption({
+            options: data.options,
+          }).run();
+        },
+        dialog: {
+          title: 'Create Multiple Choice Question',
+          description: 'Add options for your multiple choice question and select all correct answers.',
+          component: MultipleOptionForm
+        }
+      }
+    ]
+  }
 ]
 
 export default GROUPS
