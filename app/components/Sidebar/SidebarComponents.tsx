@@ -181,7 +181,7 @@ export const SidebarLink = ({
     <Link
       to={link.link}
       className={cn(
-        "flex items-center justify-start gap-2 group/sidebar",
+        "flex relative items-center justify-start gap-2 group/sidebar",
         className
       )}
       onClick={() => setOpen(!open)}
@@ -193,7 +193,7 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        className="absolute left-10 text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >
         {link.label}
       </motion.span>
@@ -209,14 +209,14 @@ export const SidebarPopoverLink = ({ link, className }: SidebarPopoverLinkProps)
     <Popover>
       <PopoverTrigger asChild>
         <div
-          className={cn("flex items-center gap-2 cursor-pointer", className)}
+          className={cn("flex relative items-center gap-2 cursor-pointer", className)}
         >
           {link.icon}
           <motion.span
             animate={{
               display: animate ? (open ? "inline-block" : "none") : "inline-block",
             }}
-            className="text-neutral-700 dark:text-neutral-200 text-sm transition duration-150 whitespace-pre inline-block"
+            className="absolute left-10 text-neutral-700 dark:text-neutral-200 text-sm transition duration-150 whitespace-pre inline-block"
           >
             {link.label}
           </motion.span>
@@ -313,7 +313,7 @@ export const Logo = () => {
       <div className="h-6 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
       <motion.span
         animate={{ opacity: animate ? (open ? 1 : 0) : 1 }}
-        className="font-medium whitespace-pre text-black dark:text-white"
+        className="absolute left-10 font-medium whitespace-pre text-black dark:text-white"
       >
         Fast Test Lab
       </motion.span>

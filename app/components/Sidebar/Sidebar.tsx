@@ -56,7 +56,7 @@ export function SidebarNav({ className }: { className?: string }) {
     },
   ];
   return (
-    <SidebarProvider open={false}>
+    <SidebarProvider>
       <Sidebar>
         <SidebarBody className={cn("justify-between gap-10", className)}>
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
@@ -66,14 +66,14 @@ export function SidebarNav({ className }: { className?: string }) {
                 <SidebarLink
                   key={idx}
                   link={link}
-                  className="hover:bg-gray-200 duration-150 rounded-lg pl-2 py-2 mr-3"
+                  className="hover:bg-sidebar-border duration-150 rounded-lg pl-2 py-2 mr-3"
                 />
               ))}
             </div>
           </div>
           <div className="overflow-x-hidden overflow-y-auto">
             <SidebarPopoverLink
-              className="hover:bg-gray-200 duration-150 rounded-lg pl-0.5 py-2 mr-3"
+              className="hover:bg-sidebar-border duration-150 rounded-lg pl-0.5 py-2 mr-3"
               link={{
                 label: "Profile",
                 icon: (

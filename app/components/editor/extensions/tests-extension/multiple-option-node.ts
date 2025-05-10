@@ -8,6 +8,7 @@ interface MultipleOptionAttributes {
     label: string
   }>
   defaultValues?: string[]
+  selectedValues?: string[]
 }
 
 declare module '@tiptap/core' {
@@ -21,7 +22,7 @@ declare module '@tiptap/core' {
 export default Node.create({
   name: 'multipleOptionNode',
   group: 'block list',
-  atom: true,
+  atom: false,
 
   addAttributes() {
     return {
@@ -33,6 +34,9 @@ export default Node.create({
         ],
       },
       defaultValues: {
+        default: [],
+      },
+      selectedValues: {
         default: [],
       },
     }

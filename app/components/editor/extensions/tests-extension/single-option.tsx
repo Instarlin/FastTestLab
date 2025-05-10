@@ -3,8 +3,9 @@ import type { NodeViewProps } from "@tiptap/react";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Label } from "~/components/ui/label";
 import { v4 as uuidv4 } from 'uuid';
-import { useState, useEffect } from 'react';
-import { CheckCircle2 } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from 'react';
+// import { CheckCircle2 } from "lucide-react";
+import type { KeyboardEvent } from 'react';
 
 interface Option {
   value: string;
@@ -13,11 +14,17 @@ interface Option {
 
 export function SingleOption(props: NodeViewProps) {
   const options = props.node.attrs.options || [];
-  const defaultValue = props.node.attrs.defaultValue;
-  const correctAnswer = props.node.attrs.correctAnswer;
+  const [newOptions, setNewOptions] = useState<Option[]>([...options]);
   const nodeId = props.node.attrs.id || props.node.attrs._id || uuidv4();
   const [isEditable, setIsEditable] = useState(props.editor.isEditable);
-  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [selectedValue, setSelectedValue] = useState<string>(props.node.attrs.selectedValue || '');
+  const [lastAddedIndex, setLastAddedIndex] = useState<number | null>(null);
+  const labelRefs = useRef<(HTMLLabelElement | null)[]>([]);
+
+  useEffect(() => {
+    setNewOptions([...options]);
+    setSelectedValue(props.node.attrs.selectedValue || '');
+  }, [options, props.node.attrs.selectedValue]);
 
   useEffect(() => {
     const updateEditable = () => {
@@ -28,11 +35,53 @@ export function SingleOption(props: NodeViewProps) {
     return () => {
       props.editor.off('update', updateEditable);
     };
-  }, [props.editor.isEditable]);
+  }, [props.editor]);
 
-  const handleValueChange = (value: string) => {
+  useEffect(() => {
+    if (lastAddedIndex !== null && labelRefs.current[lastAddedIndex]) {
+      const label = labelRefs.current[lastAddedIndex];
+      if (label) {
+        label.focus();
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(label);
+        range.collapse(false);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+      setLastAddedIndex(null);
+    }
+  }, [lastAddedIndex, newOptions]);
+
+  const handleValueChange = useCallback((value: string) => {
     setSelectedValue(value);
-  };
+    props.updateAttributes({
+      selectedValue: value
+    });
+  }, [props]);
+
+  const handleLabelChange = useCallback((index: number, newLabel: string) => {
+    const updatedOptions = [...newOptions];
+    updatedOptions[index] = { ...updatedOptions[index], label: newLabel };
+    setNewOptions(updatedOptions);
+    props.updateAttributes({
+      options: updatedOptions
+    });
+  }, [newOptions, props]);
+
+  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLLabelElement>, index: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const newOption = { value: uuidv4(), label: 'New Option' };
+      const updatedOptions = [...newOptions];
+      updatedOptions.splice(index + 1, 0, newOption);
+      setNewOptions(updatedOptions);
+      props.updateAttributes({
+        options: updatedOptions
+      });
+      setLastAddedIndex(index + 1);
+    }
+  }, [newOptions, props]);
 
   return (
     <NodeViewWrapper>
@@ -41,25 +90,28 @@ export function SingleOption(props: NodeViewProps) {
           className="mt-8" 
           value={selectedValue}
           onValueChange={handleValueChange}
-          contentEditable={isEditable}
           disabled={isEditable}
         >
-          {options.map((option: Option, index: number) => (
+          {newOptions.map((option: Option, index: number) => (
             <div key={option.value} className="flex items-center rounded-md px-2 hover:bg-accent transitions-colors duration-300">
               <RadioGroupItem 
                 className="hover:cursor-pointer" 
                 value={option.value} 
                 id={`${nodeId}-r${index}`}
               />
-              <Label 
-                className="w-full h-full pl-4 py-3 hover:cursor-pointer" 
+              <Label
+                ref={(el: HTMLLabelElement | null) => {
+                  labelRefs.current[index] = el;
+                }}
+                className="w-full h-full pl-4 py-3 focus:ring-0 focus:border-0 focus:outline-none hover:cursor-pointer group-data-[disabled=true]:pointer-events-auto group-data-[disabled=true]:opacity-100 peer-disabled:cursor-auto peer-disabled:opacity-100"
                 htmlFor={`${nodeId}-r${index}`}
+                contentEditable={isEditable}
+                onBlur={(e) => handleLabelChange(index, e.currentTarget.textContent || option.label)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                suppressContentEditableWarning
               >
                 {option.label}
               </Label>
-              {!isEditable && correctAnswer === option.value && (
-                <CheckCircle2 className="h-5 w-5 text-green-500 ml-2" />
-              )}
             </div>
           ))}
         </RadioGroup>

@@ -270,6 +270,7 @@ export default function Home() {
 
   const handleSaveCard = async (card: CardI) => {
     const res = await homeApi.createCard(card);
+    console.log(res)
     if (editingCardIndex !== null) {
       const updatedCards = [...cardsArray];
       updatedCards[editingCardIndex] = card;
@@ -281,8 +282,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-1 flex-col pl-6 overflow-y-scroll">
-      <div className="sticky top-0 flex align-middle gap-4 z-30 py-3">
+    <div className="flex flex-1 flex-col pl-5 pt-5 overflow-y-scroll">
+      <div className="sticky top-0 flex align-middle gap-4 z-30">
         <Select value={cardSize} onValueChange={setCardSize}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Select card size" />

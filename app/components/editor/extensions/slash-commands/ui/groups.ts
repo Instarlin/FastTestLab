@@ -140,7 +140,7 @@ export const GROUPS: Group[] = [
         action: (editor, data) => {
           editor.chain().focus()
           .undo()
-          .toggleSigleOption({
+          .toggleSingleOption({
             options: data.options,
             defaultValue: data.options[0]?.value
           }).run();

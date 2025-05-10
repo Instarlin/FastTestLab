@@ -8,12 +8,14 @@ interface SingleOptionAttributes {
     label: string
   }>
   defaultValue?: string
+  selectedValue?: string
+  correctAnswer?: string
 }
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
-    sigleoption: {
-      toggleSigleOption: (attributes?: SingleOptionAttributes) => ReturnType,
+    singleoption: {
+      toggleSingleOption: (attributes?: SingleOptionAttributes) => ReturnType,
     }
   }
 }
@@ -21,7 +23,7 @@ declare module '@tiptap/core' {
 export default Node.create({
   name: 'singleOptionNode',
   group: 'block list',
-  atom: true,
+  atom: false,
 
   addAttributes() {
     return {
@@ -34,6 +36,9 @@ export default Node.create({
       },
       defaultValue: {
         default: 'comfortable',
+      },
+      selectedValue: {
+        default: null,
       },
     }
   },
@@ -52,7 +57,7 @@ export default Node.create({
 
   addCommands() {
     return {
-      toggleSigleOption: (attributes?: SingleOptionAttributes) => ({ commands }) => {
+      toggleSingleOption: (attributes?: SingleOptionAttributes) => ({ commands }) => {
         return commands.insertContent({
           type: this.name,
           attrs: attributes,
