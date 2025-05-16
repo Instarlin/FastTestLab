@@ -13,7 +13,7 @@ import axios from "axios";
 interface Message {
   id: string;
   content: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   timestamp: Date;
 }
 
@@ -24,7 +24,7 @@ interface Chat {
   timestamp: Date;
 }
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: "Chat" },
     { name: "description", content: "Chat interface with file uploads" },
@@ -48,34 +48,31 @@ export default function Chat() {
     scrollToBottom();
   }, [messages]);
 
-  // Load initial chat list
   useEffect(() => {
     const loadChats = async () => {
       try {
-        const response = await axios.get('/api/chats');
+        const response = await axios.get("/api/chats");
         setChats(response.data);
-        // Select the first chat by default
         if (response.data.length > 0) {
           setSelectedChat(response.data[0].id);
         }
       } catch (error) {
-        console.error('Error loading chats:', error);
+        console.error("Error loading chats:", error);
       }
     };
     loadChats();
   }, []);
 
-  // Load messages when chat is selected
   useEffect(() => {
     const loadMessages = async () => {
       if (!selectedChat) return;
-      
+
       setIsLoadingChat(true);
       try {
         const response = await axios.get(`/api/chats/${selectedChat}/messages`);
         setMessages(response.data);
       } catch (error) {
-        console.error('Error loading messages:', error);
+        console.error("Error loading messages:", error);
       } finally {
         setIsLoadingChat(false);
       }
@@ -89,7 +86,7 @@ export default function Chat() {
 
   const dropzone = useDropzone({
     onDropFile: async (file: File) => {
-      setFiles(prev => [...prev, file]);
+      setFiles((prev) => [...prev, file]);
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return {
         status: "success",
@@ -112,33 +109,32 @@ export default function Chat() {
     const userMessage: Message = {
       id: Date.now().toString(),
       content: message,
-      role: 'user',
-      timestamp: new Date()
+      role: "user",
+      timestamp: new Date(),
     };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setMessage("");
 
     try {
-      // Send request to server
       await axios.post(`/api/chats/${selectedChat}/messages`, {
         message: userMessage.content,
-        files: files.map(file => ({
+        files: files.map((file) => ({
           name: file.name,
           type: file.type,
-          size: file.size
-        }))
+          size: file.size,
+        })),
       });
 
-      // Add assistant response (mock for now)
+      //* Assistant response (mock for now)
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'This is a mock response. Server integration needed.',
-        role: 'assistant',
-        timestamp: new Date()
+        content: "This is a mock response. Server integration needed.",
+        role: "assistant",
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     }
   };
 
@@ -153,7 +149,9 @@ export default function Chat() {
               key={chat.id}
               onClick={() => handleChatSelect(chat.id)}
               className={`hover:cursor-pointer rounded-lg p-2 ${
-                selectedChat === chat.id ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                selectedChat === chat.id
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
               }`}
             >
               <div className="font-medium truncate">{chat.title}</div>
@@ -182,13 +180,13 @@ export default function Chat() {
                         {messages.map((msg) => (
                           <div
                             key={msg.id}
-                            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                           >
                             <div
                               className={`max-w-[70%] rounded-lg p-3 ${
-                                msg.role === 'user'
-                                  ? 'bg-primary text-primary-foreground'
-                                  : 'bg-muted'
+                                msg.role === "user"
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted"
                               }`}
                             >
                               {msg.content}
@@ -219,7 +217,9 @@ export default function Chat() {
                     variant="ghost"
                     size="icon"
                     className="h-4 w-4"
-                    onClick={() => setFiles(prev => prev.filter((_, i) => i !== index))}
+                    onClick={() =>
+                      setFiles((prev) => prev.filter((_, i) => i !== index))
+                    }
                   >
                     <Trash2Icon className="size-4" />
                   </Button>
@@ -233,7 +233,7 @@ export default function Chat() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
+                  if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
                   }
@@ -242,19 +242,19 @@ export default function Chat() {
                 className="w-full resize-none rounded-lg border-1 border-gray-200 bg-background px-4 py-2 min-h-[40px] max-h-[120px] overflow-y-scroll focus-visible:outline-none"
                 rows={1}
                 style={{
-                  height: 'auto',
-                  minHeight: '40px',
-                  maxHeight: '120px',
+                  height: "auto",
+                  minHeight: "40px",
+                  maxHeight: "120px",
                 }}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
-                  target.style.height = 'auto';
+                  target.style.height = "auto";
                   target.style.height = `${Math.min(target.scrollHeight, 120)}px`;
                 }}
               />
             </div>
-            <Button 
-              variant='ghost' 
+            <Button
+              variant="ghost"
               className="absolute right-2 bottom-[9px]"
               onClick={sendMessage}
             >
@@ -269,8 +269,12 @@ export default function Chat() {
         <h2 className="mb-4 text-lg font-semibold">Context</h2>
         <div className="space-y-2">
           {/* Context items will go here */}
-          <div className="hover:cursor-pointer rounded-lg bg-muted p-2">File 1</div>
-          <div className="hover:cursor-pointer rounded-lg p-2 hover:bg-muted">File 2</div>
+          <div className="hover:cursor-pointer rounded-lg bg-muted p-2">
+            File 1
+          </div>
+          <div className="hover:cursor-pointer rounded-lg p-2 hover:bg-muted">
+            File 2
+          </div>
         </div>
       </div>
     </div>

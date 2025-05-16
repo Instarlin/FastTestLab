@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useDelayedLoader } from "~/lib/utils/useDelayedLoader";
+import { useDelayedLoader } from "~/hooks/useDelayedLoader";
 
 export function LoadIndicator() {
   const progress = useDelayedLoader();

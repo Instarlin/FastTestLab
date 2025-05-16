@@ -2,28 +2,19 @@ import { Lock, Mail, User } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Input } from "~/components/Input";
+import { Input } from "~/components/ui/hoverInput";
 import type { Route } from "./+types/home";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { authApi } from "~/lib/api";
 import type { RegisterRequest, LoginRequest } from "~/lib/api";
+import {
+  type RegisterFormData,
+  type LoginFormData,
+  registerSchema,
+  loginSchema,
+} from "~/schemas/auth";
 import { Waves } from "~/components/Waves";
-
-const registerSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters")
-});
-
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required")
-});
-
-type RegisterFormData = z.infer<typeof registerSchema>;
-type LoginFormData = z.infer<typeof loginSchema>;
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Login" }, { name: "description", content: "Login page" }];
@@ -39,17 +30,17 @@ export default function AuthForm() {
   const {
     register: registerForm,
     handleSubmit: handleRegisterSubmit,
-    formState: { errors: registerErrors, isSubmitting: isRegisterSubmitting }
+    formState: { errors: registerErrors, isSubmitting: isRegisterSubmitting },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
   });
 
   const {
     register: loginForm,
     handleSubmit: handleLoginSubmit,
-    formState: { errors: loginErrors, isSubmitting: isLoginSubmitting }
+    formState: { errors: loginErrors, isSubmitting: isLoginSubmitting },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
   });
 
   const formVariants = {
@@ -121,9 +112,11 @@ export default function AuthForm() {
                 onSubmit={handleLoginSubmit(onLogin)}
               >
                 {error && (
-                  <div className="text-red-500 text-sm text-center">{error}</div>
+                  <div className="text-red-500 text-sm text-center">
+                    {error}
+                  </div>
                 )}
-                
+
                 <div className="relative">
                   <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400 pointer-events-none" />
                   <Input
@@ -138,10 +131,12 @@ export default function AuthForm() {
                     {...loginForm("email")}
                   />
                   {loginErrors.email && (
-                    <p className="text-red-500 text-xs mt-1">{loginErrors.email.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {loginErrors.email.message}
+                    </p>
                   )}
                 </div>
-                
+
                 <div className="relative">
                   <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400 pointer-events-none" />
                   <Input
@@ -156,7 +151,9 @@ export default function AuthForm() {
                     {...loginForm("password")}
                   />
                   {loginErrors.password && (
-                    <p className="text-red-500 text-xs mt-1">{loginErrors.password.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {loginErrors.password.message}
+                    </p>
                   )}
                 </div>
 
@@ -186,7 +183,9 @@ export default function AuthForm() {
                   type="submit"
                   disabled={isLoginSubmitting}
                   className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white ${
-                    darkMode ? "hover:bg-zinc-600 bg-zinc-700" : "hover:bg-zinc-700 bg-zinc-800"
+                    darkMode
+                      ? "hover:bg-zinc-600 bg-zinc-700"
+                      : "hover:bg-zinc-700 bg-zinc-800"
                   } ${isLoginSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   {isLoginSubmitting ? "Logging in..." : "Log In"}
@@ -204,9 +203,11 @@ export default function AuthForm() {
                 onSubmit={handleRegisterSubmit(onRegister)}
               >
                 {error && (
-                  <div className="text-red-500 text-sm text-center">{error}</div>
+                  <div className="text-red-500 text-sm text-center">
+                    {error}
+                  </div>
                 )}
-                
+
                 <div className="relative">
                   <User className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
                   <Input
@@ -221,10 +222,12 @@ export default function AuthForm() {
                     {...registerForm("username")}
                   />
                   {registerErrors.username && (
-                    <p className="text-red-500 text-xs mt-1">{registerErrors.username.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {registerErrors.username.message}
+                    </p>
                   )}
                 </div>
-                
+
                 <div className="relative">
                   <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
                   <Input
@@ -239,10 +242,12 @@ export default function AuthForm() {
                     {...registerForm("email")}
                   />
                   {registerErrors.email && (
-                    <p className="text-red-500 text-xs mt-1">{registerErrors.email.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {registerErrors.email.message}
+                    </p>
                   )}
                 </div>
-                
+
                 <div className="relative">
                   <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
                   <Input
@@ -257,15 +262,19 @@ export default function AuthForm() {
                     {...registerForm("password")}
                   />
                   {registerErrors.password && (
-                    <p className="text-red-500 text-xs mt-1">{registerErrors.password.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {registerErrors.password.message}
+                    </p>
                   )}
                 </div>
-                
+
                 <button
                   type="submit"
                   disabled={isRegisterSubmitting}
                   className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white ${
-                    darkMode ? "bg-zinc-700 hover:bg-zinc-600" : "bg-zinc-800 hover:bg-zinc-700"
+                    darkMode
+                      ? "bg-zinc-700 hover:bg-zinc-600"
+                      : "bg-zinc-800 hover:bg-zinc-700"
                   } ${isRegisterSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   {isRegisterSubmitting ? "Signing Up..." : "Sign Up"}
@@ -289,7 +298,7 @@ export default function AuthForm() {
           </button>
         </div>
       </motion.div>
-      <Waves/>
+      <Waves />
     </div>
   );
 }

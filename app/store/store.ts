@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+//* For now unused, safe to delete
+
 interface ChatStore {
   chatId: string;
   setChatId: (chatId: string) => void;

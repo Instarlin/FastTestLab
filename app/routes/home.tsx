@@ -12,7 +12,11 @@ import { Card } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Settings2Icon } from "lucide-react";
 import { CardDialog, type CardI } from "~/components/CardDialog";
-import { homeApi } from "~/lib/homeApi";
+import { lessons } from "~/mock/lessons";
+import { cardSizeSchema } from "../schemas/auth";
+
+//* Previous implementation of API
+// import { homeApi } from "~/lib/home.server";
 // import { requireUser } from "~/lib/auth.server";
 // import type { LoaderFunction } from "react-router";
 
@@ -23,245 +27,29 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-//! Needs to be done on server, kubernetes required
 // export const loader: LoaderFunction = async ({ request }: Route.LoaderArgs) => {
+  // let user = await requireUser(request);
+  // console.log(user);
+  // return { user };
+  //* Previous implementation of API
   // const user = await requireUser(request);
   // return { user };
 // };
-
-const lessons = [
-  {
-    title: "Lesson 1",
-    description: "Lesson 1 Description",
-    subLessons: [
-      {
-        title: "Sub Lesson 1",
-        description: "Sub Lesson 1 Description",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson 2",
-        description: "Sub Lesson 2 Description",
-        icon: "theory",
-        succsess: false,
-      },
-    ],
-  },
-  {
-    title: "Lesson 2",
-    description: "Lesson 2 Description",
-    subLessons: [
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: true,
-      },
-    ],
-  },
-  {
-    title: "Lesson 3",
-    description: "Lesson 3 Description",
-    subLessons: [
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-    ],
-  },
-  {
-    title: "Lesson 4",
-    description: "Lesson 2 Description",
-    subLessons: [
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: true,
-      },
-      {
-        title: "Sub Lesson CHIMIN",
-        description: "Sub Lesson Chimin",
-        icon: "practice",
-        succsess: false,
-      },
-      {
-        title: "Sub Lesson CHIMIN 2",
-        description: "Sub Lesson Chimin 2",
-        icon: "theory",
-        succsess: true,
-      },
-    ],
-  },
-];
 
 export default function Home() {
   const [cardSize, setCardSize] = useState<string>();
   const [cardsArray, setCardsArray] = useState<CardI[]>([]);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
-  const allowedSizes = ["20%", "25%", "33%"];
 
   useEffect(() => {
-    homeApi.getCards().then((cards) => {
-      // TODO: make card's fields fron response being aligned with CardI type
-      // setCardsArray(cards);
-      console.log("cards", cards);
-    });
-    const savedSize = localStorage.getItem("cardSize");
-    setCardSize(allowedSizes.includes(savedSize || "") && savedSize ? savedSize : "25%");
+    //* Previous implementation of API
+    // TODO: make card's fields fron response being aligned with CardI type
+    // homeApi.getCards().then((cards) => {
+    //   setCardsArray(cards);
+    //   console.log("cards", cards);
+    // });
+    const savedSize = cardSizeSchema.safeParse(localStorage.getItem("cardSize"));
+    setCardSize(savedSize.success ? savedSize.data : "25%");
   }, []);
 
   useEffect(() => {
@@ -269,8 +57,9 @@ export default function Home() {
   }, [cardSize]);
 
   const handleSaveCard = async (card: CardI) => {
-    const res = await homeApi.createCard(card);
-    console.log(res)
+    //! Same here, might be done in other way
+    // const res = await homeApi.createCard(card);
+    // console.log(res)
     if (editingCardIndex !== null) {
       const updatedCards = [...cardsArray];
       updatedCards[editingCardIndex] = card;
@@ -283,6 +72,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-1 flex-col pl-5 pt-5 overflow-y-scroll">
+      {/* Header Menu */}
       <div className="sticky top-0 flex align-middle gap-4 z-30">
         <Select value={cardSize} onValueChange={setCardSize}>
           <SelectTrigger className="w-[150px]">
@@ -298,14 +88,17 @@ export default function Home() {
         </Select>
         <CardDialog onSave={handleSaveCard} />
       </div>
+      {/* Cards */}
       <div className="flex flex-1 flex-wrap justify-start gap-2 transition-all duration-300">
         {cardsArray.map((card, index) => (
           <Card
+            key={index}
             title={card.title}
             picture={card.picture || "https://cdn.prod.website-files.com/645a9acecda2e0594fac6126/6685a488a38a8a680ba9e5f6_og-tiptap-editor.jpg"}
             description={card.description}
             size={cardSize || "25%"}
             lessons={lessons}
+            //* Card editing button
             settingsButton={
               <CardDialog
                 trigger={

@@ -1,0 +1,218 @@
+export const lessons = [
+  {
+    title: "Lesson 1",
+    description: "Lesson 1 Description",
+    subLessons: [
+      {
+        title: "Sub Lesson 1",
+        description: "Sub Lesson 1 Description",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson 2",
+        description: "Sub Lesson 2 Description",
+        icon: "theory",
+        success: false,
+      },
+    ],
+  },
+  {
+    title: "Lesson 2",
+    description: "Lesson 2 Description",
+    subLessons: [
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: true,
+      },
+    ],
+  },
+  {
+    title: "Lesson 3",
+    description: "Lesson 3 Description",
+    subLessons: [
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+    ],
+  },
+  {
+    title: "Lesson 4",
+    description: "Lesson 2 Description",
+    subLessons: [
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: true,
+      },
+      {
+        title: "Sub Lesson CHIMIN",
+        description: "Sub Lesson Chimin",
+        icon: "practice",
+        success: false,
+      },
+      {
+        title: "Sub Lesson CHIMIN 2",
+        description: "Sub Lesson Chimin 2",
+        icon: "theory",
+        success: true,
+      },
+    ],
+  },
+];

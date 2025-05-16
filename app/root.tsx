@@ -7,7 +7,7 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import { MessageProvider } from "./components/Message";
+import { MessageProvider } from "./components/ui/message";
 
 import type { Route } from "./+types/root";
 import "./app.css";

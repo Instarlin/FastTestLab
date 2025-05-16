@@ -8,7 +8,6 @@ export default [
     route("/home", "routes/home.tsx"),
     route("/chat", "routes/chat.tsx"),
     route("/tests", "routes/tests.tsx", [
-      route("extrachimin", "routes/chimin/extrachimin.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

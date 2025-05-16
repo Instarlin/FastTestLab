@@ -10,7 +10,7 @@ interface Lesson {
   subLessons: {
     title: string;
     icon: string;
-    succsess: boolean;
+    success: boolean;
   }[];
 }
 
@@ -85,7 +85,7 @@ function Card({
                         : <LibraryBigIcon className="size-4 text-zinc-600" />
                       }
                       <p>{subLesson.title}</p>
-                      {subLesson.succsess ? <CheckIcon className="size-4 text-zinc-600 ml-auto" /> : null}
+                      {subLesson.success ? <CheckIcon className="size-4 text-zinc-600 ml-auto" /> : null}
                     </div>
                   </Link>
                 ))}

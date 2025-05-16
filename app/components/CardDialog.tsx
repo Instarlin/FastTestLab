@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "~/components/ui/dialog";
-import { Button } from "~/components/Button";
-import { Input } from "~/components/Input";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { CloudUploadIcon, Trash2Icon } from "lucide-react";
 import {
@@ -84,20 +84,27 @@ export function CardDialog({
     });
   };
 
-  const resetForm = () => {
+  const resetDropzone = async () => {
+    await Promise.all(dropzone.fileStatuses.map(file => dropzone.onRemoveFile(file.id)));
+  };
+
+  const resetForm = async () => {
     setTitle(initialData?.title || "");
     setDescription(initialData?.description || "");
     setColor(initialData?.color || "#ffffff");
     setTags(initialData?.tags || []);
     setNewTag("");
-    console.log(dropzone.fileStatuses);
-    dropzone.fileStatuses = [];
+    await resetDropzone();
   };
 
+  useEffect(() => {
+    resetForm();
+  }, [initialData]);
+
   return (
-    <Dialog onOpenChange={(open) => {
+    <Dialog onOpenChange={async (open) => {
       if (!open) {
-        resetForm();
+        await resetForm();
       }
       onOpenChange?.(open);
     }}>
@@ -114,22 +121,23 @@ export function CardDialog({
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="title" className="text-right">Title</Label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Card Title" className="col-span-3 w-[200px]" />
+            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Card Title" className="col-span-3 w-[200px]" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="description" className="text-right">Description</Label>
-            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Card Description" className="col-span-3 w-[200px]" />
+            <Input id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Card Description" className="col-span-3 w-[200px]" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="color" className="text-right">Color</Label>
             <div className="col-span-3 flex items-center gap-2">
-              <input
+              <Input
                 type="color"
+                id="color"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
                 className="h-10 w-10 rounded border p-1"
               />
-              <span className="text-sm text-muted-foreground">Choose card color</span>
+              <Label className="text-sm text-muted-foreground">Choose card color</Label>
             </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -137,6 +145,7 @@ export function CardDialog({
             <div className="col-span-3 space-y-2">
               <div className="flex gap-2">
                 <Input
+                  id="tags"
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
                   placeholder="Add tag"
@@ -151,7 +160,7 @@ export function CardDialog({
                     <span>{tag}</span>
                     <button
                       onClick={() => handleRemoveTag(tag)}
-                      className="text-muted-foreground hover:text-foreground"
+                      className="text-muted-foreground hover:text-foreground hover:cursor-pointer"
                     >
                       ×
                     </button>
@@ -221,7 +230,7 @@ export function CardDialog({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="submit" onClick={handleSave}>
+            <Button onClick={handleSave}>
               {initialData ? "Save Changes" : "Create Card"}
             </Button>
           </DialogClose>

@@ -6,3 +6,6 @@
 /build/
 
 .env
+
+/prisma/prisma/*
+/prisma/migrations/*
