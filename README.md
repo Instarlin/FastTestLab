@@ -1,87 +1,149 @@
-# Welcome to React Router!
+# 🚀 **FastTestLab2025**
 
-A modern, production-ready template for building full-stack React applications using React Router.
+A modern, full-stack web application for **rapid test creation, management, and execution**.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+Built with:
+- ⚛️ **React**
+- 🛡 **TypeScript**
+- 🎨 **TailwindCSS**
+- 🗄 **Prisma**
+- 🐳 **Docker**
 
-## Features
+---
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## ✨ Features
 
-## Getting Started
+- 📝 **Rich text editor** for test creation
+- 🧩 **Modular component architecture**
+- ⚡️ **Hot Module Replacement (HMR)** for fast development
+- 🎨 **TailwindCSS** for rapid UI development
+- 🗄 **Prisma ORM** for database management
+- 🐳 **Docker** support for easy deployment
 
-### Installation
+---
 
-Install the dependencies:
+## 🗂️ Project Structure
+
+```text
+FastTestLab2025/
+├── app/                # Frontend application (React, components, hooks, routes)
+│   ├── components/     # UI and editor components
+│   ├── hooks/          # Custom React hooks
+│   ├── lib/            # Utility libraries
+│   ├── mock/           # Mock data for development/testing
+│   ├── routes/         # Application routes
+│   ├── schemas/        # Validation schemas
+│   ├── store/          # State management
+│   └── styles/         # Global and component styles
+├── prisma/             # Prisma schema and migrations
+│   ├── migrations/     # Database migrations
+│   └── prisma/         # Prisma schema file
+├── public/             # Static assets
+├── .env                # Environment variables
+├── Dockerfile          # Docker build instructions
+├── docker-compose.yaml # Docker Compose setup
+├── package.json        # Project metadata and scripts
+├── README.md           # Project documentation
+└── ...
+```
+
+---
+
+## 🏁 Getting Started
+
+### 1️⃣ Prerequisites
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [npm](https://www.npmjs.com/) (v9+ recommended)
+- [Docker](https://www.docker.com/) (optional, for containerized deployment)
+- [PostgreSQL](https://www.postgresql.org/) (or your preferred database, if not using Docker)
+
+### 2️⃣ Installation
 
 ```bash
+git clone https://github.com/yourusername/FastTestLab2025.git
+cd FastTestLab2025
 npm install
 ```
 
-### Development
+- Copy `.env.example` to `.env` and fill in the required values.
+- Set up the database:
 
-Start the development server with HMR:
+```bash
+npx prisma migrate dev
+```
+
+### 3️⃣ Development
+
+Start the development server with hot reloading:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+Visit [http://localhost:5173](http://localhost:5173) to view the app.
 
-## Building for Production
-
-Create a production build:
+### 4️⃣ Building for Production
 
 ```bash
 npm run build
 ```
 
-## Deployment
+---
 
-### Docker Deployment
+## 🐳 Running with Docker
 
-To build and run using Docker:
-
+**Build the Docker image:**
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+docker build -t fasttestlab2025 .
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+**Run the container:**
+```bash
+docker run -p 3000:3000 fasttestlab2025
 ```
 
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+Or use Docker Compose for multi-service setup:
+```bash
+docker-compose up --build
+```
 
 ---
 
-Built with ❤️ using React Router.
+## 🗄️ Database Management
+
+- **Prisma** is used for database schema and migrations.
+- To apply migrations:
+  ```bash
+  npx prisma migrate deploy
+  ```
+- To open Prisma Studio:
+  ```bash
+  npx prisma studio
+  ```
+
+---
+
+## 🎨 Styling
+
+- **TailwindCSS** is pre-configured for rapid UI development.
+- Customize styles in `app/styles/` and `tailwind.config.ts`.
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature/YourFeature`)
+5. Open a pull request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+Built with ❤️ by the Chimin
