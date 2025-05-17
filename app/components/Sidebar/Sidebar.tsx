@@ -62,9 +62,9 @@ export function SidebarNav({ className }: { className?: string }) {
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             <Logo />
             <div className="mt-12 flex flex-col gap-2">
-              {links.map((link, idx) => (
+              {links.map((link) => (
                 <SidebarLink
-                  key={idx}
+                  key={link.label}
                   link={link}
                   className="hover:bg-sidebar-border duration-150 rounded-lg pl-2 py-2 mr-3"
                 />

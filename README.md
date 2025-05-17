@@ -1,4 +1,4 @@
-# 🚀 **FastTestLab2025**
+# 🚀 **FastTestLab**
 
 A modern, full-stack web application for **rapid test creation, management, and execution**.
 

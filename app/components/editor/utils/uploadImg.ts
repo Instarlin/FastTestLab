@@ -1,3 +1,5 @@
+//* Some sort of chimin code here, have no idea where to plug it
+
 import axios from 'axios';
 
 function uploadImage(file: File) {
