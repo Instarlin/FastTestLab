@@ -24,19 +24,12 @@ export default Node.create({
   name: 'singleOptionNode',
   group: 'block list',
   atom: false,
+  selectable: false,
+  // inline: true,
 
   addAttributes() {
     return {
-      options: {
-        default: [
-          { value: 'default', label: 'Default' },
-          { value: 'comfortable', label: 'Comfortable' },
-          { value: 'compact', label: 'Compact' }
-        ],
-      },
-      defaultValue: {
-        default: 'comfortable',
-      },
+      options: {},
       selectedValue: {
         default: null,
       },

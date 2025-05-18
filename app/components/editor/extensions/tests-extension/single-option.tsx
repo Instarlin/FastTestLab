@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect, useRef, useCallback } from 'react';
 // import { CheckCircle2 } from "lucide-react";
 import type { KeyboardEvent } from 'react';
+import { TextSelection } from "@tiptap/pm/state";
 
 interface Option {
   value: string;
@@ -72,7 +73,33 @@ export function SingleOption(props: NodeViewProps) {
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLLabelElement>, index: number) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      const newOption = { value: uuidv4(), label: 'New Option' };
+
+      // TODO: Make editor and app state sync
+      //* For now, editor state is one step behind app state
+      // const isLast    = index === newOptions.length - 1
+      // const isEmpty   = newOptions[index]?.label === ''
+      // if (isLast && isEmpty) {
+      //   const updatedOptions = newOptions.slice(0, -1)
+      //   setNewOptions(updatedOptions)
+      //   labelRefs.current.splice(index, 1)
+
+      //   const pos = (typeof props.getPos === 'function')
+      //     ? props.getPos()
+      //     : null
+
+      //   if (pos !== null) {
+      //     const after = pos + props.node.nodeSize
+      //     props.editor
+      //       .chain()
+      //       .focus()
+      //       .updateAttributes( 'singleOptionNode', { options: updatedOptions })
+      //       .setTextSelection(after)
+      //       .run();
+      //   }
+        // return;
+      // }
+
+      const newOption = { value: uuidv4(), label: '' };
       const updatedOptions = [...newOptions];
       updatedOptions.splice(index + 1, 0, newOption);
       setNewOptions(updatedOptions);
@@ -80,6 +107,63 @@ export function SingleOption(props: NodeViewProps) {
         options: updatedOptions
       });
       setLastAddedIndex(index + 1);
+    }
+    if (e.key === 'Backspace') {
+      const text = e.currentTarget.textContent;
+      if (text === '') {
+        e.preventDefault();
+        const updatedOptions = [...newOptions];
+        const [removed] = updatedOptions.splice(index, 1);
+        let newSelected = selectedValue;
+        if (selectedValue.includes(removed.value)) {
+          newSelected = selectedValue === removed.value ? '' : selectedValue;
+          setSelectedValue(newSelected);
+          props.updateAttributes({ selectedValue: newSelected });
+        }
+        setNewOptions(updatedOptions);
+        props.updateAttributes({ options: updatedOptions });
+        labelRefs.current.splice(index, 1);
+        const focusIndex = index > 0 ? index - 1 : 0;
+        setLastAddedIndex(focusIndex);
+      }
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      if (index < newOptions.length - 1) {
+        labelRefs.current[index + 1]?.focus()
+        return;
+      }
+
+      const pos = (typeof props.getPos === 'function')
+        ? props.getPos()
+        : null
+
+      if (pos !== null) {
+        const after = pos + props.node.nodeSize
+        const { state, dispatch } = props.editor.view
+        const tr = state.tr.setSelection(TextSelection.create(state.doc, after))
+        dispatch(tr)
+        props.editor.view.focus()
+      }
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (index > 0) {
+        labelRefs.current[index - 1]?.focus()
+        return;
+      }
+
+      const pos = (typeof props.getPos === 'function')
+        ? props.getPos()
+        : null
+
+      if (pos !== null && pos > 0) {
+        const before = pos - 1
+        const { state, dispatch } = props.editor.view
+        const tr = state.tr.setSelection(TextSelection.create(state.doc, before))
+        dispatch(tr)
+        props.editor.view.focus()
+      }
     }
   }, [newOptions, props]);
 

@@ -13,8 +13,8 @@ interface Option {
 
 export function MultipleOption(props: NodeViewProps) {
   const options = props.node.attrs.options || [];
-  const [updatedOptions, setUpdatedOptions] = useState<Option[]>([...options]);
   const nodeId = props.node.attrs.id || props.node.attrs._id || uuidv4();
+  const [updatedOptions, setUpdatedOptions] = useState<Option[]>([...options]);
   const [isEditable, setIsEditable] = useState(props.editor.isEditable);
   const [selectedValues, setSelectedValues] = useState<string[]>(props.node.attrs.selectedValues || []);
   const [lastAddedIndex, setLastAddedIndex] = useState<number | null>(null);
@@ -84,7 +84,27 @@ export function MultipleOption(props: NodeViewProps) {
       });
       setLastAddedIndex(index + 1);
     }
-  }, [updatedOptions, props]);
+    if (e.key === 'Backspace') {
+      const text = e.currentTarget.textContent;
+      if (text === '') {
+        e.preventDefault();
+        const newOptions = [...updatedOptions];
+        const [removed] = newOptions.splice(index, 1);
+        let newSelected = selectedValues;
+        if (selectedValues.includes(removed.value)) {
+          newSelected = selectedValues.filter(v => v !== removed.value);
+          setSelectedValues(newSelected);
+          props.updateAttributes({ selectedValues: newSelected });
+        }
+        setUpdatedOptions(newOptions);
+        props.updateAttributes({ options: newOptions });
+        labelRefs.current.splice(index, 1);
+        const focusIndex = index > 0 ? index - 1 : 0;
+        setLastAddedIndex(focusIndex);
+        console.log(props.node.attrs.selectedValues);
+      }
+    }
+  }, [updatedOptions, selectedValues, props]);
 
   return (
     <NodeViewWrapper>

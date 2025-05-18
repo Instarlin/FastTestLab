@@ -28,7 +28,6 @@ export default function Tests() {
 
   useEffect(() => {
     setCourseId(window.location.pathname.split("/")[2]);
-    console.log(courseId);
     const timer = setTimeout(() => {
       if (!editor) {
         showMessage("error", "Failed to load editor. Please try again.");
