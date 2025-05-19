@@ -3,7 +3,7 @@ import type { Route } from "./+types/home";
 import { Outlet } from "react-router";
 import { useMessage } from "~/components/ui/message";
 import { Button } from "~/components/ui/button";
-import { RichEditor } from "~/components/RichEditor";
+import { RichEditor } from "~/components/widgets/RichEditor";
 import { WordCount } from "~/components/editor/ui/word-count";
 import { PencilIcon, PencilOffIcon } from "lucide-react";
 import useRichEditor from "~/components/editor/hooks/useRichEditor";

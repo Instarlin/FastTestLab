@@ -1,4 +1,4 @@
-import { WavyBackground } from "~/components/Hero/HeroBg";
+import { WavyBackground } from "~/components/widgets/Hero/HeroBg";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {

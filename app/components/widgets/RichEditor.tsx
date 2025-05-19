@@ -1,6 +1,6 @@
 import { Editor, EditorContent } from "@tiptap/react";
 import { useRef } from "react";
-import { CustomBubbleMenu } from "./editor/extensions/bubble-menu/bubble";
+import { CustomBubbleMenu } from "~/components/editor/extensions/bubble-menu/bubble";
 
 export const RichEditor = ({
   editor,

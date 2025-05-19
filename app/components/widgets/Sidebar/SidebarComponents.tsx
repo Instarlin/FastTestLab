@@ -3,13 +3,13 @@ import React, { createContext, useContext, useState } from "react";
 import { Link } from "react-router";
 import { cn } from "~/lib/utils";
 import { MenuIcon, XIcon } from "lucide-react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../ui/select";
-import { Switch } from "../ui/switch";
+import { Label } from "../../ui/label";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../ui/select";
+import { Switch } from "../../ui/switch";
 
 interface Links {
   label: string;

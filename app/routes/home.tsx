@@ -11,7 +11,7 @@ import {
 import { Card } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Settings2Icon } from "lucide-react";
-import { CardDialog, type CardI } from "~/components/CardDialog";
+import { CardDialog, type CardI } from "~/components/widgets/CardDialog";
 import { lessons } from "~/mock/lessons";
 import { cardSizeSchema } from "../schemas/auth";
 

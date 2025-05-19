@@ -3,7 +3,7 @@ import {
   // AutonomousBreadcrumbs,
   LoadIndicator,
   SidebarNav,
-} from "~/components/Sidebar";
+} from "~/components/widgets/Sidebar";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {

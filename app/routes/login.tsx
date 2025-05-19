@@ -14,7 +14,7 @@ import {
   registerSchema,
   loginSchema,
 } from "~/schemas/auth";
-import { Waves } from "~/components/Waves";
+import { Waves } from "~/components/widgets/Waves";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Login" }, { name: "description", content: "Login page" }];
