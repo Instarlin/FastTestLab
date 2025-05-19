@@ -11,14 +11,15 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Underline from "@tiptap/extension-underline";
 import Youtube from "@tiptap/extension-youtube";
+import { Gapcursor } from "@tiptap/extension-gapcursor";
 import { type DOMOutputSpec } from "@tiptap/pm/model";
 import StarterKit from "@tiptap/starter-kit";
 import GlobalDragHandle from "tiptap-extension-global-drag-handle";
 import { Markdown } from "tiptap-markdown";
 import { TrailingNode } from "./extensions/trailing-node";
 import { SlashCommand } from "./extensions/slash-commands/commands";
-import SingleOptionNode from "./extensions/tests-extension/single-option-node";
-import MultipleOptionNode from "./extensions/tests-extension/multiple-option-node";
+import SingleOptionNode from "./extensions/tests-extension/single-option/single-option-node";
+import MultipleOptionNode from "./extensions/tests-extension/multiple-option/multiple-option-node";
 import { cn } from "~/lib/utils";
 
 const TiptapStarterKit = StarterKit.configure({
@@ -220,4 +221,5 @@ export const defaultExtensions = [
   markdown,
   SingleOptionNode,
   MultipleOptionNode,
+  Gapcursor,
 ];

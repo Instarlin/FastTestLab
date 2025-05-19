@@ -1,27 +1,24 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { NodeViewWrapper } from "@tiptap/react";
-import type { NodeViewProps } from "@tiptap/react";
-import { Checkbox } from "~/components/ui/checkbox";
+import { Checkbox } from '~/components/ui/checkbox';
 import { Label } from "~/components/ui/label";
 import { v4 as uuidv4 } from 'uuid';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { handleKeyDown } from '../option/keyHandlers';
+import type { NodeViewProps } from "@tiptap/react";
+import type { Option } from "../option/types";
 import type { KeyboardEvent } from 'react';
-
-interface Option {
-  value: string;
-  label: string;
-}
 
 export function MultipleOption(props: NodeViewProps) {
   const options = props.node.attrs.options || [];
   const nodeId = props.node.attrs.id || props.node.attrs._id || uuidv4();
-  const [updatedOptions, setUpdatedOptions] = useState<Option[]>([...options]);
   const [isEditable, setIsEditable] = useState(props.editor.isEditable);
+  const [newOptions, setNewOptions] = useState<Option[]>([...options]);
   const [selectedValues, setSelectedValues] = useState<string[]>(props.node.attrs.selectedValues || []);
   const [lastAddedIndex, setLastAddedIndex] = useState<number | null>(null);
   const labelRefs = useRef<(HTMLLabelElement | null)[]>([]);
 
   useEffect(() => {
-    setUpdatedOptions([...options]);
+    setNewOptions([...options]);
     setSelectedValues(props.node.attrs.selectedValues || []);
   }, [options, props.node.attrs.selectedValues]);
 
@@ -50,7 +47,7 @@ export function MultipleOption(props: NodeViewProps) {
       }
       setLastAddedIndex(null);
     }
-  }, [lastAddedIndex, updatedOptions]);
+  }, [lastAddedIndex, newOptions]);
 
   const handleValueChange = useCallback((value: string, checked: boolean) => {
     const newSelectedValues = checked
@@ -64,53 +61,36 @@ export function MultipleOption(props: NodeViewProps) {
   }, [selectedValues, props]);
 
   const handleLabelChange = useCallback((index: number, newLabel: string) => {
-    const updatedOptionsCopy = [...updatedOptions];
-    updatedOptionsCopy[index] = { ...updatedOptionsCopy[index], label: newLabel };
-    setUpdatedOptions(updatedOptionsCopy);
+    const updatedOptions = [...newOptions];
+    updatedOptions[index] = { ...updatedOptions[index], label: newLabel };
+    setNewOptions(updatedOptions);
     props.updateAttributes({
-      options: updatedOptionsCopy
+      options: updatedOptions
     });
-  }, [updatedOptions, props]);
+  }, [newOptions, props]);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLLabelElement>, index: number) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const newOption = { value: uuidv4(), label: 'New Option' };
-      const updatedOptionsCopy = [...updatedOptions];
-      updatedOptionsCopy.splice(index + 1, 0, newOption);
-      setUpdatedOptions(updatedOptionsCopy);
-      props.updateAttributes({
-        options: updatedOptionsCopy
-      });
-      setLastAddedIndex(index + 1);
-    }
-    if (e.key === 'Backspace') {
-      const text = e.currentTarget.textContent;
-      if (text === '') {
-        e.preventDefault();
-        const newOptions = [...updatedOptions];
-        const [removed] = newOptions.splice(index, 1);
-        let newSelected = selectedValues;
-        if (selectedValues.includes(removed.value)) {
-          newSelected = selectedValues.filter(v => v !== removed.value);
-          setSelectedValues(newSelected);
-          props.updateAttributes({ selectedValues: newSelected });
-        }
-        setUpdatedOptions(newOptions);
-        props.updateAttributes({ options: newOptions });
-        labelRefs.current.splice(index, 1);
-        const focusIndex = index > 0 ? index - 1 : 0;
-        setLastAddedIndex(focusIndex);
-        console.log(props.node.attrs.selectedValues);
+  const onKeyDown = useCallback((e: KeyboardEvent<HTMLLabelElement>, index: number) => {
+    handleKeyDown(
+      e,
+      {
+        mode: 'multiple',
+        index,
+        setNewOptions,
+        newOptions,
+        setSelectedValues,
+        selectedValues,
+        setLastAddedIndex,
+        labelRefs,
+        props
       }
-    }
-  }, [updatedOptions, selectedValues, props]);
+    );
+  }, [newOptions, selectedValues, props]);
 
   return (
     <NodeViewWrapper>
       <div className="relative group">
         <div className="mt-8 space-y-2">
-          {updatedOptions.map((option: Option, index: number) => (
+          {newOptions.map((option: Option, index: number) => (
             <div key={option.value} className="flex items-center rounded-md px-2 hover:bg-accent transitions-colors duration-300">
               <Checkbox
                 contentEditable={false}
@@ -128,7 +108,7 @@ export function MultipleOption(props: NodeViewProps) {
                 htmlFor={`${nodeId}-c${index}`}
                 contentEditable={isEditable}
                 onBlur={(e) => handleLabelChange(index, e.currentTarget.textContent || option.label)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
+                onKeyDown={(e) => onKeyDown(e, index)}
                 suppressContentEditableWarning
               >
                 {option.label}

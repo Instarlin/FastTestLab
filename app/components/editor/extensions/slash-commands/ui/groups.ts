@@ -1,7 +1,7 @@
 import { Editor } from '@tiptap/core'
 import { icons } from 'lucide-react'
-import { SingleOptionForm } from '../../tests-extension/single-option-form'
-import { MultipleOptionForm } from '../../tests-extension/multiple-option-form'
+import { SingleOptionForm } from '../../tests-extension/single-option/SingleOptionForm'
+import { MultipleOptionForm } from '../../tests-extension/multiple-option/MultipleOptionForm'
 export interface Command {
   name: string
   label: string

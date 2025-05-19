@@ -1,33 +1,37 @@
 import { mergeAttributes, Node } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
-import { MultipleOption } from './multiple-option'
+import { SingleOption } from './SingleOption'
 
-interface MultipleOptionAttributes {
+interface SingleOptionAttributes {
   options: Array<{
     value: string
     label: string
   }>
-  defaultValues?: string[]
-  selectedValues?: string[]
+  defaultValue?: string
+  selectedValue?: string
+  correctAnswer?: string
 }
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
-    multipleoption: {
-      toggleMultipleOption: (attributes?: MultipleOptionAttributes) => ReturnType,
+    singleoption: {
+      toggleSingleOption: (attributes?: SingleOptionAttributes) => ReturnType,
     }
   }
 }
 
 export default Node.create({
-  name: 'multipleOptionNode',
-  group: 'block list',
+  name: 'singleOptionNode',
+  group: 'block list header',
+  inline: false,
   atom: false,
+  selectable: false,
+  allowGapCursor: true,
 
   addAttributes() {
     return {
       options: {},
-      selectedValues: {
+      selectedValue: {
         default: null,
       },
     }
@@ -36,18 +40,18 @@ export default Node.create({
   parseHTML() {
     return [
       {
-        tag: 'multiple-option',
+        tag: 'single-option',
       },
     ]
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['multiple-option', mergeAttributes(HTMLAttributes)]
+    return ['single-option', mergeAttributes(HTMLAttributes)]
   },
 
   addCommands() {
     return {
-      toggleMultipleOption: (attributes?: MultipleOptionAttributes) => ({ commands }) => {
+      toggleSingleOption: (attributes?: SingleOptionAttributes) => ({ commands }) => {
         return commands.insertContent({
           type: this.name,
           attrs: attributes,
@@ -57,6 +61,6 @@ export default Node.create({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(MultipleOption)
+    return ReactNodeViewRenderer(SingleOption)
   },
-}) 
+})
