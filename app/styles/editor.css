@@ -57,10 +57,15 @@
   }
 }
 
-.tiptap p.is-empty::before {
+.tiptap [data-placeholder].is-empty::before {
   color: #adb5bd;
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
+  font-weight: normal;
+}
+
+.tiptap [data-placeholder].is-empty:not(:last-child)::before {
+  display: none !important;
 }

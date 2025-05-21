@@ -111,7 +111,7 @@ export function CardDialog({
       <DialogTrigger asChild>
         {trigger || <Button variant="outline">Create New Card</Button>}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-full sm:h-full md:max-w-[640px] md:max-h-[720px] overflow-y-auto overflow-x-hidden">
+      <DialogContent className="sm:max-w-full sm:max-h-full md:max-w-[640px] md:max-h-[720px] overflow-y-auto overflow-x-hidden">
         <DialogHeader>
           <DialogTitle>{initialData ? "Edit Card" : "Create New Card"}</DialogTitle>
           <DialogDescription>
@@ -200,7 +200,6 @@ export function CardDialog({
                     <div className="aspect-video animate-pulse bg-black/20" />
                   )}
                   {file.status === "success" && (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={file.result}
                       alt={`uploaded-${file.fileName}`}

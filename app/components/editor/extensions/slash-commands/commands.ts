@@ -52,7 +52,6 @@ export const SlashCommand = Extension.create({
           const isRootDepth = $from.depth === 1;
           const isParagraph = $from.parent.type.name === "paragraph";
           const isStartOfNode = $from.parent.textContent?.charAt(0) === "/";
-          // TODO
           const isInColumn = this.editor.isActive("column");
 
           const afterContent = $from.parent.textContent?.substring(
@@ -144,8 +143,6 @@ export const SlashCommand = Extension.create({
 
               const { view } = props.editor;
 
-              const editorNode = view.dom as HTMLElement;
-
               const getReferenceClientRect = () => {
                 if (!props.clientRect) {
                   return props.editor.storage[extensionName].rect;
@@ -196,8 +193,6 @@ export const SlashCommand = Extension.create({
 
               const { view } = props.editor;
 
-              // const editorNode = view.dom as HTMLElement
-
               const getReferenceClientRect = () => {
                 if (!props.clientRect) {
                   return props.editor.storage[extensionName].rect;
@@ -234,7 +229,6 @@ export const SlashCommand = Extension.create({
 
               view.dom.parentElement?.addEventListener("scroll", scrollHandler);
 
-              // eslint-disable-next-line no-param-reassign
               props.editor.storage[extensionName].rect = props.clientRect
                 ? getReferenceClientRect()
                 : {

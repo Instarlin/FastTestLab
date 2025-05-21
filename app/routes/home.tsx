@@ -73,7 +73,7 @@ export default function Home() {
   return (
     <div className="flex flex-1 flex-col pl-5 pt-5 overflow-y-scroll">
       {/* Header Menu */}
-      <div className="sticky top-0 flex align-middle gap-4 z-30">
+      <div className="top-0 flex align-middle gap-4 z-30">
         <Select value={cardSize} onValueChange={setCardSize}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Select card size" />
@@ -89,7 +89,7 @@ export default function Home() {
         <CardDialog onSave={handleSaveCard} />
       </div>
       {/* Cards */}
-      <div className="flex flex-1 flex-wrap justify-start gap-2 transition-all duration-300">
+      <div className="flex flex-wrap justify-start gap-2 py-2 transition-all duration-300">
         {cardsArray.map((card, index) => (
           <Card
             key={index}

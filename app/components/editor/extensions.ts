@@ -11,6 +11,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Underline from "@tiptap/extension-underline";
 import Youtube from "@tiptap/extension-youtube";
+import Placeholder from "@tiptap/extension-placeholder";
 import { Gapcursor } from "@tiptap/extension-gapcursor";
 import { type DOMOutputSpec } from "@tiptap/pm/model";
 import StarterKit from "@tiptap/starter-kit";
@@ -176,6 +177,18 @@ const TiptapYoutube = Youtube.configure({
 
 const TiptapCharacterCount = CharacterCount;
 
+const CustomPlaceholder = Placeholder.configure({
+  placeholder: ({ node }) => {
+    if (node.type.name === "heading") {
+      return 'Heading';
+    } else if (node.type.name === "list") {
+      return "Can you add some further context?";
+    }
+    return "Type / for commands...";
+  },
+  showOnlyCurrent: false,
+});
+
 const Smiles = Extension.create({
   name: "smiles",
   addInputRules() {
@@ -222,4 +235,5 @@ export const defaultExtensions = [
   SingleOptionNode,
   MultipleOptionNode,
   Gapcursor,
+  CustomPlaceholder,
 ];

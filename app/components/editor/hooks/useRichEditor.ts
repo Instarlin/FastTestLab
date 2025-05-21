@@ -1,4 +1,3 @@
-import Placeholder from "@tiptap/extension-placeholder";
 import { useEditor } from "@tiptap/react";
 import { defaultExtensions } from "../extensions";
 import json from './gg.json'
@@ -12,12 +11,7 @@ export const useRichEditor = () => {
     autofocus: true,
     editable: false,
     content: content,
-    extensions: [
-      ...defaultExtensions,
-      Placeholder.configure({
-        placeholder: "Type / for commands...",
-      }),
-    ],
+    extensions: [ ...defaultExtensions ],
     editorProps: {
       attributes: {
         spellcheck: "false",
