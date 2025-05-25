@@ -14,6 +14,8 @@ import { Settings2Icon } from "lucide-react";
 import { CardDialog, type CardI } from "~/components/widgets/CardDialog";
 import { lessons } from "~/mock/lessons";
 import { cardSizeSchema } from "../schemas/auth";
+import { redirect } from "react-router";
+import { sessionStorage } from "~/modules/session.server";
 
 //* Previous implementation of API
 // import { homeApi } from "~/lib/home.server";
@@ -25,6 +27,13 @@ export function meta({}: Route.MetaArgs) {
     { title: "New React Router App" },
     { name: "description", content: "Welcome to React Router!" },
   ];
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  let user = session.get("user");
+  if (!user) return redirect("/auth?formType=login");
+  return null;
 }
 
 // export const loader: LoaderFunction = async ({ request }: Route.LoaderArgs) => {

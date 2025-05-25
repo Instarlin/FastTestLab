@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Route } from "./+types/home";
-import { Outlet } from "react-router";
+import { Outlet, redirect } from "react-router";
+import { sessionStorage } from "~/modules/session.server";
 import { useMessage } from "~/components/ui/message";
 import { Button } from "~/components/ui/button";
 import { RichEditor } from "~/components/widgets/RichEditor";
@@ -18,6 +19,13 @@ export function meta({}: Route.MetaArgs) {
       content: "Rich editor for course creation",
     },
   ];
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  let user = session.get("user");
+  if (!user) return redirect("/auth?formType=login");
+  return null;
 }
 
 export default function Tests() {

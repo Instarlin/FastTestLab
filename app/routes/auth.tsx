@@ -1,13 +1,11 @@
 import { Lock, Mail, User } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { redirect, Form, useFetcher, useActionData, useLocation } from "react-router";
 import { Input } from "~/components/ui/hoverInput";
 import type { Route } from "./+types/home";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authApi } from "~/lib/api";
-import type { RegisterRequest, LoginRequest } from "~/lib/api";
 import {
   type RegisterFormData,
   type LoginFormData,
@@ -15,17 +13,108 @@ import {
   loginSchema,
 } from "~/schemas/auth";
 import { Waves } from "~/components/widgets/Waves";
+import { sessionStorage } from "~/modules/session.server";
+import { db } from "~/modules/db.server";
+import bcrypt from "bcryptjs";
+import { authenticator } from "~/modules/auth.server";
+
+type ActionData =
+  | { formType: "login"; error?: string }
+  | { formType: "register"; error?: string };
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Login" }, { name: "description", content: "Login page" }];
 }
 
-export default function AuthForm() {
+export async function loader({ request }: Route.LoaderArgs) {
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  let user = session.get("user");
+  if (user) return redirect("/home");
+  return null;
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  try {
+    let formData = await request.clone().formData();
+    let formType = formData.get("formType");
+    const payload = Object.fromEntries(formData) as Record<string, string>
+    
+    if (formType === "register") {
+      const result = registerSchema.safeParse(payload);
+      if (!result.success) {
+        const { fieldErrors } = result.error.flatten()
+        return console.log(fieldErrors);
+      }
+      const { username, email, password } = result.data
+      let exists = await db.user.findUnique({ where: { email } });
+      if (exists) {
+        return redirect("/auth?formType=register&error=Bad%20request");
+      }
+      let user = await db.user.create({
+        data: { username, email, password: await bcrypt.hash(password, 10) },
+      });
+      let session = await sessionStorage.getSession(
+        request.headers.get("cookie")
+      );
+      session.set("user", { id: user.id, email: user.email });
+      return redirect("/home", {
+        headers: {
+          "Set-Cookie": await sessionStorage.commitSession(session),
+        },
+      });
+    }
+
+    if (formType === "login") {
+      // const result = registerSchema.safeParse(payload);
+      // if (!result.success) {
+      //   const { fieldErrors } = result.error.flatten();
+      //   return console.log(fieldErrors);
+      // }
+      // const { email, password } = result.data;
+      // TODO: Find out if the data needs to be validated here
+      let user = await authenticator.authenticate("form", request);
+      let session = await sessionStorage.getSession(
+        request.headers.get("cookie")
+      );
+      session.set("user", user);
+      return redirect("/home", {
+        headers: {
+          "Set-Cookie": await sessionStorage.commitSession(session, {
+            maxAge: formData.get("remember") === "on" ? 60 * 60 * 24 * 30 : undefined,
+          }),
+        },
+      });
+    }
+  } catch (error) {
+    return redirect("/auth?formType=login&error=Bad%20credentials");
+  }
+  return redirect("/auth?formType=login");
+}
+
+const MotionForm = motion.create(Form);
+
+export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [remember, setRemember] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const actionData = useActionData<ActionData>();
+  const fetcher = useFetcher();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlError = params.get("error");
+    const urlFormType = params.get("formType");
+    if (urlError) setError(decodeURIComponent(urlError));
+    else setError(null);
+    if (urlFormType === "register") setIsLogin(false);
+    else if (urlFormType === "login") setIsLogin(true);
+  }, [location.search]);
+
+  useEffect(() => {
+    setError(actionData?.error || fetcher.data?.error);
+  }, [actionData, fetcher.data]);
 
   const {
     register: registerForm,
@@ -43,41 +132,27 @@ export default function AuthForm() {
     resolver: zodResolver(loginSchema),
   });
 
-  const formVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 },
-  };
-
-  const backgroundColor = darkMode ? "bg-zinc-900" : "bg-zinc-100";
-  const textColor = darkMode ? "text-white" : "text-black";
-  const cardBg = darkMode
-    ? "bg-zinc-800 border-zinc-600"
-    : "bg-white border-zinc-200";
-
   const onRegister = async (data: RegisterFormData) => {
-    try {
-      setError(null);
-      await authApi.register(data as RegisterRequest);
-      navigate("/home");
-    } catch (err: any) {
-      setError(err.message || "Registration failed");
-    }
+    const formData = new FormData();
+    formData.append("formType", "register");
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    fetcher.submit(formData, { method: "post" });
   };
 
   const onLogin = async (data: LoginFormData) => {
-    try {
-      setError(null);
-      await authApi.login(data as LoginRequest);
-      navigate("/home");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
-    }
+    const form = new FormData();
+    form.append("formType", "login");
+    form.append("email", data.email);
+    form.append("password", data.password);
+    form.append("remember", remember ? "on" : "off");
+    fetcher.submit(form, { method: "post" });
   };
 
   return (
     <div
-      className={`w-full min-h-screen flex items-center justify-center px-4 relative transition-colors duration-300 ${backgroundColor} ${textColor}`}
+      className={`w-full min-h-screen flex items-center justify-center px-4 relative transition-colors duration-300 ${darkMode ? "bg-zinc-900" : "bg-zinc-100"} ${darkMode ? "text-white" : "text-black"}`}
     >
       <button
         className={`absolute z-10 bottom-4 right-4 text-sm px-3 py-1 rounded-md border border-gray-400 hover:cursor-pointer transition-colors duration-200 ${
@@ -88,28 +163,29 @@ export default function AuthForm() {
         Switch to {darkMode ? "Light" : "Dark"}
       </button>
 
+      {/* Auth Form */}
       <motion.div
         layout
         animate={{ height: "auto" }}
         transition={{ type: "spring", duration: 0.5 }}
-        className={`w-full max-w-md rounded-xl p-6 shadow-2xl border transition-colors duration-200 ${cardBg}`}
+        className={`w-full max-w-md rounded-xl p-6 shadow-2xl border transition-colors duration-200 ${darkMode ? "bg-zinc-800 border-zinc-600" : "bg-white border-zinc-200"}`}
       >
         <h2 className="text-2xl text-center font-semibold mb-6 transition-all duration-300">
           {isLogin ? "Login" : "Register"}
         </h2>
-
         <AnimatePresence mode="wait">
           <motion.div layout="position">
             {isLogin ? (
-              <motion.form
+              //* Login Form
+              <MotionForm
                 key="login"
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={formVariants}
+                method="post"
+                onSubmit={handleLoginSubmit(onLogin)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="flex flex-col gap-4"
-                onSubmit={handleLoginSubmit(onLogin)}
               >
                 {error && (
                   <div className="text-red-500 text-sm text-center">
@@ -190,17 +266,18 @@ export default function AuthForm() {
                 >
                   {isLoginSubmitting ? "Logging in..." : "Log In"}
                 </button>
-              </motion.form>
+              </MotionForm>
             ) : (
-              <motion.form
+              //* Register Form
+              <MotionForm
                 key="register"
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={formVariants}
+                method="post"
+                onSubmit={handleRegisterSubmit(onRegister)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="flex flex-col gap-4"
-                onSubmit={handleRegisterSubmit(onRegister)}
               >
                 {error && (
                   <div className="text-red-500 text-sm text-center">
@@ -279,7 +356,7 @@ export default function AuthForm() {
                 >
                   {isRegisterSubmitting ? "Signing Up..." : "Sign Up"}
                 </button>
-              </motion.form>
+              </MotionForm>
             )}
           </motion.div>
         </AnimatePresence>
@@ -302,3 +379,9 @@ export default function AuthForm() {
     </div>
   );
 }
+
+  // const backgroundColor = darkMode ? "bg-zinc-900" : "bg-zinc-100";
+  // const textColor = darkMode ? "text-white" : "text-black";
+  // const cardBg = darkMode
+  //   ? "bg-zinc-800 border-zinc-600"
+  //   : "bg-white border-zinc-200";
