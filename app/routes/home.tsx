@@ -16,16 +16,12 @@ import { lessons } from "~/mock/lessons";
 import { cardSizeSchema } from "../schemas/auth";
 import { redirect } from "react-router";
 import { sessionStorage } from "~/modules/session.server";
-
-//* Previous implementation of API
-// import { homeApi } from "~/lib/home.server";
-// import { requireUser } from "~/lib/auth.server";
-// import type { LoaderFunction } from "react-router";
+// import { db } from "~/modules/db.server";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Lessons" },
+    { name: "description", content: "List of all lessons" },
   ];
 }
 
@@ -33,17 +29,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
   let user = session.get("user");
   if (!user) return redirect("/auth?formType=login");
+  // let cards = db.
   return null;
 }
-
-// export const loader: LoaderFunction = async ({ request }: Route.LoaderArgs) => {
-  // let user = await requireUser(request);
-  // console.log(user);
-  // return { user };
-  //* Previous implementation of API
-  // const user = await requireUser(request);
-  // return { user };
-// };
 
 export default function Home() {
   const [cardSize, setCardSize] = useState<string>();
@@ -51,12 +39,6 @@ export default function Home() {
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    //* Previous implementation of API
-    // TODO: make card's fields fron response being aligned with CardI type
-    // homeApi.getCards().then((cards) => {
-    //   setCardsArray(cards);
-    //   console.log("cards", cards);
-    // });
     const savedSize = cardSizeSchema.safeParse(localStorage.getItem("cardSize"));
     setCardSize(savedSize.success ? savedSize.data : "25%");
   }, []);
@@ -66,9 +48,6 @@ export default function Home() {
   }, [cardSize]);
 
   const handleSaveCard = async (card: CardI) => {
-    //! Same here, might be done in other way
-    // const res = await homeApi.createCard(card);
-    // console.log(res)
     if (editingCardIndex !== null) {
       const updatedCards = [...cardsArray];
       updatedCards[editingCardIndex] = card;

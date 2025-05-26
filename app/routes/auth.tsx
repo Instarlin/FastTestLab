@@ -13,17 +13,17 @@ import {
   loginSchema,
 } from "~/schemas/auth";
 import { Waves } from "~/components/widgets/Waves";
-import { sessionStorage } from "~/modules/session.server";
-import { db } from "~/modules/db.server";
 import bcrypt from "bcryptjs";
 import { authenticator } from "~/modules/auth.server";
+import { sessionStorage } from "~/modules/session.server";
+import { db } from "~/modules/db.server";
 
 type ActionData =
   | { formType: "login"; error?: string }
   | { formType: "register"; error?: string };
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "Login" }, { name: "description", content: "Login page" }];
+  return [{ title: "Authentication" }, { name: "description", content: "Authentication page" }];
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -37,18 +37,18 @@ export async function action({ request }: Route.ActionArgs) {
   try {
     let formData = await request.clone().formData();
     let formType = formData.get("formType");
-    const payload = Object.fromEntries(formData) as Record<string, string>
     
     if (formType === "register") {
+      const payload = Object.fromEntries(formData) as Record<string, string>
       const result = registerSchema.safeParse(payload);
       if (!result.success) {
         const { fieldErrors } = result.error.flatten()
-        return console.log(fieldErrors);
+        return { formType: "register", error: JSON.stringify(fieldErrors) };
       }
       const { username, email, password } = result.data
       let exists = await db.user.findUnique({ where: { email } });
       if (exists) {
-        return redirect("/auth?formType=register&error=Bad%20request");
+        return { formType: "register", error: "Bad request" };
       }
       let user = await db.user.create({
         data: { username, email, password: await bcrypt.hash(password, 10) },
@@ -65,13 +65,6 @@ export async function action({ request }: Route.ActionArgs) {
     }
 
     if (formType === "login") {
-      // const result = registerSchema.safeParse(payload);
-      // if (!result.success) {
-      //   const { fieldErrors } = result.error.flatten();
-      //   return console.log(fieldErrors);
-      // }
-      // const { email, password } = result.data;
-      // TODO: Find out if the data needs to be validated here
       let user = await authenticator.authenticate("form", request);
       let session = await sessionStorage.getSession(
         request.headers.get("cookie")
@@ -86,9 +79,10 @@ export async function action({ request }: Route.ActionArgs) {
       });
     }
   } catch (error) {
-    return redirect("/auth?formType=login&error=Bad%20credentials");
+    console.log(error)
+    return { formType: "login", error: "Bad request" };
   }
-  return redirect("/auth?formType=login");
+  return { formType: "login", error: "Something went wrong" };
 }
 
 const MotionForm = motion.create(Form);
@@ -101,6 +95,7 @@ export default function Auth() {
   const actionData = useActionData<ActionData>();
   const fetcher = useFetcher();
   const location = useLocation();
+  const isSubmitting = fetcher.state === "submitting" || fetcher.state === "loading";
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -119,7 +114,7 @@ export default function Auth() {
   const {
     register: registerForm,
     handleSubmit: handleRegisterSubmit,
-    formState: { errors: registerErrors, isSubmitting: isRegisterSubmitting },
+    formState: { errors: registerErrors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
@@ -127,7 +122,7 @@ export default function Auth() {
   const {
     register: loginForm,
     handleSubmit: handleLoginSubmit,
-    formState: { errors: loginErrors, isSubmitting: isLoginSubmitting },
+    formState: { errors: loginErrors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
@@ -142,12 +137,12 @@ export default function Auth() {
   };
 
   const onLogin = async (data: LoginFormData) => {
-    const form = new FormData();
-    form.append("formType", "login");
-    form.append("email", data.email);
-    form.append("password", data.password);
-    form.append("remember", remember ? "on" : "off");
-    fetcher.submit(form, { method: "post" });
+    const formData = new FormData();
+    formData.append("formType", "login");
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("remember", remember ? "on" : "off");
+    fetcher.submit(formData, { method: "post" });
   };
 
   return (
@@ -257,14 +252,14 @@ export default function Auth() {
 
                 <button
                   type="submit"
-                  disabled={isLoginSubmitting}
+                  disabled={isSubmitting}
                   className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white ${
                     darkMode
                       ? "hover:bg-zinc-600 bg-zinc-700"
                       : "hover:bg-zinc-700 bg-zinc-800"
-                  } ${isLoginSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+                  } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  {isLoginSubmitting ? "Logging in..." : "Log In"}
+                  {isSubmitting ? "Logging in..." : "Log In"}
                 </button>
               </MotionForm>
             ) : (
@@ -347,14 +342,14 @@ export default function Auth() {
 
                 <button
                   type="submit"
-                  disabled={isRegisterSubmitting}
+                  disabled={isSubmitting}
                   className={`block w-full text-center font-semibold py-2 rounded-md transition-colors duration-200 hover:cursor-pointer text-white ${
                     darkMode
                       ? "bg-zinc-700 hover:bg-zinc-600"
                       : "bg-zinc-800 hover:bg-zinc-700"
-                  } ${isRegisterSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+                  } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  {isRegisterSubmitting ? "Signing Up..." : "Sign Up"}
+                  {isSubmitting ? "Signing Up..." : "Sign Up"}
                 </button>
               </MotionForm>
             )}
@@ -370,6 +365,7 @@ export default function Auth() {
           <button
             className={`underline transition duration-200 cursor-pointer hover:text-blue-400`}
             onClick={() => setIsLogin(!isLogin)}
+            disabled={isSubmitting}
           >
             {isLogin ? "Register" : "Login"}
           </button>
@@ -379,9 +375,3 @@ export default function Auth() {
     </div>
   );
 }
-
-  // const backgroundColor = darkMode ? "bg-zinc-900" : "bg-zinc-100";
-  // const textColor = darkMode ? "text-white" : "text-black";
-  // const cardBg = darkMode
-  //   ? "bg-zinc-800 border-zinc-600"
-  //   : "bg-white border-zinc-200";
