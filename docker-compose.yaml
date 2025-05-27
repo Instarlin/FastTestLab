@@ -41,11 +41,13 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       DATABASE_URL: postgresql://prisma:prisma@db:5432/appdb
+    env_file:
+      - .env.production
     networks:
       - prisma-network
-    command: sh -c "npx prisma migrate reset --force && npm run start"
+    command: sh -c "npx prisma migrate deploy && npm run start"
     depends_on:
       - minio
       - db

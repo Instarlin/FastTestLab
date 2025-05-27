@@ -14,9 +14,8 @@ import { Settings2Icon } from "lucide-react";
 import { CardDialog, type CardI } from "~/components/widgets/CardDialog";
 import { lessons } from "~/mock/lessons";
 import { cardSizeSchema } from "../schemas/auth";
-import { redirect } from "react-router";
-import { sessionStorage } from "~/modules/session.server";
-// import { db } from "~/modules/db.server";
+import { redirect, useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { getUserID } from "~/modules/session.server";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -25,18 +24,20 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let user = session.get("user");
-  if (!user) return redirect("/auth?formType=login");
-  // let cards = db.
-  return null;
+export async function loader({ request }: LoaderFunctionArgs) {
+  console.log("home loader");
+  const userID = await getUserID(request);
+  console.log(userID);
+  // if (!userID) return redirect("/auth?formType=login");
+  return {userID, request};
 }
 
 export default function Home() {
   const [cardSize, setCardSize] = useState<string>();
   const [cardsArray, setCardsArray] = useState<CardI[]>([]);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
+  const { userID, request } = useLoaderData<typeof loader>();
+  console.log(userID, request);
 
   useEffect(() => {
     const savedSize = cardSizeSchema.safeParse(localStorage.getItem("cardSize"));

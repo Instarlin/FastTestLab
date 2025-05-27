@@ -1,6 +1,6 @@
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
-import { TOTPStrategy } from "remix-auth-totp";
+// import { TOTPStrategy } from "remix-auth-totp";
 import { db } from "./db.server";
 import { compare } from "bcryptjs";
 import { loginSchema } from "~/schemas/auth";
@@ -36,17 +36,17 @@ authenticator.use(
 
 
 //* For future use, 2FA?
-authenticator.use(
-  new TOTPStrategy(
-    {
-      secret: process.env.ENCRYPTION_SECRET,
-      emailSentRedirect: "/verify",
-      magicLinkPath: "/verify",
-      successRedirect: "/dashboard",
-      failureRedirect: "/verify",
-      sendTOTP: async ({ email, code, magicLink }) => {},
-    },
-    async ({ email }) => {}
-  ),
-  "totp"
-);
+// authenticator.use(
+//   new TOTPStrategy(
+//     {
+//       secret: process.env.ENCRYPTION_SECRET,
+//       emailSentRedirect: "/verify",
+//       magicLinkPath: "/verify",
+//       successRedirect: "/dashboard",
+//       failureRedirect: "/verify",
+//       sendTOTP: async ({ email, code, magicLink }) => {},
+//     },
+//     async ({ email }) => {}
+//   ),
+//   "totp"
+// );

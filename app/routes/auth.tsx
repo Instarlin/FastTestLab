@@ -1,7 +1,7 @@
 import { Lock, Mail, User } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState, useEffect } from "react";
-import { redirect, Form, useFetcher, useActionData, useLocation } from "react-router";
+import { redirect, Form, useFetcher, useActionData, useLocation, type ActionFunctionArgs, type LoaderFunctionArgs } from "react-router";
 import { Input } from "~/components/ui/hoverInput";
 import type { Route } from "./+types/home";
 import { useForm } from "react-hook-form";
@@ -15,7 +15,7 @@ import {
 import { Waves } from "~/components/widgets/Waves";
 import bcrypt from "bcryptjs";
 import { authenticator } from "~/modules/auth.server";
-import { sessionStorage } from "~/modules/session.server";
+import { createUserSession, getUserID } from "~/modules/session.server";
 import { db } from "~/modules/db.server";
 
 type ActionData =
@@ -26,57 +26,62 @@ export function meta({}: Route.MetaArgs) {
   return [{ title: "Authentication" }, { name: "description", content: "Authentication page" }];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let user = session.get("user");
-  if (user) return redirect("/home");
-  return null;
+export async function loader({ request }: LoaderFunctionArgs) {
+  const userID = await getUserID(request);
+  if (userID) return redirect("/home");
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
+  console.log("auth action")
   try {
-    let formData = await request.clone().formData();
-    let formType = formData.get("formType");
+    const formData = await request.clone().formData();
+    const formType = formData.get("formType") as string;
     
     if (formType === "register") {
       const payload = Object.fromEntries(formData) as Record<string, string>
+
       const result = registerSchema.safeParse(payload);
       if (!result.success) {
         const { fieldErrors } = result.error.flatten()
         return { formType: "register", error: JSON.stringify(fieldErrors) };
       }
+
       const { username, email, password } = result.data
+
       let exists = await db.user.findUnique({ where: { email } });
       if (exists) {
         return { formType: "register", error: "Bad request" };
       }
+
       let user = await db.user.create({
         data: { username, email, password: await bcrypt.hash(password, 10) },
       });
-      let session = await sessionStorage.getSession(
-        request.headers.get("cookie")
-      );
-      session.set("user", { id: user.id, email: user.email });
-      return redirect("/home", {
-        headers: {
-          "Set-Cookie": await sessionStorage.commitSession(session),
-        },
-      });
-    }
 
-    if (formType === "login") {
-      let user = await authenticator.authenticate("form", request);
-      let session = await sessionStorage.getSession(
-        request.headers.get("cookie")
-      );
-      session.set("user", user);
-      return redirect("/home", {
-        headers: {
-          "Set-Cookie": await sessionStorage.commitSession(session, {
-            maxAge: formData.get("remember") === "on" ? 60 * 60 * 24 * 30 : undefined,
-          }),
-        },
+      const response = await createUserSession({
+        request,
+        userID: user.id,
+        redirectTo: "/home",
+        remember: formData.get("remember") === "on",
       });
+
+      if (!response) throw new Error("Failed to create user session");
+
+      return response;
+    }
+    
+    if (formType === "login") {
+      const user = await authenticator.authenticate("form", request);
+      
+      const response = await createUserSession({
+        request,
+        userID: user.id,
+        redirectTo: "/home",
+        remember: formData.get("remember") === "on",
+      });
+
+      if (!response) throw new Error("Failed to create user session");
+
+      return response;
     }
   } catch (error) {
     console.log(error)
@@ -100,9 +105,9 @@ export default function Auth() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const urlError = params.get("error");
-    const urlFormType = params.get("formType");
     if (urlError) setError(decodeURIComponent(urlError));
     else setError(null);
+    const urlFormType = params.get("formType");
     if (urlFormType === "register") setIsLogin(false);
     else if (urlFormType === "login") setIsLogin(true);
   }, [location.search]);
