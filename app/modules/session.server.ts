@@ -1,5 +1,5 @@
 import type { User } from "@prisma/client";
-import { createCookieSessionStorage, redirect, redirectDocument } from "react-router";
+import { createCookieSessionStorage, redirect } from "react-router";
 
 if (!process.env.SESSION_SECRET) throw new Error("Missing SESSION_SECRET");
 
@@ -39,11 +39,13 @@ export async function createUserSession({
 }) {
   const session = await getUserSession(request);
   session.set("userID", userID);
-  return redirectDocument(redirectTo || "/", {
+  return redirect(redirectTo || "/", {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production" && process.env.USE_HTTPS === "true",
+        secure:
+          process.env.NODE_ENV === "production" &&
+          process.env.USE_HTTPS === "true",
         sameSite: "lax",
         maxAge: remember ? 60 * 60 * 24 * 30 : undefined,
       }),
