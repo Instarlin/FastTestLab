@@ -1,7 +1,7 @@
 import { Lock, Mail, User } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState, useEffect } from "react";
-import { redirect, Form, useFetcher, useActionData, useLocation, type ActionFunctionArgs, type LoaderFunctionArgs } from "react-router";
+import { redirect, Form, useFetcher, useActionData, useLocation, type ActionFunctionArgs, type LoaderFunctionArgs, useNavigation } from "react-router";
 import { Input } from "~/components/ui/hoverInput";
 import type { Route } from "./+types/home";
 import { useForm } from "react-hook-form";
@@ -27,13 +27,11 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  console.log("auth loader");
   const userID = await getUserID(request);
   if (userID) return redirect("/home");
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  console.log("auth action")
   try {
     const formData = await request.clone().formData();
     const formType = formData.get("formType") as string;
@@ -65,7 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
         remember: formData.get("remember") === "on",
       });
 
-      if (!response) throw new Error("Failed to create user session");
+      if (!response) return { formType: "register", error: "Something went wrong" };
 
       return response;
     }
@@ -80,7 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
         remember: formData.get("remember") === "on",
       });
 
-      if (!response) throw new Error("Failed to create user session");
+      if (!response) return { formType: "login", error: "Something went wrong" };
 
       return response;
     }
@@ -99,9 +97,9 @@ export default function Auth() {
   const [darkMode, setDarkMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const actionData = useActionData<ActionData>();
-  const fetcher = useFetcher();
   const location = useLocation();
-  const isSubmitting = fetcher.state === "submitting" || fetcher.state === "loading";
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting" || navigation.state === "loading";
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -114,12 +112,11 @@ export default function Auth() {
   }, [location.search]);
 
   useEffect(() => {
-    setError(actionData?.error || fetcher.data?.error);
-  }, [actionData, fetcher.data]);
+    setError(actionData?.error || null);
+  }, [actionData]);
 
   const {
     register: registerForm,
-    handleSubmit: handleRegisterSubmit,
     formState: { errors: registerErrors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -127,29 +124,10 @@ export default function Auth() {
 
   const {
     register: loginForm,
-    handleSubmit: handleLoginSubmit,
     formState: { errors: loginErrors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
-
-  const onRegister = async (data: RegisterFormData) => {
-    const formData = new FormData();
-    formData.append("formType", "register");
-    formData.append("username", data.username);
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    fetcher.submit(formData, { method: "post" });
-  };
-
-  const onLogin = async (data: LoginFormData) => {
-    const formData = new FormData();
-    formData.append("formType", "login");
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    formData.append("remember", remember ? "on" : "off");
-    fetcher.submit(formData, { method: "post" });
-  };
 
   return (
     <div
@@ -181,13 +159,13 @@ export default function Auth() {
               <MotionForm
                 key="login"
                 method="post"
-                onSubmit={handleLoginSubmit(onLogin)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="flex flex-col gap-4"
               >
+                <input type="hidden" name="formType" value="login" />
                 {error && (
                   <div className="text-red-500 text-sm text-center">
                     {error}
@@ -273,13 +251,13 @@ export default function Auth() {
               <MotionForm
                 key="register"
                 method="post"
-                onSubmit={handleRegisterSubmit(onRegister)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="flex flex-col gap-4"
               >
+                <input type="hidden" name="formType" value="register" />
                 {error && (
                   <div className="text-red-500 text-sm text-center">
                     {error}

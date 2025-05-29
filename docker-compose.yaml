@@ -40,13 +40,15 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NODE_ENV: development
+      NODE_ENV: prod
+      USE_HTTPS: false
+      PRISMA_SCHEMA: prisma/schema.prod.prisma
       DATABASE_URL: postgresql://prisma:prisma@db:5432/appdb
     env_file:
       - .env.production
     networks:
       - prisma-network
-    command: sh -c "npx prisma migrate deploy && npm run start"
+    command: sh -c "npx prisma migrate deploy --schema=prisma/schema.prod.prisma && npm run start"
     depends_on:
       - minio
       - db
