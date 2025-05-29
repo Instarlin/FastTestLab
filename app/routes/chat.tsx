@@ -9,8 +9,6 @@ import { Trash2Icon, SendHorizontalIcon } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { redirect, type LoaderFunctionArgs } from "react-router";
-import { getUserID } from "~/modules/session.server";
 
 interface Message {
   id: string;
@@ -31,12 +29,6 @@ export function meta({}: Route.MetaArgs) {
     { title: "Chat" },
     { name: "description", content: "Chat interface with file uploads" },
   ];
-}
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  const userID = await getUserID(request);
-  if (!userID) return redirect("/auth?formType=login");
-  return null;
 }
 
 export default function Chat() {

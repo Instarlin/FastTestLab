@@ -1,10 +1,11 @@
-import { Outlet, useNavigation } from "react-router";
+import { Outlet, redirect, useNavigation, type LoaderFunctionArgs } from "react-router";
 import {
   // AutonomousBreadcrumbs,
   LoadIndicator,
   SidebarNav,
 } from "~/components/widgets/Sidebar";
 import type { Route } from "./+types/home";
+import { getUserID } from "~/modules/session.server";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,6 +13,12 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Navigation interface" },
   ];
 }
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const userID = await getUserID(request);
+  if (!userID) return redirect("/auth?formType=login");
+  return {userID, request};
+} 
 
 export default function Home() {
   const navigation = useNavigation();

@@ -27,6 +27,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  console.log("auth loader");
   const userID = await getUserID(request);
   if (userID) return redirect("/home");
 }
