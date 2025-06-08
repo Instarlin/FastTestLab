@@ -1,7 +1,5 @@
 # 🚀 **FastTestLab**
 
-Testing Gitlab integration
-
 A modern, full-stack web application for **rapid test creation, management, and execution**.
 
 Built with:
