@@ -92,7 +92,6 @@ describe("Auth Route Tests", () => {
         });
 
         // user exists
-        console.log(response);
         expect([302]).toContain(response.status);
 
         if (response.status === 302) {
