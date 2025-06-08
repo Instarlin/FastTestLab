@@ -7,12 +7,16 @@
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
+    "test": "vitest",
+    "test:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && vitest run\"",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
     "prisma:dev": "prisma migrate dev --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.prisma",
-    "prisma:prod": "prisma migrate deploy --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.prod.prisma"
+    "prisma:prod": "prisma migrate deploy --schema=prisma/schema.prod.prisma && prisma generate --schema=prisma/schema.prod.prisma"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
-    "@prisma/client": "^6.7.0",
+    "@prisma/client": "^6.9.0",
     "@radix-ui/react-accordion": "^1.2.4",
     "@radix-ui/react-avatar": "^1.1.4",
     "@radix-ui/react-checkbox": "^1.1.5",
@@ -88,17 +92,20 @@
     "@types/react-dom": "^19.0.1",
     "@types/three": "^0.175.0",
     "@types/uuid": "^10.0.0",
+    "concurrently": "^9.0.1",
     "depcheck": "^1.4.7",
     "eslint": "^9.24.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.0.0",
     "prettier": "3.5.3",
-    "prisma": "^6.7.0",
+    "prisma": "^6.9.0",
     "react-router-devtools": "^1.1.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.2",
+    "wait-on": "^8.0.1"
   }
 }
