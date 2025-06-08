@@ -11,3 +11,5 @@
 
 /prisma/prisma/*
 /prisma/migrations/*
+
+/.kube/*

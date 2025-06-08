@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -22,7 +22,7 @@ model Card {
   description String
   color       String
   image       String
-  tags        CardTag[]
+  tags        String[]
 }
 
 model Tag {

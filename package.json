@@ -8,7 +8,7 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "prisma:dev": "prisma migrate dev --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.prisma",
-    "prisma:prod": "prisma migrate deploy --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.prisma"
+    "prisma:prod": "prisma migrate deploy --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.prod.prisma"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

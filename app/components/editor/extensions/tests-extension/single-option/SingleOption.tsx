@@ -102,7 +102,7 @@ export function SingleOption(props: NodeViewProps) {
                 ref={(el: HTMLLabelElement | null) => {
                   labelRefs.current[index] = el;
                 }}
-                className="w-full h-full pl-4 py-3 focus:ring-0 focus:border-0 focus:outline-none hover:cursor-pointer group-data-[disabled=true]:pointer-events-auto group-data-[disabled=true]:opacity-100 peer-disabled:cursor-auto peer-disabled:opacity-100"
+                className="w-full h-full max-w-2 pl-4 py-3 focus:ring-0 focus:border-0 focus:outline-none hover:cursor-pointer group-data-[disabled=true]:pointer-events-auto group-data-[disabled=true]:opacity-100 peer-disabled:cursor-auto peer-disabled:opacity-100"
                 htmlFor={`${nodeId}-r${index}`}
                 contentEditable={isEditable}
                 onBlur={(e) => handleLabelChange(index, e.currentTarget.textContent || option.label)}
@@ -114,6 +114,9 @@ export function SingleOption(props: NodeViewProps) {
             </div>
           ))}
         </RadioGroup>
+        <span className="rounded-md px-2 py-1 text-sm text-success bg-success/15">
+          Correct
+        </span>
       </div>
     </NodeViewWrapper>
   );
