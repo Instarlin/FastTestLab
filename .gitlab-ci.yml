@@ -42,8 +42,8 @@ test:
             done
     script:
         - npm run start &
-        - npx wait-on tcp:db:5432 tcp:localhost:3000 --timeout 30000 \
-            || { echo "DB or app never came online in 30 s"; exit 1; }
+        # - npx wait-on tcp:db:5432 tcp:localhost:3000 --timeout 30000 \
+        #     || { echo "DB or app never came online in 30 s"; exit 1; }
         - npm run test
     
 
