@@ -21,13 +21,14 @@ build:
 test:
     stage: test
     image: node:20-alpine
+    timeout: 6 minutes
     services:
-    - name: postgres:15-alpine alias db
+    - name: postgres:15-alpine
     variables:
         POSTGRES_USER: prisma
         POSTGRES_PASSWORD: prisma
         POSTGRES_DB: appdb
-        DATABASE_URL: postgres://prisma:prisma@db:5432/appdb
+        DATABASE_URL: postgres://prisma:prisma@15-alpine:5432/appdb
     dependencies:
         - build
     before_script:
@@ -40,13 +41,16 @@ test:
             done
     script:
         - npm run start &
-        - npx wait-on tcp:db:5432 tcp:localhost:3000
+        - npx wait-on tcp:db:5432 tcp:localhost:3000 --timeout 30000 \
+            || { echo "DB or app never came online in 30 s"; exit 1; }
         - npm run test
     
 
 publish:
     stage: publish
     image: docker:28.2.2-alpine3.22
+    dependencies:
+        - test
     before_script:
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
     script:
