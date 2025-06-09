@@ -23,12 +23,13 @@ test:
     image: node:20-alpine
     timeout: 6 minutes
     services:
-    - name: postgres:15-alpine
+    - name: postgres:15-alpine 
+      alias: db
     variables:
         POSTGRES_USER: prisma
         POSTGRES_PASSWORD: prisma
         POSTGRES_DB: appdb
-        DATABASE_URL: postgres://prisma:prisma@15-alpine:5432/appdb
+        DATABASE_URL: postgres://prisma:db:5432/appdb
     dependencies:
         - build
     before_script:
@@ -57,4 +58,4 @@ publish:
         - docker build -t instarlinz/fasttest:lastest .
         - docker push instarlinz/fasttest:lastest
     only:
-        - main
+        - master
