@@ -44,11 +44,12 @@ services:
       USE_HTTPS: false
       PRISMA_SCHEMA: prisma/schema.prod.prisma
       DATABASE_URL: postgresql://prisma:prisma@db:5432/appdb
+      BASE_URL: http://localhost:3000
     env_file:
       - .env.production
     networks:
       - prisma-network
-    command: sh -c "npx prisma migrate deploy --schema=prisma/schema.prod.prisma && npm run start"
+    command: sh -c "npm run prisma:prod && npm run start"
     depends_on:
       - minio
       - db
