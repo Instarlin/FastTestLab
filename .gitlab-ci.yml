@@ -1,10 +1,48 @@
-run_tests:
+stages:
+    - build
+    - test
+    - publish
+
+build:
+    stage: build
     image: node:20-alpine
     before_script:
-        - npm i
+        - npm ci
         - npm run prisma:generate
-        - npm run build
-        - npm run prisma:prod
     script:
-        - npm run start
+        - npm run build
+    artifacts:
+        paths:
+            - "/build"
+            - "/prisma"
+            - "/node_modules"
+        expire_in: 1h
+
+test:
+    stage: test
+    image: node:20-alpine
+    services:
+    - name: postgres:15-alpine alias db
+    variables:
+        POSTGRES_USER: prisma
+        POSTGRES_PASSWORD: prisma
+        POSTGRES_DB: appdb
+        DATABASE_URL: postgres://prisma:prisma@db:5432/appdb
+    dependencies:
+        - build
+    script:
+        - npm run start &
+        - npx wait-on tcp:db:5432 tcp:localhost:3000
         - npm run test
+    
+
+publish:
+    stage: publish
+    image: docker:28.2.2-alpine3.22
+    before_script:
+        - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
+    script:
+        - docker build -t instarlinz/fasttest:lastest .
+        - docker push instarlinz/fasttest:lastest
+    only:
+        - main
