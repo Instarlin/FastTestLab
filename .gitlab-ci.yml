@@ -2,6 +2,9 @@ run_tests:
     image: node:20-alpine
     before_script:
         - npm i
+        - npm run prisma:generate
+        - npm run build
+        - npm run prisma:prod
     script:
-        - npm run test:dev
-
+        - npm run start
+        - npm run test
