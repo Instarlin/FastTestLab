@@ -33,6 +33,7 @@ test:
         POSTGRES_PASSWORD: prisma
         POSTGRES_DB: appdb
         DATABASE_URL: postgres://prisma:prisma@db:5432/appdb
+        BASE_URL: http://localhost:3000
     dependencies:
         - build
     before_script:
