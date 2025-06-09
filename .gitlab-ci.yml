@@ -3,4 +3,5 @@ run_tests:
     before_script:
         - npm i
     script:
-        - npm run test
+        - npm run test:dev
+
