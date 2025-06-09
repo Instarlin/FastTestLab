@@ -12,7 +12,8 @@
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
     "prisma:dev": "prisma migrate dev --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.prisma",
-    "prisma:prod": "prisma migrate deploy --schema=prisma/schema.prod.prisma && prisma generate --schema=prisma/schema.prod.prisma"
+    "prisma:generate": "prisma generate --schema=prisma/schema.prod.prisma",
+    "prisma:prod": "prisma migrate deploy --schema=prisma/schema.prod.prisma"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
