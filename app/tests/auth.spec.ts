@@ -1,7 +1,8 @@
-import { expect, test, describe, beforeAll, afterAll } from "vitest";
+import { expect, test, describe } from "vitest";
 import axios from "axios";
 
 const TEST_BASE_URL = import.meta.env.BASE_URL;
+console.log(TEST_BASE_URL);
 const TIMEOUT = 10000;
 
 describe("Auth Route Tests", () => {
