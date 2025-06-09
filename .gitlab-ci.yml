@@ -29,7 +29,7 @@ test:
         POSTGRES_USER: prisma
         POSTGRES_PASSWORD: prisma
         POSTGRES_DB: appdb
-        DATABASE_URL: postgres://prisma:db:5432/appdb
+        DATABASE_URL: postgresql://prisma:prisma@db:5432/appdb
     dependencies:
         - build
     before_script:
