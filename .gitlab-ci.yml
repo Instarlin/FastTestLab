@@ -68,7 +68,8 @@ publish:
         - docker build \
             --build-arg SESSION_SECRET=$SESSION_SECRET \
             --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET \
-            -t instarlinz/fasttest:lastest .
-        - docker push instarlinz/fasttest:lastest
+            -t instarlinz/fasttest:latest \
+            .
+        - docker push instarlinz/fasttest:latest
     only:
         - master
