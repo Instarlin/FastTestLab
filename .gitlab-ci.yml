@@ -53,7 +53,7 @@ publish:
     stage: publish
     image: docker:28.2.2-alpine3.22
     services:
-        - name: docker:28.2.2-dind
+        - name: docker:28.2.2-dind-alpine3.22
           alias: docker   
     dependencies:
         - test
