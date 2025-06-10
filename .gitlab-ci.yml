@@ -33,7 +33,6 @@ test:
         POSTGRES_PASSWORD: prisma
         POSTGRES_DB: appdb
         DATABASE_URL: postgres://prisma:prisma@db:5432/appdb
-        BASE_URL: http://localhost:3000
     dependencies:
         - build
     before_script:
@@ -44,10 +43,10 @@ test:
                 exit 1
                 fi
             done
+        - echo "BASE_URL=http://localhost:3000" > .env
     script:
         - npm run start &
         - apk add --no-cache busybox-extras
-        - echo "Resolving db:" && getent hosts db
         - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
         - npm run test
     
