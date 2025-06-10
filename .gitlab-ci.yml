@@ -60,6 +60,8 @@ publish:
     variables:
         DOCKER_HOST: "tcp://docker:2375"
         DOCKER_TLS_CERTDIR: ""
+        SESSION_SECRET: $SESSION_SECRET
+        ENCRYPTION_SECRET: $ENCRYPTION_SECRET
     before_script:
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
     script:
