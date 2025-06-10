@@ -40,7 +40,9 @@ test:
                 exit 1
                 fi
             done
+        - npm run prisma:generate
     script:
+        - npm run prisma:prod
         - npm run start &
         - apk add --no-cache busybox-extras
         - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
