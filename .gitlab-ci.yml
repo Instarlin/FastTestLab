@@ -1,6 +1,3 @@
-variables:
-  CI_DEBUG_SERVICES: "true"
-
 stages:
     - build
     - test
@@ -43,7 +40,6 @@ test:
                 exit 1
                 fi
             done
-        - echo "BASE_URL=http://localhost:3000" > .env
     script:
         - npm run start &
         - apk add --no-cache busybox-extras
