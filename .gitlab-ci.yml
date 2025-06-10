@@ -52,8 +52,14 @@ test:
 publish:
     stage: publish
     image: docker:28.2.2-alpine3.22
+    services:
+        - name: docker:28.2.2-alpine3.22-dind
+          alias: docker   
     dependencies:
         - test
+    variables:
+        DOCKER_HOST: "tcp://docker:2375"
+        DOCKER_TLS_CERTDIR: "/certs"
     before_script:
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
     script:
