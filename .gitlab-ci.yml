@@ -47,6 +47,8 @@ test:
         - apk add --no-cache busybox-extras
         - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
         - npm run test
+
+
     
 
 publish:
@@ -60,12 +62,13 @@ publish:
     variables:
         DOCKER_HOST: "tcp://docker:2375"
         DOCKER_TLS_CERTDIR: ""
-        SESSION_SECRET: $SESSION_SECRET
-        ENCRYPTION_SECRET: $ENCRYPTION_SECRET
     before_script:
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
     script:
-        - docker build -t instarlinz/fasttest:lastest .
+        - docker build \
+            --build-arg SESSION_SECRET=$SESSION_SECRET \
+            --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET \
+            -t instarlinz/fasttest:lastest .
         - docker push instarlinz/fasttest:lastest
     only:
         - master
