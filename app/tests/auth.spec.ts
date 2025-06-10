@@ -1,7 +1,7 @@
 import { expect, test, describe } from "vitest";
 import axios from "axios";
 
-const TEST_BASE_URL = import.meta.env.BASE_URL;
+const TEST_BASE_URL = "http://localhost:3000";
 const TIMEOUT = 10000;
 
 describe("Auth Route Tests", () => {
@@ -34,7 +34,7 @@ describe("Auth Route Tests", () => {
     },
     TIMEOUT
   );
-  
+
   test(
     "should load auth page successfully",
     async () => {
