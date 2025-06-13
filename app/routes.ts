@@ -11,4 +11,5 @@ export default [
     route("/tests", "routes/tests.tsx", [
     ]),
   ]),
+  route("/api/upload", "routes/api/upload.ts"),
 ] satisfies RouteConfig;

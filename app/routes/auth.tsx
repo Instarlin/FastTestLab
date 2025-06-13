@@ -1,7 +1,7 @@
 import { Lock, Mail, User } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState, useEffect } from "react";
-import { redirect, Form, useFetcher, useActionData, useLocation, type ActionFunctionArgs, type LoaderFunctionArgs, useNavigation } from "react-router";
+import { redirect, Form, useActionData, useLocation, type ActionFunctionArgs, type LoaderFunctionArgs, useNavigation } from "react-router";
 import { Input } from "~/components/ui/hoverInput";
 import type { Route } from "./+types/home";
 import { useForm } from "react-hook-form";

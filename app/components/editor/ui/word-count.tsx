@@ -16,5 +16,5 @@ export const WordCount = ({ editor }: { editor: Editor }) => {
       <p>{characters} characters</p>
       <p>{words} words</p>
     </div>
-  )
-}
+  );
+};

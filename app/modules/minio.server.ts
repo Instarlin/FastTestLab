@@ -1,4 +1,5 @@
-import { S3 } from "aws-sdk";
+import pkg from "aws-sdk";
+const { S3 } = pkg;
 import { Readable } from "stream";
 
 const {
