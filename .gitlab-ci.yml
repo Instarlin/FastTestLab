@@ -36,20 +36,20 @@ test:
         - |
             for path in build prisma node_modules; do
                 if [ ! -e "$path" ]; then
-                echo "‼️ Required artifact '$path' not found. Aborting."
+                echo "Required artifact '$path' not found"
                 exit 1
                 fi
             done
+        - apk add --no-cache busybox-extras
+        - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
         - npm run prisma:generate
-    script:
         - npm run prisma:push
+    script:
         - npm run start &
         - apk add --no-cache busybox-extras
         - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
+
         - npm run test
-
-
-    
 
 publish:
     stage: publish

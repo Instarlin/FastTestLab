@@ -48,6 +48,13 @@ services:
       PRISMA_SCHEMA: prisma/schema.prod.prisma
       DATABASE_URL: postgresql://prisma:prisma@db:5432/appdb
       BASE_URL: http://localhost:3000
+    volumes:
+      - type: bind
+        source: ./app/
+        target: /usr/src/app/
+      - type: bind
+        source: ./vite.config.ts
+        target: /usr/src/app/vite.config.ts
     env_file:
       - .env.production
     networks:
