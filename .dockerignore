@@ -1,5 +1,5 @@
-.react-router/*
-.VSCodeCounter/*
+.react-router
+.VSCodeCounter
 build
 node_modules
 README.md

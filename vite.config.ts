@@ -4,8 +4,14 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
-  resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.json'],
+  plugins: [reactRouter(), tailwindcss(), tsconfigPaths()],
+  server: {
+    host: true,
+    port: Number(process.env.PORT) || 5173,
+    strictPort: true,
+    // watch: {
+    //   usePolling: true,
+    //   interval: 100,
+    // },
   },
 });

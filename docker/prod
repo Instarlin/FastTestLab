@@ -1,0 +1,30 @@
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+ARG SESSION_SECRET
+ARG ENCRYPTION_SECRET
+
+ENV SESSION_SECRET=${SESSION_SECRET}
+ENV ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run prisma:generate
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+COPY --from=builder   /app/build                 ./build
+COPY --from=builder   /app/prisma                ./prisma
+COPY --from=builder   /app/public                ./public
+COPY --from=builder   /app/node_modules/prisma   ./node_modules/prisma
+COPY --from=builder   /app/node_modules/.prisma   ./node_modules/.prisma
+COPY --from=builder   /app/node_modules/@prisma  ./node_modules/@prisma
+
+EXPOSE 3000
