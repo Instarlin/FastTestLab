@@ -3,6 +3,10 @@ stages:
     - test
     - publish
 
+cache:
+    paths:
+        - node_modules/
+
 build:
     stage: build
     image: node:20-alpine
@@ -40,15 +44,12 @@ test:
                 exit 1
                 fi
             done
-        - apk add --no-cache busybox-extras
-        - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
         - npm run prisma:generate
         - npm run prisma:push
     script:
         - npm run start &
         - apk add --no-cache busybox-extras
         - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
-
         - npm run test
 
 publish:
