@@ -1,0 +1,72 @@
+stages:
+    - build
+    - test
+    - publish
+
+cache:
+    paths:
+        - node_modules/
+
+build:
+    stage: build
+    image: node:20-alpine
+    before_script:
+        - npm ci
+        - npm run prisma:generate
+    script:
+        - npm run build
+    artifacts:
+        paths:
+            - "build/"
+            - "prisma/"
+            - "node_modules/"
+        expire_in: 1h
+
+test:
+    stage: test
+    image: node:20-alpine
+    timeout: 6 minutes
+    services:
+    - name: postgres:15-alpine 
+      alias: db
+    variables:
+        POSTGRES_USER: prisma
+        POSTGRES_PASSWORD: prisma
+        POSTGRES_DB: appdb
+        DATABASE_URL: postgres://prisma:prisma@db:5432/appdb
+    dependencies:
+        - build
+    before_script:
+        - |
+            for path in build prisma node_modules; do
+                if [ ! -e "$path" ]; then
+                echo "Required artifact '$path' not found"
+                exit 1
+                fi
+            done
+        - npm run prisma:generate
+        - npm run prisma:push
+    script:
+        - npm run start &
+        - apk add --no-cache busybox-extras
+        - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
+        - npm run test
+
+publish:
+    stage: publish
+    image: docker:28.2.2-alpine3.22
+    services:
+        - name: docker:28.2.2-dind-alpine3.22
+          alias: docker
+    dependencies:
+        - test
+    variables:
+        DOCKER_HOST: "tcp://docker:2375"
+        DOCKER_TLS_CERTDIR: ""
+    before_script:
+        - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
+    script:
+        - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET -t instarlinz/fasttest:latest .
+        - docker push instarlinz/fasttest:latest
+    only:
+        - master

@@ -1,0 +1,15 @@
+.DS_Store
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+/.VSCodeCounter/
+
+.env
+.env.production
+
+/prisma/prisma/*
+/prisma/migrations/*
+
+/.kube/*

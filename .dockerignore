@@ -1,0 +1,9 @@
+.react-router
+.VSCodeCounter
+build
+node_modules
+README.md
+LICENSE
+deploy.sh
+prisma/dev.db
+prisma/migrations/*

@@ -1,0 +1,65 @@
+services:
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: appdb
+    networks:
+      - prisma-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prisma -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    command: postgres -c listen_addresses='*'
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - "5432:5432"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SESSION_SECRET: ${SESSION_SECRET}
+        ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: prod
+      USE_HTTPS: false
+      PRISMA_SCHEMA: prisma/schema.prod.prisma
+      DATABASE_URL: postgresql://prisma:prisma@db:5432/appdb
+      BASE_URL: http://localhost:3000
+    env_file:
+      - .env.production
+    networks:
+      - prisma-network
+    command: sh -c "npm run prisma:prod && npm run start"
+    depends_on:
+      - minio
+      - db
+
+networks:
+  prisma-network:
+
+volumes:
+  minio-data:
+  db-data:

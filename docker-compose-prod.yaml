@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/prod
+      args:
+        SESSION_SECRET: ${SESSION_SECRET}
+        ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: prod
+      USE_HTTPS: false
+      PRISMA_SCHEMA: prisma/schema.prod.prisma
+      DATABASE_URL: postgresql://prisma:prisma@db:5432/appdb
+      BASE_URL: http://localhost:3000
+    env_file:
+      - .env
+    networks:
+      - prisma-network
+    command: sh -c "npm run prisma:push && npm run prisma:prod && npm run start"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+networks:
+  prisma-network:
