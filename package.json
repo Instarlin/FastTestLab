@@ -13,8 +13,8 @@
     "prisma:push": "prisma db push --schema=prisma/schema.prod.prisma",
     "prisma:generate": "prisma generate --schema=prisma/schema.prod.prisma",
     "prisma:prod": "prisma migrate deploy --schema=prisma/schema.prod.prisma",
-    "docker:dev": "docker compose -f docker-infra-compose.yaml -f docker-compose-dev.yaml up -d --build",
-    "docker:prod": "docker compose -f docker-infra-compose.yaml -f docker-compose-prod.yaml up -d --build"
+    "docker:dev": "docker compose -f docker-compose-dev.yaml up -d --build",
+    "docker:prod": "docker compose -f docker-compose-prod.yaml up -d --build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

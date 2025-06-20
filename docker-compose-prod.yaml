@@ -1,14 +1,19 @@
+include:
+  - docker-compose-infra.yaml
+
 services:
   app:
     build:
       context: .
-      dockerfile: docker/prod
+      dockerfile: Dockerfile
       args:
         SESSION_SECRET: ${SESSION_SECRET}
         ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}
+        NODE_ENV: prod
     restart: unless-stopped
     ports:
       - "3000:3000"
+    init: true
     environment:
       NODE_ENV: prod
       USE_HTTPS: false
@@ -19,7 +24,8 @@ services:
       - .env
     networks:
       - prisma-network
-    command: sh -c "npm run prisma:push && npm run prisma:prod && npm run start"
+    entrypoint: ["./entrypoint.sh"]
+    command: npm run start
     depends_on:
       db:
         condition: service_healthy
@@ -27,4 +33,4 @@ services:
         condition: service_started
 
 networks:
-  prisma-network:
+  prisma-network: {}

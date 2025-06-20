@@ -66,7 +66,7 @@ publish:
     before_script:
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
     script:
-        - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET -t instarlinz/fasttest:latest .
+        - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET --build-arg NODE_ENV=prod -t instarlinz/fasttest:latest .
         - docker push instarlinz/fasttest:latest
     only:
         - master

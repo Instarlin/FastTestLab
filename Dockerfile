@@ -17,8 +17,11 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
 
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+ARG NODE_ENV
+ENV NODE_ENV=${NODE_ENV}
+
+COPY package.json package-lock.json entrypoint.sh ./
+RUN if [ "$NODE_ENV" = "dev" ]; then npm ci; else npm ci --omit=dev; fi
 
 COPY --from=builder   /usr/src/app/build                 ./build
 COPY --from=builder   /usr/src/app/prisma                ./prisma
