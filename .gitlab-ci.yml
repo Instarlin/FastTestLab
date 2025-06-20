@@ -19,7 +19,10 @@ build:
         paths:
             - "build/"
             - "prisma/"
-            - "node_modules/"
+            - "public/"
+            - "node_modules/prisma/"
+            - "node_modules/.prisma/"
+            - "node_modules/@prisma/"
         expire_in: 1h
 
 test:
@@ -37,6 +40,7 @@ test:
     dependencies:
         - build
     before_script:
+        - npm ci --omit=dev
         - |
             for path in build prisma node_modules; do
                 if [ ! -e "$path" ]; then

@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,27 +17,10 @@ model User {
 }
 
 model Card {
-  id          String    @id @default(cuid())
-  title       String
+  id       String @id @default(cuid())
+  title    String
   description String
-  color       String
-  image       String
-  tags        String[]
-}
-
-model Tag {
-  id    String  @id @default(cuid())
-  name  String
-  cards CardTag[]
-  user  User?   @relation(fields: [userId], references: [id])
-  userId String?
-}
-
-model CardTag {
-  card   Card @relation(fields: [cardId], references: [id])
-  cardId String
-  tag    Tag  @relation(fields: [tagId], references: [id])
-  tagId  String
-
-  @@id([cardId, tagId])
+  Color    String
+  Tags     String
+  Image    String
 }
