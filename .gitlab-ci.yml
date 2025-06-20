@@ -44,12 +44,15 @@ test:
                 exit 1
                 fi
             done
-        - npm run prisma:generate
         - npm run prisma:push
+        - npm run prisma:prod
     script:
         - npm run start &
         - apk add --no-cache busybox-extras
-        - echo "Probing TCP port 5432 on db:" && nc -zv db 5432
+        - echo "Waiting for database to be ready..."
+        - nc -zv db 5432
+        - echo "Waiting for application server to be ready..."
+        - sleep 10
         - npm run test
 
 publish:
