@@ -45,7 +45,7 @@ test:
                 fi
             done
         - npm run prisma:generate
-        - npm run prisma:prod
+        - npm run prisma:push
     script:
         - npm run start &
         - apk add --no-cache busybox-extras
