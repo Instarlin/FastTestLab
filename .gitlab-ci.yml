@@ -2,6 +2,7 @@ stages:
     - build
     - test
     - publish
+    - deploy
 
 cache:
     paths:
@@ -15,7 +16,7 @@ build:
         - npm run prisma:generate
     script:
         - npm run build
-    artifacts:
+    artifacts: 
         paths:
             - "build/"
             - "prisma/"
@@ -71,5 +72,24 @@ publish:
     script:
         - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET --build-arg NODE_ENV=prod -t instarlinz/fasttest:latest .
         - docker push instarlinz/fasttest:latest
+    only:
+        - master
+
+deploy:
+    stage: deploy
+    tags:
+        - docker
+        - deploy
+    image: docker:28.2.2-alpine3.22
+    dependencies:
+        - publish
+    environment:
+    before_script:
+        - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
+    script:
+        - docker pull instarlinz/fasttest:latest
+        - docker stop fasttest || true
+        - docker rm fasttest || true
+        - docker run -d --name fasttest -p 3000:3000 instarlinz/fasttest:latest
     only:
         - master

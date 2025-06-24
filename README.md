@@ -1,136 +1,251 @@
 # 🚀 **FastTestLab**
 
-A modern, full-stack web application for **rapid test creation, management, and execution**.
+A modern, full-stack web application for **rapid test creation, management, and execution** with advanced rich text editing capabilities.
 
-Built with:
-- ⚛️ **React**
-- 🛡 **TypeScript**
-- 🎨 **TailwindCSS**
-- 🗄 **Prisma**
-- 🐳 **Docker**
+## 🛠 **Tech Stack**
+
+- ⚛️ **React 19** with **React Router 7**
+- </> **TypeScript** for type safety
+- 🎨 **TailwindCSS 4** + **Radix UI** components
+- 📝 **TipTap** - advanced rich text editor
+- ⚙️ **Prisma ORM** + **PostgreSQL** database
+- 🔐 **Remix Auth** for authentication
+- 🐳 **Docker** + **Docker Compose** for deployment
+- 📊 **MinIO** for file storage
+- 🧪 **Vitest** for testing
+- 🎭 **Motion** for animations
 
 ---
 
 ## ✨ Features
 
+### 🎯 **Test Creation System**
 - 📝 **Rich text editor** for test creation
-- 🧩 **Modular component architecture**
-- ⚡️ **Hot Module Replacement (HMR)** for fast development
-- 🎨 **TailwindCSS** for rapid UI development
-- 🗄 **Prisma ORM** for database management
-- 🐳 **Docker** support for easy deployment
+- 🎨 **Interactive elements** with drag & drop
+- 🔧 **Slash commands** for quick element insertion
+
+### 🔐 **Authentication & Security**
+- 👤 **User registration and login**
+- 🎫 **Session management**
+- 🔄 **Protected routes**
+
+### 🛠 **Developer Tools**
+- 🧪 **Comprehensive testing** with Vitest
+- 📦 **Docker containerization**
+- ⚙️ **Prisma Studio** for database management
 
 ---
 
-## 🗂️ Project Structure
+## 🗂️ **Project Structure**
 
-```text
-FastTestLab2025/
-├── app/                # Frontend application (React, components, hooks, routes)
-│   ├── components/     # UI and editor components
-│   ├── hooks/          # Custom React hooks
-│   ├── lib/            # Utility libraries
-│   ├── mock/           # Mock data for development/testing
-│   ├── routes/         # Application routes
-│   ├── schemas/        # Validation schemas
-│   ├── store/          # State management
-│   └── styles/         # Global and component styles
-├── prisma/             # Prisma schema and migrations
-│   ├── migrations/     # Database migrations
-│   └── prisma/         # Prisma schema file
-├── public/             # Static assets
-├── .env                # Environment variables
-├── Dockerfile          # Docker build instructions
-├── docker-compose.yaml # Docker Compose setup
-├── package.json        # Project metadata and scripts
-├── README.md           # Project documentation
+```
+FastTestLab/
+├── app/                         # Main application
+│   ├── components/              # UI components
+│   │   ├── editor/              # Editor
+│   │   │   ├── extensions/      # Editor extensions
+│   │   │   ├── hooks/           # Editor hooks
+│   │   │   └── ui/              # Editor UI components
+│   │   ├── ui/                  # Base UI components
+│   │   └── widgets/             # Complex widgets
+│   ├── hooks/                   # Custom React hooks
+│   ├── lib/                     # Utilities and API
+│   ├── modules/                 # Server modules
+│   │   ├── auth.server.ts       # Authentication
+│   │   ├── db.server.ts         # Database
+│   │   ├── minio.server.ts      # File storage
+│   │   └── session.server.ts    # Session management
+│   ├── routes/                  # Application routes
+│   │   ├── auth.tsx             # Authentication
+│   │   ├── chat.tsx             # Chat interface
+│   │   ├── home.tsx             # Home page
+│   │   └── tests.tsx            # Test editor
+│   ├── schemas/                 # Validation schemas
+│   ├── store/                   # State management (Zustand)
+│   └── styles/                  # Global styles
+├── prisma/                      # Database schema
+├── public/                      # Static assets
+├── docker-compose-*.yaml        # Docker configurations
 └── ...
 ```
 
 ---
 
-## 🏁 Getting Started
+## 🚀 **Quick Start**
 
-### 1️⃣ Prerequisites
-- [Node.js](https://nodejs.org/) (v18+ recommended)
-- [npm](https://www.npmjs.com/) (v9+ recommended)
-- [Docker](https://www.docker.com/) (optional, for containerized deployment)
+### **Prerequisites**
+- [Node.js](https://nodejs.org/) (v18+)
+- [npm](https://www.npmjs.com/) (v9+)
+- [Docker](https://www.docker.com/) (optional, if db is local)
 - [PostgreSQL](https://www.postgresql.org/) (or your preferred database, if not using Docker)
 
-### 2️⃣ Installation
+### **Installation**
 
 ```bash
-git clone https://github.com/yourusername/FastTestLab2025.git
-cd FastTestLab2025
-npm install
+git clone https://github.com/yourusername/FastTestLab.git
+cd FastTestLab
+npm i
 ```
 
-- Copy `.env.example` to `.env` and fill in the required values.
-- Set up the database:
+### **Environment Setup**
+
+Copy `.env.example` to `.env` and configure:
+
+```env
+# Database
+DATABASE_URL="postgresql://prisma:prisma@localhost:5432/appdb"
+
+# Authentication
+SESSION_SECRET="your-session-secret"
+ENCRYPTION_SECRET="your-encryption-secret"
+
+# MinIO (File Storage)
+MINIO_ROOT_USER="minioadmin"
+MINIO_ROOT_PASSWORD="minioadmin"
+MINIO_ENDPOINT="localhost"
+MINIO_PORT="9000"
+MINIO_USE_SSL="false"
+MINIO_BUCKET_NAME="fasttestlab"
+
+# Application
+BASE_URL="http://localhost:3000"
+PORT="3000"
+```
+
+### **Database Setup**
 
 ```bash
+# Generate Prisma client
+npx prisma generate
+# Apply migrations
 npx prisma migrate dev
 ```
 
-### 3️⃣ Development
-
-Start the development server with hot reloading:
+### **Development Server**
 
 ```bash
 npm run dev
 ```
 
-Visit [http://localhost:5173](http://localhost:5173) to view the app.
+Visit [http://localhost:3000](http://localhost:3000) to view the application.
 
-### 4️⃣ Building for Production
+---
+
+## 🐳 **Docker Deployment**
+
+### **Development Environment**
 
 ```bash
-npm run build
+# Start all services (app + DB + MinIO)
+npm run docker:dev
+
+# Or manually
+docker compose -f docker-compose-dev.yaml up -d --build
+```
+
+### **Production Environment**
+
+```bash
+# Build and run production version
+npm run docker:prod
+
+# Or manually
+docker compose -f docker-compose-prod.yaml up -d --build
+```
+
+### **Available Services**
+- **Application**: http://localhost:3000
+- **MinIO Console**: http://localhost:9001 (admin/minioadmin)
+---
+
+## 🎯 **Usage Guide**
+
+### **Creating Tests**
+1. **Login** via `/auth`
+2. **Navigate to editor** at `/tests`
+3. **Use slash commands** to add elements:
+   - `/single` - single choice question
+   - `/multiple` - multiple choice question
+   - `/h1`, `/h2`, `/h3` - headings
+   - `/table` - tables
+   - `/code` - code blocks
+   - `/quote` - blockquotes
+   - `/list` - bullet lists
+---
+
+## 🗄 **Database Management**
+
+### **Prisma Commands**
+```bash
+# Apply migrations
+npx prisma migrate dev
+
+# View data
+npx prisma studio
+
+# Reset database
+npx prisma migrate reset
+
+# Generate client
+npx prisma generate
+```
+
+### **Database Schema**
+- **User** - system users
+- **Card** - content cards
+- **Session** - user sessions (auto-managed)
+
+---
+
+## 🧪 **Testing**
+
+```bash
+# Run tests
+npm test
+
+# Development testing
+npm run test:dev
+
+# Code coverage
+npm run test:coverage
+
+# Test UI
+npm run test:ui
 ```
 
 ---
 
-## 🐳 Running with Docker
+## 🛠 **Development**
 
-**Build the Docker image:**
+### **Available Scripts**
 ```bash
-docker build -t fasttestlab2025 .
+npm run dev          # Development server
+npm run build        # Production build
+npm run start        # Production server
+npm run typecheck    # TypeScript check
+npm run test         # Run tests
 ```
 
-**Run the container:**
-```bash
-docker run -p 3000:3000 fasttestlab2025
-```
-
-Or use Docker Compose for multi-service setup:
-```bash
-docker-compose up --build
-```
+### **Editor Extensions Structure**
+- **Bubble Menu** - context formatting menu
+- **Slash Commands** - quick access commands
+- **Test Extensions** - test creation elements
+- **Custom Nodes** - custom editor nodes
 
 ---
 
-## 🗄️ Database Management
+## 🔧 **Configuration**
 
-- **Prisma** is used for database schema and migrations.
-- To apply migrations:
-  ```bash
-  npx prisma migrate deploy
-  ```
-- To open Prisma Studio:
-  ```bash
-  npx prisma studio
-  ```
+### **TipTap Editor**
+Extensions in `app/components/editor/extensions/`:
+- Basic elements (headings, lists, tables)
+- Test elements (single/multiple choice)
+- Formatting (bold, italic, links)
+- Media content (images, videos)
 
 ---
 
-## 🎨 Styling
-
-- **TailwindCSS** is pre-configured for rapid UI development.
-- Customize styles in `app/styles/` and `tailwind.config.ts`.
-
----
-
-## 📄 License
+## 📄 **License**
 
 This project is licensed under the **MIT License**.
 
