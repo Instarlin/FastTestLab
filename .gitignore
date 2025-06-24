@@ -9,7 +9,4 @@
 .env
 .env.production
 
-/prisma/prisma/*
-/prisma/migrations/*
-
 /.kube/*
