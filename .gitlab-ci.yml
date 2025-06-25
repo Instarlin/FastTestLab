@@ -78,14 +78,13 @@ publish:
 deploy:
     stage: deploy
     tags:
-        - docker
         - deploy
     image: docker:28.2.2-alpine3.22
     dependencies:
         - publish
-    environment:
     before_script:
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
+        - unset DOCKER_HOST
     script:
         - docker pull instarlinz/fasttest:latest
         - docker stop fasttest || true
