@@ -80,8 +80,14 @@ deploy:
     tags:
         - deploy
     image: docker:28.2.2-alpine3.22
+    services:
+        - name: docker:28.2.2-dind-alpine3.22
+          alias: docker
     dependencies:
         - publish
+    variables:
+        DOCKER_HOST: "tcp://docker:2375"
+        DOCKER_TLS_CERTDIR: ""
     before_script:
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
         - unset DOCKER_HOST
