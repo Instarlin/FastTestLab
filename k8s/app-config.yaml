@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: fasttest
+data:
+  NODE_ENV: "prod"
+  USE_HTTPS: "false"
+  DATABASE_URL: "postgresql://prisma:prisma@postgres:5432/appdb"
+  BASE_URL: "http://app.yourdomain.com"
