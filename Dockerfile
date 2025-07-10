@@ -1,4 +1,4 @@
-FROM node:24-alpine AS builder
+FROM node:lts-alpine AS builder
 WORKDIR /usr/src/app
 
 ARG SESSION_SECRET
@@ -14,7 +14,7 @@ COPY . .
 RUN npm run prisma:generate
 RUN npm run build
 
-FROM node:24-alpine AS runner
+FROM node:lts-alpine AS runner
 WORKDIR /usr/src/app
 
 ARG NODE_ENV

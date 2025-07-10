@@ -17,6 +17,7 @@ spec:
       containers:
       - name: postgres
         image: postgres:15
+        command: ["postgres", "-c", "listen_addresses='*'"]
         ports:
           - containerPort: 5432
         env:
@@ -35,6 +36,13 @@ spec:
               secretKeyRef:
                 name: db-credentials
                 key: POSTGRES_PASSWORD
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
         readinessProbe:
           exec:
             command: ["pg_isready","-U","prisma","-d","postgres"]
@@ -42,6 +50,13 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 2
           failureThreshold: 20
+        livenessProbe:
+          exec:
+            command: ["pg_isready","-U","prisma","-d","postgres"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
         volumeMounts:
           - name: data
             mountPath: /var/lib/postgresql/data
