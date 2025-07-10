@@ -91,7 +91,7 @@ export function MultipleOption(props: NodeViewProps) {
       <div className="relative group">
         <div className="mt-8 space-y-2">
           {newOptions.map((option: Option, index: number) => (
-            <div key={option.value} className="flex items-center rounded-md px-2 hover:bg-accent transitions-colors duration-300">
+            <div key={option.value} className="flex items-center rounded-md px-2 hover:cursor-pointer hover:bg-accent transitions-colors duration-300">
               <Checkbox
                 contentEditable={false}
                 id={`${nodeId}-c${index}`}

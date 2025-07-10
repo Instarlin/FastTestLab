@@ -65,6 +65,12 @@ export function SingleOption(props: NodeViewProps) {
     });
   }, [newOptions, props]);
 
+  const handleOptionClick = useCallback((value: string) => {
+    if (!isEditable) {
+      handleValueChange(value);
+    }
+  }, [isEditable, handleValueChange]);
+
   const onKeyDown = useCallback((e: KeyboardEvent<HTMLLabelElement>, index: number) => {
     handleKeyDown(
       e,
@@ -89,14 +95,18 @@ export function SingleOption(props: NodeViewProps) {
           className="mt-8" 
           value={selectedValue}
           onValueChange={handleValueChange}
-          disabled={isEditable}
         >
           {newOptions.map((option: Option, index: number) => (
-            <div key={option.value} className="flex items-center rounded-md px-2 hover:bg-accent transitions-all duration-300">
+            <div 
+              key={option.value} 
+              className="flex items-center rounded-md px-2 hover:cursor-pointer hover:bg-accent transitions-all duration-300"
+              onClick={() => handleOptionClick(option.value)}
+            >
               <RadioGroupItem 
-                className="hover:cursor-pointer" 
+                className="hover:cursor-pointer"
                 value={option.value} 
                 id={`${nodeId}-r${index}`}
+                disabled={isEditable}
               />
               <Label
                 ref={(el: HTMLLabelElement | null) => {

@@ -16,7 +16,7 @@ build:
         - npm run prisma:generate
     script:
         - npm run build
-    artifacts: 
+    artifacts:
         paths:
             - "build/"
             - "prisma/"
