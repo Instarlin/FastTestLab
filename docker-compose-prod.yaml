@@ -6,6 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: runner
       args:
         SESSION_SECRET: ${SESSION_SECRET}
         ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}

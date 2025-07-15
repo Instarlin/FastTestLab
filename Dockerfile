@@ -1,5 +1,5 @@
 FROM node:lts-alpine AS builder
-WORKDIR /usr/src/app
+WORKDIR /app
 
 ARG SESSION_SECRET
 ARG ENCRYPTION_SECRET
@@ -15,7 +15,7 @@ RUN npm run prisma:generate
 RUN npm run build
 
 FROM node:lts-alpine AS runner
-WORKDIR /usr/src/app
+WORKDIR /app
 
 ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
@@ -23,11 +23,15 @@ ENV NODE_ENV=${NODE_ENV}
 COPY package.json package-lock.json entrypoint.sh ./
 RUN if [ "$NODE_ENV" = "dev" ]; then npm ci; else npm ci --omit=dev; fi
 
-COPY --from=builder   /usr/src/app/build                 ./build
-COPY --from=builder   /usr/src/app/prisma                ./prisma
-COPY --from=builder   /usr/src/app/public                ./public
-COPY --from=builder   /usr/src/app/node_modules/prisma   ./node_modules/prisma
-COPY --from=builder   /usr/src/app/node_modules/.prisma  ./node_modules/.prisma
-COPY --from=builder   /usr/src/app/node_modules/@prisma  ./node_modules/@prisma
+COPY --from=builder   /app/build                 ./build
+COPY --from=builder   /app/prisma                ./prisma
+COPY --from=builder   /app/public                ./public
+COPY --from=builder   /app/node_modules/prisma   ./node_modules/prisma
+COPY --from=builder   /app/node_modules/.prisma  ./node_modules/.prisma
+COPY --from=builder   /app/node_modules/@prisma  ./node_modules/@prisma
 
 EXPOSE 3000
+
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["npm", "run", "start"]
