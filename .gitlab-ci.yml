@@ -16,13 +16,13 @@ build:
         - npm run prisma:generate
     script:
         - npm run build
-    artifacts:
+    cache:
         paths:
-            - "build/"
-            - "prisma/"
-            - "public/"
+            - |
+                "build/"
+                "prisma/"
+                "public/"
             - "node_modules/"
-        expire_in: 1h
 
 test:
     stage: test
@@ -38,6 +38,8 @@ test:
         DATABASE_URL: postgres://prisma:prisma@db:5432/appdb
     dependencies:
         - build
+    needs:
+        - build
     before_script:
         - |
             for path in build prisma node_modules; do
@@ -48,20 +50,22 @@ test:
             done
         - npm run prisma:push
     script:
-        - npm run start &
-        - apk add --no-cache busybox-extras
-        - echo "Waiting for database to be ready..."
-        - nc -zv db 5432
-        - echo "Waiting for application server to be ready..."
-        - sleep 10
-        - npm run test
+        - |
+            npm run start &
+            apk add --no-cache busybox-extras
+            echo "Waiting for database to be ready..."
+            nc -zv db 5432
+            echo "Waiting for application server to be ready..."
+            npm run start &
+            for i in $(seq 1 30); do
+                nc -z localhost 3000 && break
+                sleep 1
+            - done
 
 publish:
     stage: publish
-    image: docker:28.2.2-alpine3.22
-    services:
-        - name: docker:28.2.2-dind-alpine3.22
-          alias: docker
+    image: docker:28
+    services: [docker:28-dind]
     dependencies:
         - test
     variables:
@@ -70,8 +74,8 @@ publish:
     before_script:
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
     script:
-        - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET --build-arg NODE_ENV=prod -t instarlinz/fasttest:latest .
-        - docker push instarlinz/fasttest:latest
+        - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET --build-arg NODE_ENV=prod -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+        - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
     only:
         - master
 
@@ -79,10 +83,8 @@ deploy:
     stage: deploy
     tags:
         - deploy
-    image: docker:28.2.2-alpine3.22
-    services:
-        - name: docker:28.2.2-dind-alpine3.22
-          alias: docker
+    image: docker:28
+    services: [docker:28-dind]
     dependencies:
         - publish
     variables:
