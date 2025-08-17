@@ -5,24 +5,27 @@ stages:
     - deploy
 
 cache:
-    paths:
-        - node_modules/
+  key: "npm-${CI_COMMIT_REF_SLUG}"
+  paths:
+    - .npm/
+  policy: pull-push
 
 build:
     stage: build
     image: node:20-alpine
     before_script:
-        - npm ci
+        - npm ci --cache .npm --prefer-offline
         - npm run prisma:generate
     script:
         - npm run build
-    cache:
+    artifacts:
+        expire_in: 1h
         paths:
-            - |
-                "build/"
-                "prisma/"
-                "public/"
-            - "node_modules/"
+            - "build/"
+            - "prisma/"
+            - "public/"
+            - package.json
+            - package-lock.json
 
 test:
     stage: test
@@ -36,21 +39,39 @@ test:
         POSTGRES_PASSWORD: prisma
         POSTGRES_DB: appdb
         DATABASE_URL: postgres://prisma:prisma@db:5432/appdb
-    needs:
-        - build        
-    script:
+    needs: ["build"] 
+    before_script:
+        - apk add --no-cache busybox-extras
+        - npm ci --cache .npm --prefer-offline
+        
+        - |
+            for path in build prisma; do
+                if [ ! -e "$path" ]; then
+                echo "Required artifact '$path' not found" >&2
+                exit 1
+                fi
+            done
+
         - npm run prisma:push
+    script:
+        - |
+            echo "Waiting for Postgres on db:5432…"
+            for i in $(seq 1 60); do
+                if nc -z db 5432; then
+                echo "Postgres is up"; break
+                fi
+                sleep 1
+            done
         - |
             npm run start &
-            apk add --no-cache busybox-extras
-            echo "Waiting for database to be ready..."
-            nc -zv db 5432
-            echo "Waiting for application server to be ready..."
-            npm run start &
-            for i in $(seq 1 30); do
-                nc -z localhost 3000 && break
+            echo "Waiting for app on localhost:3000…"
+            for i in $(seq 1 60); do
+                if nc -z localhost 3000; then
+                echo "App is up"; break
+                fi
                 sleep 1
-            - done
+            done
+            npm test
 
 publish:
     stage: publish
