@@ -21,7 +21,8 @@ ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
 
 COPY package.json package-lock.json entrypoint.sh ./
-RUN if [ "$NODE_ENV" = "dev" ]; then npm ci; else npm ci --omit=dev; fi
+# RUN if [ "$NODE_ENV" = "dev" ]; then npm ci; else npm ci --omit=dev; fi
+RUN npm ci
 
 COPY --from=builder   /app/build                 ./build
 COPY --from=builder   /app/prisma                ./prisma
