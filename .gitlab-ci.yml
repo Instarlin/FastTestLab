@@ -75,18 +75,20 @@ test:
 
 publish:
     stage: publish
-    image: docker:28
-    services: [docker:28-dind]
-    dependencies:
-        - test
+    image: docker:28.0.2
+    services:
+        - name: docker:28.0.2-dind
+          alias: docker
     variables:
         DOCKER_HOST: "tcp://docker:2375"
         DOCKER_TLS_CERTDIR: ""
+        DOCKER_DRIVER: overlay2
+        DOCKERHUB_REPO: "docker.io/instarlinz/fasttest"
     before_script:
-        - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD
+        - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" docker.io --password-stdin
     script:
-        - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET --build-arg NODE_ENV=prod -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
-        - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+        - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET --build-arg NODE_ENV=prod -t $DOCKERHUB_REPO:$CI_COMMIT_SHORT_SHA .
+        - docker push $DOCKERHUB_REPO:$CI_COMMIT_SHORT_SHA
     only:
         - master
 
