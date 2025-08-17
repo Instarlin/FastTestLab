@@ -37,17 +37,9 @@ test:
         POSTGRES_DB: appdb
         DATABASE_URL: postgres://prisma:prisma@db:5432/appdb
     needs:
-        - build
-    before_script:
-        - |
-            for path in build prisma node_modules; do
-                if [ ! -e "$path" ]; then
-                echo "Required artifact '$path' not found"
-                exit 1
-                fi
-            done
-        - npm run prisma:push
+        - build        
     script:
+        - npm run prisma:push
         - |
             npm run start &
             apk add --no-cache busybox-extras
