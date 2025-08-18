@@ -73,7 +73,7 @@ test:
 
 sast:semgrep:
     stage: test
-    image: returntocorp/semgrep:1
+    image: semgrep/semgrep:latest
     rules:
         - if: '$CI_COMMIT_BRANCH'
     script:
@@ -91,7 +91,14 @@ sast:gitleaks:
     rules:
         - if: '$CI_COMMIT_BRANCH'
     script:
-        - gitleaks detect --no-git --redact --report-format sarif --report-path gitleaks.sarif || true
+        - | 
+            gitleaks detect 
+            --no-git --redact 
+            --report-format sarif 
+            --report-path gitleaks.sarif 
+            --skip-dirs build,node_modules,prisma/migrations,public
+            --verbose
+            || true
     allow_failure: true
     artifacts:
         when: always
