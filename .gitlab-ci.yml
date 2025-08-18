@@ -23,7 +23,6 @@ build:
         paths:
             - "build/"
             - "prisma/"
-            - "public/"
             - package.json
             - package-lock.json
 
@@ -51,8 +50,6 @@ test:
                 exit 1
                 fi
             done
-
-        - npm run prisma:push
     script:
         - |
             echo "Waiting for Postgres on db:5432…"
@@ -62,6 +59,7 @@ test:
                 fi
                 sleep 1
             done
+        - npm run prisma:push
         - |
             npm run start &
             echo "Waiting for app on localhost:3000…"
@@ -72,6 +70,34 @@ test:
                 sleep 1
             done
             npm test
+
+sast:semgrep:
+    stage: test
+    image: returntocorp/semgrep:1
+    rules:
+        - if: '$CI_COMMIT_BRANCH'
+    script:
+        - semgrep ci --config p/owasp-top-ten --config p/ci --error --sarif > semgrep.sarif || true
+    allow_failure: true
+    artifacts:
+        when: always
+        paths: [semgrep.sarif]
+        reports:
+            sast: semgrep.sarif
+
+sast:gitleaks:
+    stage: test
+    image: zricethezav/gitleaks:latest
+    rules:
+        - if: '$CI_COMMIT_BRANCH'
+    script:
+        - gitleaks detect --no-git --redact --report-format sarif --report-path gitleaks.sarif || true
+    allow_failure: true
+    artifacts:
+        when: always
+        paths: [gitleaks.sarif]
+        reports:
+            sast: gitleaks.sarif
 
 publish:
     stage: publish
@@ -85,10 +111,15 @@ publish:
         DOCKER_DRIVER: overlay2
         DOCKERHUB_REPO: "docker.io/instarlinz/fasttest"
     before_script:
-        - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" docker.io --password-stdin
+        - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" docker.io --password-stdin
     script:
-        - docker build --build-arg SESSION_SECRET=$SESSION_SECRET --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET --build-arg NODE_ENV=prod -t $DOCKERHUB_REPO:$CI_COMMIT_SHORT_SHA .
-        - docker push $DOCKERHUB_REPO:$CI_COMMIT_SHORT_SHA
+        - TAG_SHORT="$CI_COMMIT_SHORT_SHA"
+        - docker build 
+           --build-arg SESSION_SECRET=$SESSION_SECRET 
+           --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET 
+           --build-arg NODE_ENV=prod 
+           -t $DOCKERHUB_REPO:$TAG_SHORT .
+        - docker push $DOCKERHUB_REPO:$TAG_SHORT
     only:
         - master
 
