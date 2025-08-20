@@ -216,23 +216,3 @@ export const lessons = [
     ],
   },
 ];
-
-Intercom('boot', {
-  app_id: 'abc12345',
-  email: 'john.doe@example.com',
-  name: 'John Doe',
-  user_id: '9876'
-});
-
-window.intercomSettings = {
-  app_id: appId,
-  name: myUserName,
-  email: myUserEmail,
-};
-
-// ruleid: intercom-settings-user-identifier-without-user-hash
-window.intercomSettings = {
-  app_id: appId,
-  name: myUserName,
-  user_id: myUserID,
-};
