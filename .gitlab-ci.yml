@@ -87,7 +87,9 @@ sast:semgrep:
 
 sast:gitleaks:
     stage: test
-    image: zricethezav/gitleaks:latest
+    image:
+        name: zricethezav/gitleaks:latest
+        entrypoint: [""]
     rules:
         - if: '$CI_COMMIT_BRANCH'
     script:
