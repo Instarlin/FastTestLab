@@ -77,7 +77,11 @@ sast:semgrep:
     rules:
         - if: '$CI_COMMIT_BRANCH'
     script:
-        - semgrep ci --config p/owasp-top-ten --config p/ci --error --sarif > semgrep.sarif || true
+        - |
+            semgrep ci \
+            --config p/auto
+            --error \
+            --sarif > semgrep.sarif || true
     allow_failure: true
     artifacts:
         when: always
