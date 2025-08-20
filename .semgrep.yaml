@@ -5,8 +5,6 @@ rulesets:
     - p/javascript
     - p/typescript
     - p/nodejsscan
-    - p/expressjs
+    - p/react
     - p/jwt
     - p/secrets
-
-severity: INFO

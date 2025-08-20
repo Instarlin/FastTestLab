@@ -81,11 +81,6 @@ sast:semgrep:
     script: semgrep ci
     variables:
       SEMGREP_APP_TOKEN: $SEMGREP_APP_TOKEN
-    artifacts:
-        when: always
-        paths: [semgrep.sarif]
-        reports:
-            sast: semgrep.sarif
 
 sast:gitleaks:
     stage: test
