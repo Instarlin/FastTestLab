@@ -75,14 +75,12 @@ sast:semgrep:
     stage: test
     image: semgrep/semgrep:latest
     rules:
-        - if: '$CI_COMMIT_BRANCH'
-    script:
-        - |
-            semgrep ci \
-            --config p/auto
-            --error \
-            --sarif > semgrep.sarif || true
-    allow_failure: true
+        - if: $CI_COMMIT_BRANCH
+        - if: $CI_MERGE_REQUEST_IID
+        - if: $CI_PIPELINE_SOURCE == "web"
+    script: semgrep ci
+    variables:
+      SEMGREP_APP_TOKEN: $SEMGREP_APP_TOKEN
     artifacts:
         when: always
         paths: [semgrep.sarif]
