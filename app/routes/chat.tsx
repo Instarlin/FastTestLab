@@ -1,4 +1,4 @@
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/chat";
 import {
   Dropzone,
   DropZoneArea,
@@ -8,7 +8,6 @@ import {
 import { Trash2Icon, SendHorizontalIcon } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useState, useRef, useEffect } from "react";
-import axios from "axios";
 
 interface Message {
   id: string;
@@ -32,13 +31,54 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Chat() {
+  const initialChats: Chat[] = [
+    {
+      id: "1",
+      title: "General",
+      lastMessage: "Start chatting!",
+      timestamp: new Date(),
+    },
+    {
+      id: "2",
+      title: "Project",
+      lastMessage: "Discuss the project here",
+      timestamp: new Date(),
+    },
+  ];
+
+  const initialMessages: Record<string, Message[]> = {
+    "1": [
+      {
+        id: "m1",
+        content: "Welcome to General chat",
+        role: "assistant",
+        timestamp: new Date(),
+      },
+    ],
+    "2": [
+      {
+        id: "m2",
+        content: "Welcome to Project chat",
+        role: "assistant",
+        timestamp: new Date(),
+      },
+    ],
+  };
+
+  const [chats, setChats] = useState<Chat[]>(initialChats);
+  const [selectedChat, setSelectedChat] = useState<string | null>(
+    initialChats[0]?.id ?? null,
+  );
+  const [messageHistory, setMessageHistory] = useState<Record<string, Message[]>>(
+    initialMessages,
+  );
+  const [messages, setMessages] = useState<Message[]>(
+    initialMessages[initialChats[0].id],
+  );
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState<File[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [selectedChat, setSelectedChat] = useState<string | null>(null);
-  const [isLoadingChat, setIsLoadingChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [fileDb, setFileDb] = useState<Record<string, File[]>>({});
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,45 +89,14 @@ export default function Chat() {
   }, [messages]);
 
   useEffect(() => {
-    const loadChats = async () => {
-      try {
-        const response = await axios.get("/api/chats");
-        setChats(response.data);
-        if (response.data.length > 0) {
-          setSelectedChat(response.data[0].id);
-        }
-      } catch (error) {
-        console.error("Error loading chats:", error);
-      }
-    };
-    loadChats();
-  }, []);
-
-  useEffect(() => {
-    const loadMessages = async () => {
-      if (!selectedChat) return;
-
-      setIsLoadingChat(true);
-      try {
-        const response = await axios.get(`/api/chats/${selectedChat}/messages`);
-        setMessages(response.data);
-      } catch (error) {
-        console.error("Error loading messages:", error);
-      } finally {
-        setIsLoadingChat(false);
-      }
-    };
-    loadMessages();
-  }, [selectedChat]);
-
-  const handleChatSelect = (chatId: string) => {
-    setSelectedChat(chatId);
-  };
+    if (selectedChat) {
+      setMessages(messageHistory[selectedChat] || []);
+    }
+  }, [selectedChat, messageHistory]);
 
   const dropzone = useDropzone({
     onDropFile: async (file: File) => {
       setFiles((prev) => [...prev, file]);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       return {
         status: "success",
         result: URL.createObjectURL(file),
@@ -102,41 +111,68 @@ export default function Chat() {
     },
   });
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (!message.trim() || !selectedChat) return;
 
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       content: message,
       role: "user",
       timestamp: new Date(),
     };
-    setMessages((prev) => [...prev, userMessage]);
+    const assistantMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      content: "This is a mock response. Server integration needed.",
+      role: "assistant",
+      timestamp: new Date(),
+    };
+
+    setMessageHistory((prev) => ({
+      ...prev,
+      [selectedChat]: [
+        ...(prev[selectedChat] || []),
+        userMessage,
+        assistantMessage,
+      ],
+    }));
+
+    setMessages((prev) => [...prev, userMessage, assistantMessage]);
+
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat.id === selectedChat
+          ? { ...chat, lastMessage: userMessage.content, timestamp: new Date() }
+          : chat,
+      ),
+    );
+
+    setFileDb((prev) => ({
+      ...prev,
+      [selectedChat]: [...(prev[selectedChat] || []), ...files],
+    }));
+
+    setFiles([]);
     setMessage("");
-
-    try {
-      await axios.post(`/api/chats/${selectedChat}/messages`, {
-        message: userMessage.content,
-        files: files.map((file) => ({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })),
-      });
-
-      //* Assistant response (mock for now)
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: "This is a mock response. Server integration needed.",
-        role: "assistant",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
   };
+
+  const handleChatSelect = (id: string) => {
+    setSelectedChat(id);
+  };
+
+  const removeAttachment = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeDbFile = (index: number) => {
+    if (!selectedChat) return;
+    setFileDb((prev) => {
+      const newFiles = [...(prev[selectedChat] || [])];
+      newFiles.splice(index, 1);
+      return { ...prev, [selectedChat]: newFiles };
+    });
+  };
+
+  const dbFilesList = selectedChat ? fileDb[selectedChat] || [] : [];
 
   return (
     <div className="flex h-full">
@@ -148,11 +184,10 @@ export default function Chat() {
             <div
               key={chat.id}
               onClick={() => handleChatSelect(chat.id)}
-              className={`hover:cursor-pointer rounded-lg p-2 ${
-                selectedChat === chat.id
+              className={`hover:cursor-pointer rounded-lg p-2 ${selectedChat === chat.id
                   ? "bg-primary text-primary-foreground"
                   : "hover:bg-muted"
-              }`}
+                }`}
             >
               <div className="font-medium truncate">{chat.title}</div>
               <div className="text-sm text-muted-foreground truncate">
@@ -171,31 +206,23 @@ export default function Chat() {
               <DropzoneTrigger className="h-full w-full p-0 m-0 cursor-auto bg-background hover:bg-background ring-offset-none transition-colors focus-within:outline-none has-[input:focus-visible]:ring-0 has-[input:focus-visible]:ring-offset-0">
                 <div className="h-full w-full overflow-y-auto">
                   <div className="p-4 space-y-4">
-                    {isLoadingChat ? (
-                      <div className="flex justify-center items-center h-full">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    {messages.map((msg) => (
+                      <div
+                        key={msg.id}
+                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
+                          }`}
+                      >
+                        <div
+                          className={`max-w-[70%] rounded-lg p-3 ${msg.role === "user"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted"
+                            }`}
+                        >
+                          {msg.content}
+                        </div>
                       </div>
-                    ) : (
-                      <>
-                        {messages.map((msg) => (
-                          <div
-                            key={msg.id}
-                            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                          >
-                            <div
-                              className={`max-w-[70%] rounded-lg p-3 ${
-                                msg.role === "user"
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted"
-                              }`}
-                            >
-                              {msg.content}
-                            </div>
-                          </div>
-                        ))}
-                        <div ref={messagesEndRef} />
-                      </>
-                    )}
+                    ))}
+                    <div ref={messagesEndRef} />
                   </div>
                 </div>
               </DropzoneTrigger>
@@ -217,9 +244,7 @@ export default function Chat() {
                     variant="ghost"
                     size="icon"
                     className="h-4 w-4"
-                    onClick={() =>
-                      setFiles((prev) => prev.filter((_, i) => i !== index))
-                    }
+                    onClick={() => removeAttachment(index)}
                   >
                     <Trash2Icon className="size-4" />
                   </Button>
@@ -264,17 +289,29 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* Context Section */}
+      {/* File Database Section */}
       <div className="hidden md:block min-w-[350px] border-l-1 border-gray-200 bg-background p-4">
-        <h2 className="mb-4 text-lg font-semibold">Context</h2>
+        <h2 className="mb-4 text-lg font-semibold">Files</h2>
         <div className="space-y-2">
-          {/* Context items will go here */}
-          <div className="hover:cursor-pointer rounded-lg bg-muted p-2">
-            File 1
-          </div>
-          <div className="hover:cursor-pointer rounded-lg p-2 hover:bg-muted">
-            File 2
-          </div>
+          {dbFilesList.map((file, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between rounded-lg p-2 hover:bg-muted"
+            >
+              <span className="truncate">{file.name}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-4 w-4"
+                onClick={() => removeDbFile(index)}
+              >
+                <Trash2Icon className="size-4" />
+              </Button>
+            </div>
+          ))}
+          {dbFilesList.length === 0 && (
+            <div className="text-sm text-muted-foreground">No files uploaded.</div>
+          )}
         </div>
       </div>
     </div>

@@ -1,17 +1,18 @@
-import { expect, test, describe } from "vitest";
+import { expect, test, describe, beforeEach } from "vitest";
 import axios from "axios";
-
-const TEST_BASE_URL = "http://localhost:3000";
-const TIMEOUT = 10000;
+import { TEST_CONFIG, waitForServer } from "./setup";
 
 describe("Auth Route Tests", () => {
+  beforeEach(async () => {
+    await waitForServer(TEST_CONFIG.BASE_URL);
+  });
   // Test that unauthorized access to protected routes redirects to auth
   test(
     "should redirect to auth when accessing protected routes",
     async () => {
       try {
-        const response = await axios.get(`${TEST_BASE_URL}/home`, {
-          timeout: TIMEOUT,
+        const response = await axios.get(`${TEST_CONFIG.BASE_URL}/home`, {
+          timeout: TEST_CONFIG.TIMEOUT,
           maxRedirects: 0,
           validateStatus: function (status) {
             return true;
@@ -32,15 +33,15 @@ describe("Auth Route Tests", () => {
         throw error;
       }
     },
-    TIMEOUT
+    TEST_CONFIG.TIMEOUT
   );
 
   test(
     "should load auth page successfully",
     async () => {
       try {
-        const response = await axios.get(`${TEST_BASE_URL}/auth`, {
-          timeout: TIMEOUT,
+        const response = await axios.get(`${TEST_CONFIG.BASE_URL}/auth`, {
+          timeout: TEST_CONFIG.TIMEOUT,
           maxRedirects: 0,
           validateStatus: function (status) {
             return true;
@@ -60,7 +61,7 @@ describe("Auth Route Tests", () => {
         throw error;
       }
     },
-    TIMEOUT
+    TEST_CONFIG.TIMEOUT
   );
 
   // Test POST request to login endpoint
@@ -73,8 +74,8 @@ describe("Auth Route Tests", () => {
       loginData.append("password", "testpassword123");
 
       try {
-        const response = await axios.post(`${TEST_BASE_URL}/auth`, loginData, {
-          timeout: TIMEOUT,
+        const response = await axios.post(`${TEST_CONFIG.BASE_URL}/auth`, loginData, {
+          timeout: TEST_CONFIG.TIMEOUT,
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -102,7 +103,7 @@ describe("Auth Route Tests", () => {
         throw error;
       }
     },
-    TIMEOUT
+    TEST_CONFIG.TIMEOUT
   );
 
   test(
@@ -116,10 +117,10 @@ describe("Auth Route Tests", () => {
 
       try {
         const response = await axios.post(
-          `${TEST_BASE_URL}/auth`,
+          `${TEST_CONFIG.BASE_URL}/auth`,
           registerData,
           {
-            timeout: TIMEOUT,
+            timeout: TEST_CONFIG.TIMEOUT,
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -147,7 +148,7 @@ describe("Auth Route Tests", () => {
         throw error;
       }
     },
-    TIMEOUT
+    TEST_CONFIG.TIMEOUT
   );
 
   test(
@@ -159,8 +160,8 @@ describe("Auth Route Tests", () => {
       loginData.append("password", "testpassword123");
 
       try {
-        const response = await axios.post(`${TEST_BASE_URL}/auth`, loginData, {
-          timeout: TIMEOUT,
+        const response = await axios.post(`${TEST_CONFIG.BASE_URL}/auth`, loginData, {
+          timeout: TEST_CONFIG.TIMEOUT,
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -188,6 +189,6 @@ describe("Auth Route Tests", () => {
         throw error;
       }
     },
-    TIMEOUT
+    TEST_CONFIG.TIMEOUT
   );
 });

@@ -1,14 +1,13 @@
 import axios from 'axios';
 
-axios.defaults.timeout = 10000;
+export const TEST_CONFIG = {
+  BASE_URL: "http://localhost:3000",
+  TIMEOUT: 10000,
+};
+
+axios.defaults.timeout = TEST_CONFIG.TIMEOUT;
 
 console.log('🧪 Test environment initialized');
-
-export const TEST_CONFIG = {
-  BASE_URL: import.meta.env.BASE_URL,
-  TIMEOUT: 10000,
-  API_TIMEOUT: 5000,
-};
 
 export async function waitForServer(url: string, maxAttempts = 10): Promise<boolean> {
   for (let i = 0; i < maxAttempts; i++) {
