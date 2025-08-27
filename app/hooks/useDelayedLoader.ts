@@ -29,7 +29,17 @@ export function useDelayedLoader() {
       setProgress(0);
 
       intervalRef.current = window.setInterval(() => {
-        setProgress((prev) => (prev < PROGRESS_MAX ? prev + PROGRESS_STEP : prev));
+        setProgress((prev) => {
+          const next = prev + PROGRESS_STEP;
+          if (next >= PROGRESS_MAX) {
+            if (intervalRef.current !== null) {
+              clearInterval(intervalRef.current);
+              intervalRef.current = null;
+            }
+            return PROGRESS_MAX;
+          }
+          return next;
+        });
       }, INTERVAL_MS);
     } else {
       clearTimers();

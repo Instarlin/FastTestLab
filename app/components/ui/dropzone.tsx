@@ -174,6 +174,7 @@ type UseDropzoneProps<TUploadRes, TUploadError> = {
     maxSize?: number;
     maxFiles?: number;
   };
+  noClick?: boolean;
   shiftOnMaxFiles?: boolean;
 } & (TUploadError extends string
   ? {
@@ -214,6 +215,7 @@ const useDropzone = <TUploadRes, TUploadError = string>(
     autoRetry,
     validation,
     shiftOnMaxFiles,
+    noClick,
   } = props;
 
   const inputId = useId();
@@ -323,6 +325,7 @@ const useDropzone = <TUploadRes, TUploadError = string>(
     accept: validation?.accept,
     minSize: validation?.minSize,
     maxSize: validation?.maxSize,
+    noClick,
     onDropAccepted: async (newFiles) => {
       setRootError(undefined);
 
