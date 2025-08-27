@@ -19,10 +19,12 @@ services:
       USE_HTTPS: false
       DATABASE_URL: postgresql://prisma:prisma@db:5432/appdb
       BASE_URL: http://localhost:3000
-      PORT: 3000
+    env_file:
+      - .env
     volumes:
-      - .:/usr/src/app:delegated
-      - /usr/src/app/node_modules
+      - .:/app:delegated
+      - /app/node_modules
+    working_dir: /app
     networks:
       - prisma-network
     entrypoint: ["./entrypoint.sh"]

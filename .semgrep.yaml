@@ -1,0 +1,9 @@
+rulesets:
+  - p/owasp-top-ten
+  - p/ci
+  - p/javascript
+  - p/typescript
+  - p/nodejsscan
+  - p/react
+  - p/jwt
+  - p/secrets

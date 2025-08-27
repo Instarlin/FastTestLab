@@ -30,8 +30,7 @@ COPY --from=builder   /app/node_modules/prisma   ./node_modules/prisma
 COPY --from=builder   /app/node_modules/.prisma  ./node_modules/.prisma
 COPY --from=builder   /app/node_modules/@prisma  ./node_modules/@prisma
 
-EXPOSE 3000
-
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
+
 CMD ["npm", "run", "start"]
