@@ -8,7 +8,6 @@ services:
       dockerfile: Dockerfile
       args:
         SESSION_SECRET: ${SESSION_SECRET}
-        ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}
         NODE_ENV: dev
     restart: unless-stopped
     ports:

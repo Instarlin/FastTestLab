@@ -9,7 +9,6 @@ services:
       target: runner
       args:
         SESSION_SECRET: ${SESSION_SECRET}
-        ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}
         NODE_ENV: prod
     restart: unless-stopped
     ports:

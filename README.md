@@ -97,7 +97,6 @@ DATABASE_URL="postgresql://prisma:prisma@localhost:5432/appdb"
 
 # Authentication
 SESSION_SECRET="your-session-secret"
-ENCRYPTION_SECRET="your-encryption-secret"
 
 # MinIO (File Storage)
 MINIO_ROOT_USER="minioadmin"

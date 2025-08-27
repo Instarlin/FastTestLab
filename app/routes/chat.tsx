@@ -27,7 +27,7 @@ interface Message {
   content: string;
   role: "user" | "assistant";
   timestamp: Date;
-  files?: File[];
+  files?: string[];
 }
 
 interface Chat {
@@ -46,40 +46,6 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export default function Chat() {
-  const initialChats: Chat[] = [
-    {
-      id: "1",
-      title: "General",
-      lastMessage: "Start chatting!",
-      timestamp: new Date(),
-    },
-    {
-      id: "2",
-      title: "Project",
-      lastMessage: "Discuss the project here",
-      timestamp: new Date(),
-    },
-  ];
-
-  const initialMessages: Record<string, Message[]> = {
-    "1": [
-      {
-        id: "m1",
-        content: "Welcome to General chat",
-        role: "assistant",
-        timestamp: new Date(),
-      },
-    ],
-    "2": [
-      {
-        id: "m2",
-        content: "Welcome to Project chat",
-        role: "assistant",
-        timestamp: new Date(),
-      },
-    ],
-  };
-
   const sortChats = (list: Chat[]) =>
     [...list].sort((a, b) => {
       if (a.pinned === b.pinned) {
@@ -88,14 +54,14 @@ export default function Chat() {
       return a.pinned ? -1 : 1;
     });
 
-  const [chats, setChats] = useState<Chat[]>(sortChats(initialChats));
-  const [selectedChat, setSelectedChat] = useState<string | null>(initialChats[0]?.id ?? null);
-  const [messageHistory, setMessageHistory] = useState<Record<string, Message[]>>(initialMessages);
-  const [messages, setMessages] = useState<Message[]>(initialMessages[initialChats[0].id]);
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const [messageHistory, setMessageHistory] = useState<Record<string, Message[]>>({});
+  const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [isMultiline, setIsMultiline] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [fileDb, setFileDb] = useState<Record<string, File[]>>({});
+  const [fileDb, setFileDb] = useState<Record<string, string[]>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -108,10 +74,33 @@ export default function Chat() {
   }, [messages]);
 
   useEffect(() => {
-    if (selectedChat) {
-      setMessages(messageHistory[selectedChat] || []);
-    }
-  }, [selectedChat, messageHistory]);
+    const load = async () => {
+      const res = await fetch("/api/chats");
+      if (res.ok) {
+        const data = await res.json();
+        const parsed = data.map((c: any) => ({
+          ...c,
+          timestamp: new Date(c.timestamp),
+        }));
+        setChats(sortChats(parsed));
+        if (parsed[0]) {
+          setSelectedChat(parsed[0].id);
+          const msgRes = await fetch(`/api/chats/${parsed[0].id}`);
+          if (msgRes.ok) {
+            const msgs = await msgRes.json();
+            const parsedMsgs = msgs.map((m: any) => ({
+              ...m,
+              timestamp: new Date(m.timestamp),
+            }));
+            setMessageHistory({ [parsed[0].id]: parsedMsgs });
+            setMessages(parsedMsgs);
+          }
+        }
+      }
+    };
+    load();
+  }, []);
+
 
   const dropzone = useDropzone({
     onDropFile: async (file: File) => {
@@ -131,22 +120,20 @@ export default function Chat() {
     noClick: true,
   });
 
-  const createChat = () => {
-    const id = Date.now().toString();
-    const newChat: Chat = {
-      id,
-      title: "New Chat",
-      lastMessage: "Start chatting!",
-      timestamp: new Date(),
-      pinned: false,
-    };
-    setChats((prev) => sortChats([newChat, ...prev]));
-    setMessageHistory((prev) => ({ ...prev, [id]: [] }));
-    setSelectedChat(id);
-    setMessages([]);
+  const createChat = async () => {
+    const res = await fetch("/api/chats", { method: "POST" });
+    if (res.ok) {
+      const chat: Chat = await res.json();
+      chat.timestamp = new Date(chat.timestamp);
+      setChats((prev) => sortChats([chat, ...prev]));
+      setMessageHistory((prev) => ({ ...prev, [chat.id]: [] }));
+      setSelectedChat(chat.id);
+      setMessages([]);
+    }
   };
 
-  const deleteChat = (id: string) => {
+  const deleteChat = async (id: string) => {
+    await fetch(`/api/chats/${id}`, { method: "DELETE" });
     const nextChats = chats.filter((chat) => chat.id !== id);
     const nextSelected = selectedChat === id ? nextChats[0]?.id ?? null : selectedChat;
     setChats(nextChats);
@@ -164,79 +151,100 @@ export default function Chat() {
     setMessages(nextSelected ? messageHistory[nextSelected] || [] : []);
   };
 
-  const togglePinChat = (id: string) => {
-    setChats((prev) =>
-      sortChats(
-        prev.map((chat) =>
-          chat.id === id ? { ...chat, pinned: !chat.pinned } : chat,
-        ),
-      ),
-    );
+  const togglePinChat = async (id: string) => {
+    const chat = chats.find((c) => c.id === id);
+    if (!chat) return;
+    const res = await fetch(`/api/chats/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pinned: !chat.pinned }),
+    });
+    if (res.ok) {
+      const updated: Chat = await res.json();
+      updated.timestamp = new Date(updated.timestamp);
+      setChats((prev) => sortChats(prev.map((c) => (c.id === id ? updated : c))));
+    }
   };
 
-  const renameChat = (id: string) => {
+  const renameChat = async (id: string) => {
     const current = chats.find((c) => c.id === id);
     if (!current) return;
     const name = window.prompt("Rename chat", current.title);
     if (name) {
-      setChats((prev) =>
-        prev.map((chat) => (chat.id === id ? { ...chat, title: name } : chat)),
-      );
+      const res = await fetch(`/api/chats/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: name }),
+      });
+      if (res.ok) {
+        const updated: Chat = await res.json();
+        updated.timestamp = new Date(updated.timestamp);
+        setChats((prev) => prev.map((c) => (c.id === id ? updated : c)));
+      }
     }
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!message.trim() || !selectedChat) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: message,
-      role: "user",
-      timestamp: new Date(),
-      files,
-    };
-
-    const assistantMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      content: "This is a mock response. Server integration needed.",
-      role: "assistant",
-      timestamp: new Date(),
-    };
-
-    setMessageHistory((prev) => ({
-      ...prev,
-      [selectedChat]: [
-        ...(prev[selectedChat] || []),
-        userMessage,
-        assistantMessage,
-      ],
-    }));
-
-    setMessages((prev) => [...prev, userMessage, assistantMessage]);
-
-    setChats((prev) =>
-      prev.map((chat) =>
-        chat.id === selectedChat
-          ? { ...chat, lastMessage: userMessage.content, timestamp: new Date() }
-          : chat,
-      ),
+    const uploaded = await Promise.all(
+      files.map(async (file) => {
+        const data = new FormData();
+        data.append("file", file);
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: data,
+        });
+        if (uploadRes.ok) {
+          const { url } = await uploadRes.json();
+          return url as string;
+        }
+        return "";
+      })
     );
 
-    setFileDb((prev) => ({
-      ...prev,
-      [selectedChat]: [...(prev[selectedChat] || []), ...files],
-    }));
-
-    setFiles([]);
-    setMessage("");
-    setIsMultiline(false);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
+    const res = await fetch(`/api/chats/${selectedChat}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: message, files: uploaded }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const parsed = data.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
+      setMessageHistory((prev) => ({
+        ...prev,
+        [selectedChat]: [...(prev[selectedChat] || []), ...parsed],
+      }));
+      setMessages((prev) => [...prev, ...parsed]);
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === selectedChat
+            ? { ...chat, lastMessage: parsed[0].content, timestamp: parsed[0].timestamp }
+            : chat,
+        ),
+      );
+      setFileDb((prev) => ({
+        ...prev,
+        [selectedChat]: [...(prev[selectedChat] || []), ...uploaded.filter(Boolean)],
+      }));
+      setFiles([]);
+      setMessage("");
+      setIsMultiline(false);
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
     }
   };
 
-  const handleChatSelect = (id: string) => {
+  const handleChatSelect = async (id: string) => {
     setSelectedChat(id);
+    const res = await fetch(`/api/chats/${id}`);
+    if (res.ok) {
+      const msgs = await res.json();
+      const parsed = msgs.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
+      setMessageHistory((prev) => ({ ...prev, [id]: parsed }));
+      setMessages(parsed);
+    }
   };
 
   const removeAttachment = (index: number) => {
@@ -352,7 +360,14 @@ export default function Chat() {
                                 className="flex items-center gap-1 rounded-md bg-background/20 px-2 py-1 text-xs"
                               >
                                 <PaperclipIcon className="size-4" />
-                                <span className="truncate">{file.name}</span>
+                                <a
+                                  href={file}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="truncate"
+                                >
+                                  {decodeURIComponent(file.split("/").pop() || "")}
+                                </a>
                               </div>
                             ))}
                           </div>
@@ -436,7 +451,14 @@ export default function Chat() {
               key={index}
               className="flex items-center justify-between rounded-md p-2 hover:bg-muted"
             >
-              <span className="truncate">{file.name}</span>
+              <a
+                href={file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="truncate"
+              >
+                {decodeURIComponent(file.split("/").pop() || "")}
+              </a>
               <Button
                 variant="ghost"
                 size="icon"

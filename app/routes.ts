@@ -12,4 +12,6 @@ export default [
     ]),
   ]),
   route("/api/upload", "routes/api/upload.ts"),
+  route("/api/chats", "routes/api/chats.ts"),
+  route("/api/chats/:chatId", "routes/api/chats.$chatid.ts"),
 ] satisfies RouteConfig;

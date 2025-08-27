@@ -122,7 +122,6 @@ publish:
         - TAG_SHORT="$CI_COMMIT_SHORT_SHA"
         - docker build 
            --build-arg SESSION_SECRET=$SESSION_SECRET 
-           --build-arg ENCRYPTION_SECRET=$ENCRYPTION_SECRET 
            --build-arg NODE_ENV=prod 
            -t $DOCKERHUB_REPO:$TAG_SHORT .
         - docker push $DOCKERHUB_REPO:$TAG_SHORT
