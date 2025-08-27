@@ -21,8 +21,7 @@ ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
 
 COPY package.json package-lock.json entrypoint.sh ./
-# RUN if [ "$NODE_ENV" = "dev" ]; then npm ci; else npm ci --omit=dev; fi
-RUN npm ci
+RUN if [ "$NODE_ENV" = "dev" ]; then npm ci; else npm ci --omit=dev; fi
 
 COPY --from=builder   /app/build                 ./build
 COPY --from=builder   /app/prisma                ./prisma
@@ -31,8 +30,7 @@ COPY --from=builder   /app/node_modules/prisma   ./node_modules/prisma
 COPY --from=builder   /app/node_modules/.prisma  ./node_modules/.prisma
 COPY --from=builder   /app/node_modules/@prisma  ./node_modules/@prisma
 
-EXPOSE 3000
-
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
+
 CMD ["npm", "run", "start"]

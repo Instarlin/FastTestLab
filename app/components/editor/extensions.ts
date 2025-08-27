@@ -192,7 +192,10 @@ const CustomPlaceholder = Placeholder.configure({
 const Smiles = Extension.create({
   name: "smiles",
   addInputRules() {
-    return [textInputRule({ find: /O;-\) $/, replace: "😇 " })];
+    return [
+      textInputRule({ find: /O;-\) $/, replace: "😇 " }),
+      textInputRule({ find: /meow $/, replace: "😺 " }),
+    ];
   },
 });
 

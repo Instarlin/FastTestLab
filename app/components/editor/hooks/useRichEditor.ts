@@ -120,11 +120,12 @@ export const useRichEditor = () => {
     return false;
   };
 
+  //* Initial editor state
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
     autofocus: true,
-    editable: false,
+    editable: true,
     content: content,
     extensions: [...defaultExtensions],
     editorProps: {

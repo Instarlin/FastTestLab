@@ -22,8 +22,9 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/usr/src/app:delegated
-      - /usr/src/app/node_modules
+      - .:/app:delegated
+      - /app/node_modules
+    working_dir: /app
     networks:
       - prisma-network
     entrypoint: ["./entrypoint.sh"]
