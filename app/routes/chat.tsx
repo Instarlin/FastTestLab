@@ -60,6 +60,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [isMultiline, setIsMultiline] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [fileDb, setFileDb] = useState<Record<string, string[]>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -94,6 +95,7 @@ export default function Chat() {
             }));
             setMessageHistory({ [parsed[0].id]: parsedMsgs });
             setMessages(parsedMsgs);
+            setFileDb((prev) => ({ ...prev, [parsed[0].id]: parsedMsgs.flatMap((m: any) => m.files || []) }));
           }
         }
       }
@@ -112,7 +114,7 @@ export default function Chat() {
     },
     validation: {
       accept: {
-        "image/*": [".png", ".jpg", ".jpeg"],
+        // "image/*": [".png", ".jpg", ".jpeg"],
       },
       maxSize: 10 * 1024 * 1024,
       maxFiles: 10,
@@ -187,52 +189,57 @@ export default function Chat() {
   const sendMessage = async () => {
     if (!message.trim() || !selectedChat) return;
 
-    const uploaded = await Promise.all(
-      files.map(async (file) => {
-        const data = new FormData();
-        data.append("file", file);
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: data,
-        });
-        if (uploadRes.ok) {
-          const { url } = await uploadRes.json();
-          return url as string;
-        }
-        return "";
-      })
-    );
+    setIsLoading(true);
 
-    const res = await fetch(`/api/chats/${selectedChat}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: message, files: uploaded }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const parsed = data.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
-      setMessageHistory((prev) => ({
-        ...prev,
-        [selectedChat]: [...(prev[selectedChat] || []), ...parsed],
-      }));
-      setMessages((prev) => [...prev, ...parsed]);
-      setChats((prev) =>
-        prev.map((chat) =>
-          chat.id === selectedChat
-            ? { ...chat, lastMessage: parsed[0].content, timestamp: parsed[0].timestamp }
-            : chat,
-        ),
+    try {
+      const uploaded = await Promise.all(
+        files.map(async (file) => {
+          const data = new FormData();
+          data.append("file", file);
+          const uploadRes = await fetch("/api/upload", { method: "POST", body: data });
+          if (uploadRes.ok) {
+            const { key } = await uploadRes.json();
+            return key as string;
+          }
+          return "";
+        })
       );
-      setFileDb((prev) => ({
-        ...prev,
-        [selectedChat]: [...(prev[selectedChat] || []), ...uploaded.filter(Boolean)],
-      }));
-      setFiles([]);
-      setMessage("");
-      setIsMultiline(false);
-      if (textareaRef.current) {
-        textareaRef.current.style.height = "auto";
+
+      const res = await fetch(`/api/chats/${selectedChat}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: message, files: uploaded.filter(Boolean) }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const parsed = data.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
+        setMessageHistory((prev) => ({
+          ...prev,
+          [selectedChat]: [...(prev[selectedChat] || []), ...parsed],
+        }));
+        setMessages((prev) => [...prev, ...parsed]);
+        setChats((prev) =>
+          prev.map((chat) =>
+            chat.id === selectedChat
+              ? { ...chat, lastMessage: parsed[0].content, timestamp: parsed[0].timestamp }
+              : chat,
+          ),
+        );
+        setFileDb((prev) => ({
+          ...prev,
+          [selectedChat]: [...(prev[selectedChat] || []), ...uploaded.filter(Boolean)],
+        }));
+        setFiles([]);
+        setMessage("");
+        setIsMultiline(false);
+        if (textareaRef.current) {
+          textareaRef.current.style.height = "auto";
+        }
       }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -364,9 +371,13 @@ export default function Chat() {
                                   href={file}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="truncate"
+                                  className="truncate max-w-40"
                                 >
-                                  {decodeURIComponent(file.split("/").pop() || "")}
+                                  {(() => {
+                                    const fileNameWithParams = decodeURIComponent(file.split("/").pop() || "Error");
+                                    const name = fileNameWithParams.split("?")[0];
+                                    return name.length > 37 ? name.slice(37) : name;
+                                  })()}
                                 </a>
                               </div>
                             ))}
@@ -434,7 +445,7 @@ export default function Chat() {
                   setIsMultiline(target.scrollHeight > 40);
                 }}
               />
-              <Button size="icon" variant="ghost" className="rounded-full" onClick={sendMessage}>
+              <Button size="icon" variant="ghost" className="rounded-full" onClick={sendMessage} disabled={isLoading}>
                 <SendHorizontalIcon className="size-4" />
               </Button>
             </div>
@@ -457,7 +468,11 @@ export default function Chat() {
                 rel="noopener noreferrer"
                 className="truncate"
               >
-                {decodeURIComponent(file.split("/").pop() || "")}
+                {(() => {
+                  const fileNameWithParams = decodeURIComponent(file.split("/").pop() || "Error");
+                  const name = fileNameWithParams.split("?")[0];
+                  return name.length > 37 ? name.slice(37) : name;
+                })()}
               </a>
               <Button
                 variant="ghost"
