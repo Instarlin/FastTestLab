@@ -443,7 +443,7 @@ const DropZoneArea = forwardRef<HTMLDivElement, DropZoneAreaProps>(
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         ref={(instance) => {
-          // TODO: test if this actually works?
+          //* might be working?
           ref.current = instance;
           if (typeof forwardedRef === "function") {
             forwardedRef(instance);
@@ -805,7 +805,6 @@ const InfiniteProgress = forwardRef<HTMLDivElement, InfiniteProgressProps>(
         )}
       >
         <div
-          //   TODO: add proper done transition
           className={cn(
             "h-full w-full rounded-full bg-primary",
             done ? "translate-x-0" : "animate-infinite-progress",

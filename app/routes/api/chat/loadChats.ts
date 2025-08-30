@@ -2,11 +2,11 @@ import { type LoaderFunctionArgs } from "react-router";
 import { db } from "~/modules/db.server";
 import { getUserID } from "~/modules/session.server";
 
+//* GET /api/chat/loadChats
+// Loads all chats of the user
 export async function loader({ request }: LoaderFunctionArgs) {
     const userId = await getUserID(request);
-    if (!userId) {
-        return new Response("Unauthorized", { status: 401 });
-    }
+    if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
     const chats = await db.chat.findMany({
         where: { userId },
         orderBy: [{ pinned: "desc" }, { updatedAt: "desc" }],

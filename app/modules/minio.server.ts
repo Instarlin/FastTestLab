@@ -10,9 +10,12 @@ const mc = new Minio.Client({
   secretKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG',
 })
 
-const BUCKET = process.env.MINIO_BUCKET!;
+const BUCKET = process.env.MINIO_BUCKET;
+if (!BUCKET) {
+  throw new Error("MINIO_BUCKET env var is required");
+}
 
-export function getDownloadUrl(key: string, expiresSec = 300, filename?: string) {
+export function getDownloadUrl(key: string, expiresSec: number, filename?: string) {
   return mc.presignedGetObject(BUCKET, key, expiresSec, {
     'response-content-disposition': filename
       ? `attachment; filename="${filename}"`
@@ -21,13 +24,13 @@ export function getDownloadUrl(key: string, expiresSec = 300, filename?: string)
 }
 
 export async function signKeys(keys: string[], expiresSec = 300) {
-  return Promise.all(keys.map(async (k) => {
+  const results = await Promise.all(keys.map(async (k) => {
     if (!k) return '';
-    // backward-compat: if it's already a full URL (legacy row), keep it
     if (/^https?:\/\//i.test(k)) return k;
     const filename = k.split('/').pop() || 'download';
     return getDownloadUrl(k, expiresSec, filename);
   }));
+  return results.filter(Boolean);
 }
 
 export function listObjectKeys(prefix = ''): Promise<string[]> {

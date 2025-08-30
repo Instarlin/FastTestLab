@@ -2,7 +2,6 @@ FROM node:lts-alpine AS builder
 WORKDIR /app
 
 ARG SESSION_SECRET
-
 ENV SESSION_SECRET=${SESSION_SECRET}
 
 COPY package.json package-lock.json ./

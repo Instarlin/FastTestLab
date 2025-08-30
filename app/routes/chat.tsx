@@ -20,8 +20,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Button } from "~/components/ui/button";
 import { useState, useRef, useEffect } from "react";
+import MarkdownMessage from "~/components/widgets/MarkdownMessage";
 
 interface Message {
   id: string;
@@ -65,16 +67,19 @@ export default function Chat() {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [fileDb, setFileDb] = useState<Record<string, string[]>>({});
+  const [model, setModel] = useState<string>("gpt-5-chat-latest");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior });
   };
 
   useEffect(() => {
-    scrollToBottom();
+    scrollToBottom("smooth");
   }, [messages]);
 
   useEffect(() => {
@@ -221,36 +226,61 @@ export default function Chat() {
         })
       );
 
-      const res = await fetch(`/api/chat/createMessage/${selectedChat}`, {
+      // Optimistic user + assistant placeholder
+      const now = new Date();
+      const userMsg = { id: `local-${now.getTime()}`, content: message, role: "user" as const, timestamp: now, files: [] as string[] };
+      const assistantMsg = { id: `local-assistant-${now.getTime()}`, content: "", role: "assistant" as const, timestamp: now, files: [] as string[] };
+      setMessageHistory((prev) => ({
+        ...prev,
+        [selectedChat]: [...(prev[selectedChat] || []), userMsg, assistantMsg],
+      }));
+      setMessages((prev) => [...prev, userMsg, assistantMsg]);
+      setFileDb((prev) => ({
+        ...prev,
+        [selectedChat]: [...(prev[selectedChat] || []), ...uploaded.filter(Boolean)],
+      }));
+
+      // Stream assistant response
+      const res = await fetch(`/api/chat/streamMessage/${selectedChat}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: message, files: uploaded.filter(Boolean) }),
+        body: JSON.stringify({ content: message, files: uploaded.filter(Boolean), model }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        const parsed = data.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
-        setMessageHistory((prev) => ({
-          ...prev,
-          [selectedChat]: [...(prev[selectedChat] || []), ...parsed],
-        }));
-        setMessages((prev) => [...prev, ...parsed]);
+      if (res.ok && (res as any).body) {
+        const reader = (res as any).body.getReader();
+        const decoder = new TextDecoder();
+        let acc = "";
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          acc += chunk;
+          setMessages((prev) => {
+            const copy = [...prev];
+            const idx = copy.findIndex((m) => m.id === assistantMsg.id);
+            if (idx !== -1) copy[idx] = { ...copy[idx], content: acc };
+            return copy;
+          });
+          setMessageHistory((prev) => {
+            const old = prev[selectedChat] || [];
+            const copy = [...old];
+            const idx = copy.findIndex((m) => m.id === assistantMsg.id);
+            if (idx !== -1) copy[idx] = { ...copy[idx], content: acc };
+            return { ...prev, [selectedChat]: copy };
+          });
+        }
         setChats((prev) =>
           prev.map((chat) =>
-            chat.id === selectedChat
-              ? { ...chat, lastMessage: parsed[0].content, timestamp: parsed[0].timestamp }
-              : chat,
+            chat.id === selectedChat ? { ...chat, lastMessage: acc || userMsg.content, timestamp: new Date() } : chat,
           ),
         );
-        setFileDb((prev) => ({
-          ...prev,
-          [selectedChat]: [...(prev[selectedChat] || []), ...uploaded.filter(Boolean)],
-        }));
-        setFiles([]);
-        setMessage("");
-        setIsMultiline(false);
-        if (textareaRef.current) {
-          textareaRef.current.style.height = "auto";
-        }
+      }
+
+      setFiles([]);
+      setMessage("");
+      setIsMultiline(false);
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -293,7 +323,7 @@ export default function Chat() {
   const dbFilesList = selectedChat ? fileDb[selectedChat] || [] : [];
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-screen w-full overflow-hidden">
       {/* Chat List Section */}
       <div className="hidden md:block w-64 flex-shrink-0 border-r border-gray-200 bg-card shadow-sm overflow-y-auto">
         <div className="sticky top-0 mb-4 flex items-center justify-between py-2 px-4 bg-background/75 backdrop-blur-sm border-b border-gray-200">
@@ -363,9 +393,9 @@ export default function Chat() {
       </div>
 
       {/* Main Chat Section */}
-      <div className="flex relative flex-1 flex-col bg-background">
+      <div className="flex relative flex-1 flex-col min-h-0 bg-background">
         <Dropzone {...dropzone}>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 min-h-0">
             <DropZoneArea className="h-full p-0 m-0 rounded-none border-none bg-background ring-offset-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0">
               <div ref={messagesContainerRef} className="h-full w-full overflow-y-auto pb-20">
                 <div className="p-4 space-y-4">
@@ -381,7 +411,7 @@ export default function Chat() {
                             : "bg-card"
                           }`}
                       >
-                        {msg.content}
+                        <MarkdownMessage text={msg.content} />
                         {msg.files && msg.files.length > 0 && (
                           <div className="mt-2 space-y-1">
                             {msg.files.map((file, index) => (
@@ -420,7 +450,7 @@ export default function Chat() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={scrollToBottom}
+              onClick={() => scrollToBottom()}
               className={`
                 rounded-full left-[calc(50%-16px)] absolute -top-8 border border-gray-300 bg-background
                 transition-all duration-300
@@ -458,6 +488,33 @@ export default function Chat() {
               <DropzoneTrigger className="flex h-8 w-8 p-0 bg-background items-center justify-center rounded-full hover:bg-accent">
                 <UploadIcon className="size-4" />
               </DropzoneTrigger>
+              <div className="hidden md:flex items-center">
+                <Select value={model} onValueChange={setModel}>
+                  <SelectTrigger className="h-8 w-40 text-xs">
+                    <SelectValue placeholder="Model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {/* Cheaper models:
+                      gpt-5-mini, gpt-5-nano, gpt-4.1-mini, gpt-4.1-nano, 
+                      gpt-4o-mini, o1-mini, o3-mini, o4-minim codex-mini-latest
+
+                      More expensive models:
+                      gpt-5, gpt-5-chat-latest, gpt-4.1, gpt-4o, o1, o3
+                      */}
+                      {/* <SelectItem value="gpt-5">gpt-5 RT</SelectItem> */}
+                      <SelectItem value="gpt-5-chat-latest">gpt-5-chat RT</SelectItem>
+                      {/* <SelectItem value="gpt-5-mini">gpt-5-mini</SelectItem> */}
+                      <SelectItem value="gpt-4.1">gpt-4.1 RT</SelectItem>
+                      <SelectItem value="gpt-4.1-mini">gpt-4.1-mini</SelectItem>
+                      <SelectItem value="gpt-4o">gpt-4o</SelectItem>
+                      <SelectItem value="o4-mini">o4-mini</SelectItem>
+                      <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
+                      {/* <SelectItem value="codex-mini-latest">codex-mini-latest</SelectItem> */}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
               <textarea
                 ref={textareaRef}
                 value={message}
