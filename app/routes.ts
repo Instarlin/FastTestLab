@@ -11,9 +11,10 @@ export default [
     route("/tests", "routes/tests.tsx", [
     ]),
   ]),
-  route("/api/chat/uploadFile", "routes/api/chat/uploadFile.ts"),
   route("/api/chat/loadChats", "routes/api/chat/loadChats.ts"),
   route("/api/chat/createChat", "routes/api/chat/createChat.ts"),
+  route("/api/chat/uploadFile", "routes/api/chat/uploadFile.ts"),
   route("/api/chat/loadChat/:chatId", "routes/api/chat/loadChatData.ts"),
-  route("/api/chat/chatActions/:chatId", "routes/api/chat/chatActions.ts"),
+  route("/api/chat/updateChat/:chatId", "routes/api/chat/updateChat.ts"),
+  route("/api/chat/createMessage/:chatId", "routes/api/chat/createMessage.ts"),
 ] satisfies RouteConfig;

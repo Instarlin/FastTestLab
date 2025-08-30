@@ -151,7 +151,7 @@ export default function Chat() {
   };
 
   const deleteChat = async (id: string) => {
-    await fetch(`/api/chat/chatActions/${id}`, { method: "DELETE" });
+    await fetch(`/api/chat/updateChat/${id}`, { method: "DELETE" });
     const nextChats = chats.filter((chat) => chat.id !== id);
     const nextSelected = selectedChat === id ? nextChats[0]?.id ?? null : selectedChat;
     setChats(nextChats);
@@ -172,7 +172,7 @@ export default function Chat() {
   const togglePinChat = async (id: string) => {
     const chat = chats.find((c) => c.id === id);
     if (!chat) return;
-    const res = await fetch(`/api/chat/chatActions/${id}`, {
+    const res = await fetch(`/api/chat/updateChat/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ pinned: !chat.pinned }),
@@ -189,7 +189,7 @@ export default function Chat() {
     if (!current) return;
     const name = window.prompt("Rename chat", current.title);
     if (name) {
-      const res = await fetch(`/api/chat/chatActions/${id}`, {
+      const res = await fetch(`/api/chat/updateChat/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: name }),
@@ -221,7 +221,7 @@ export default function Chat() {
         })
       );
 
-      const res = await fetch(`/api/chat/loadChat/${selectedChat}`, {
+      const res = await fetch(`/api/chat/createMessage/${selectedChat}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: message, files: uploaded.filter(Boolean) }),
