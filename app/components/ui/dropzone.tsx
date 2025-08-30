@@ -8,6 +8,7 @@ import {
   useMemo,
   useReducer,
   useState,
+  type ButtonHTMLAttributes,
 } from "react";
 import {
   type Accept,
@@ -658,7 +659,7 @@ const DropzoneMessage = forwardRef<HTMLParagraphElement, DropzoneMessageProps>(
 );
 DropzoneMessage.displayName = "DropzoneMessage";
 
-interface DropzoneRemoveFileProps extends ButtonProps {}
+interface DropzoneRemoveFileProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 const DropzoneRemoveFile = forwardRef<
   HTMLButtonElement,
@@ -689,7 +690,7 @@ const DropzoneRemoveFile = forwardRef<
 });
 DropzoneRemoveFile.displayName = "DropzoneRemoveFile";
 
-interface DropzoneRetryFileProps {}
+interface DropzoneRetryFileProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 const DropzoneRetryFile = forwardRef<HTMLButtonElement, DropzoneRetryFileProps>(
   ({ className, ...props }, ref) => {

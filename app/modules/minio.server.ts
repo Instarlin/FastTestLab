@@ -1,5 +1,7 @@
 import * as Minio from 'minio'
+import { Readable } from 'stream';
 
+//TODO: make configure own minio server, instead of public one
 const mc = new Minio.Client({
   endPoint: 'play.min.io',
   port: 9000,
@@ -18,7 +20,6 @@ export function getDownloadUrl(key: string, expiresSec = 300, filename?: string)
   });
 }
 
-// ---- NEW: bulk sign (for loader)
 export async function signKeys(keys: string[], expiresSec = 300) {
   return Promise.all(keys.map(async (k) => {
     if (!k) return '';
@@ -33,14 +34,14 @@ export function listObjectKeys(prefix = ''): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const keys: string[] = [];
     const s = mc.listObjectsV2(BUCKET, prefix, true);
-    s.on('data', (o) => keys.push(o.name));
+    s.on('data', (o) => keys.push(o.name || ''));
     s.on('end', () => resolve(keys));
     s.on('error', reject);
   });
 }
 
 export async function uploadToMinio(
-  fileStream: ReadableStream,
+  fileStream: Readable,
   key: string,
   size: number
 ): Promise<{ key: string }> {
